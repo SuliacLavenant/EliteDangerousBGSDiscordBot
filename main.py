@@ -13,6 +13,7 @@ from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 #Discord app token
 load_dotenv()
 token = os.getenv("DISCORD_TOKEN")
+guildID = os.getenv("DISCORD_GUILD")
 
 #Intents for discord
 intents = discord.Intents.default()
@@ -21,7 +22,7 @@ intents.message_content = True
 #create bot
 bot = BGSManagementBot(command_prefix=".", intents=intents)
 
-guild = discord.Object(id=GUILDID)
+guild = discord.Object(id=guildID)
 
 
 @bot.tree.command(name="hello", description="say Hello World", guild=guild)

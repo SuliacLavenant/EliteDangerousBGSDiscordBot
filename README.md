@@ -12,3 +12,4 @@ Python extra packages:
 
 Create a .env file with:
 - DISCORD_TOKEN=DISCORDAPPTOKEN
+- DISCORD_GUILD=IDOFYOURDISCORDSERVER
