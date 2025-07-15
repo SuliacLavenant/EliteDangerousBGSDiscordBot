@@ -3,6 +3,8 @@ class SystemInfoMinorFactionFocused:
     systemName = ""
     minorFactionName = ""
     controllingFaction = ""
+    controllingFactionInfluence = -1
+    controllingFactionInaraLink = ""
     positionInSystem = -1
     influence = -1
 
@@ -18,6 +20,10 @@ class SystemInfoMinorFactionFocused:
         self.systemName = systemName
         self.minorFactionName = minorFactionName
 
+    def setControllingFaction(self, controllingFaction: str):
+        self.controllingFaction = controllingFaction
+        self.controllingFactionInaraLink = f"https://inara.cz/elite/minorfaction/?search={self.controllingFaction.replace(" ", "%20")}"
+    
     def setDate(self, date: str):
         self.date = date
         self.dateStr = f"{date[8:10]} {date[5:7]} {date[0:4]}, {date[11:16]}"

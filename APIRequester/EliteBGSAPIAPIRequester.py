@@ -11,7 +11,7 @@ class EliteBGSAPIAPIRequester(AbstractAPIRequester):
         jsonData = requests.get(f"https://elitebgs.app/api/ebgs/v5/systems?name={systemName}&factionDetails=true").json()
 
         systemInfoMinorFaction = SystemInfoMinorFactionFocused(jsonData["docs"][0]["name"], minorFactionName)
-        systemInfoMinorFaction.controllingFaction = jsonData["docs"][0]["controlling_minor_faction_cased"]
+        systemInfoMinorFaction.setControllingFaction(jsonData["docs"][0]["controlling_minor_faction_cased"])
         
         factionInSystem = False
         otherInfluences = []
@@ -20,6 +20,11 @@ class EliteBGSAPIAPIRequester(AbstractAPIRequester):
             if faction["name"] == minorFactionName:
                 systemInfoMinorFaction.influence = faction["faction_details"]["faction_presence"]["influence"]
                 factionInSystem = True
+                if minorFactionName == systemInfoMinorFaction.controllingFaction:
+                    systemInfoMinorFaction.controllingFactionInfluence = faction["faction_details"]["faction_presence"]["influence"]
+            elif faction["name"] == systemInfoMinorFaction.controllingFaction:
+                systemInfoMinorFaction.controllingFactionInfluence = faction["faction_details"]["faction_presence"]["influence"]
+                otherInfluences.append(faction["faction_details"]["faction_presence"]["influence"])
             else:
                 otherInfluences.append(faction["faction_details"]["faction_presence"]["influence"])
         

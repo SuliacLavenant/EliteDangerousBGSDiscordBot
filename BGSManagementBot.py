@@ -19,13 +19,24 @@ class BGSManagementBot(commands.Bot):
             print(f"Error syncing commands: {e}")
 
     def getSystemMinorFactionRecapEmbed(self, systemInfoMinorFaction: SystemInfoMinorFactionFocused):
-        systemRecapEmbed = discord.Embed(title=systemInfoMinorFaction.systemName, url=INARASYSTEMPAGE+systemInfoMinorFaction.systemName)
+        title = systemInfoMinorFaction.systemName
+        if systemInfoMinorFaction.controllingFaction == systemInfoMinorFaction.minorFactionName:
+            title += "   :crown:"
+
+        description = f"**Leader**: [{systemInfoMinorFaction.controllingFaction}]({systemInfoMinorFaction.controllingFactionInaraLink}), "
+        description += "        "
+        description += f"**Influence**: {round(systemInfoMinorFaction.controllingFactionInfluence*100,1)}%"
+
+        systemRecapEmbed = discord.Embed(title=title, url=INARASYSTEMPAGE+systemInfoMinorFaction.systemName, description=description)
+
+        if systemInfoMinorFaction.controllingFaction != systemInfoMinorFaction.minorFactionName:
+            systemRecapEmbed.add_field(name=f"{systemInfoMinorFaction.minorFactionName} Influence", value=round(systemInfoMinorFaction.influence*100,1), inline=False)
+
         systemRecapEmbed.add_field(name="Population", value=systemInfoMinorFaction.populationStr, inline=True)
-        systemRecapEmbed.add_field(name="Influence", value=systemInfoMinorFaction.influence, inline=True)
         systemRecapEmbed.add_field(name="Current State(s)", value="TODO", inline=False)
 
-        systemRecapEmbed.add_field(name="Influence Since Yesterday", value="", inline=True)
-        systemRecapEmbed.add_field(name="Influence Since Last Week", value="", inline=True)
+        #systemRecapEmbed.add_field(name="Influence Since Yesterday", value="", inline=True)
+        #systemRecapEmbed.add_field(name="Influence Since Last Week", value="", inline=True)
         #systemRecapEmbed.add_field(name="", value="", inline=True)
         systemRecapEmbed.set_footer(text=f"Info updated: {systemInfoMinorFaction.dateStr}")
 
