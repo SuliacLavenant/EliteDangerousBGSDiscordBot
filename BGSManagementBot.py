@@ -20,8 +20,9 @@ class BGSManagementBot(commands.Bot):
 
     def getSystemMinorFactionRecapEmbed(self, systemInfoMinorFaction: SystemInfoMinorFactionFocused):
         systemRecapEmbed = discord.Embed(title=systemInfoMinorFaction.systemName, url=INARASYSTEMPAGE+systemInfoMinorFaction.systemName)
-        systemRecapEmbed.add_field(name="Current Influence", value=systemInfoMinorFaction.influence, inline=False)
-        systemRecapEmbed.add_field(name="Current State(s)", value="TODO", inline=False) 
+        systemRecapEmbed.add_field(name="Population", value=systemInfoMinorFaction.populationStr, inline=True)
+        systemRecapEmbed.add_field(name="Influence", value=systemInfoMinorFaction.influence, inline=True)
+        systemRecapEmbed.add_field(name="Current State(s)", value="TODO", inline=False)
 
         systemRecapEmbed.add_field(name="Influence Since Yesterday", value="", inline=True)
         systemRecapEmbed.add_field(name="Influence Since Last Week", value="", inline=True)

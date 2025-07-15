@@ -32,5 +32,6 @@ class EliteBGSAPIAPIRequester(AbstractAPIRequester):
                     systemInfoMinorFaction.positionInSystem += 1
 
         systemInfoMinorFaction.setDate(jsonData["docs"][0]["updated_at"])
+        systemInfoMinorFaction.setPopulation(jsonData["docs"][0]["population"])
         
         return systemInfoMinorFaction
