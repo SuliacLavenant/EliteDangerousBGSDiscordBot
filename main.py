@@ -7,7 +7,7 @@ import os
 
 #custom files
 from BGSManagementBot import BGSManagementBot
-from APIRequester.EBGSAPIAPIRequester import EBGSAPIAPIRequester
+from APIRequester.EliteBGSAPIAPIRequester import EliteBGSAPIAPIRequester
 from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
 #Discord app token
@@ -35,7 +35,7 @@ async def helloworldparameter(interaction: discord.Interaction, word: str):
 
 @bot.tree.command(name="getsystemrecap", description="send an embed contenant a recap of the requested system", guild=guild)
 async def getsystemrecap(interaction: discord.Interaction, systemname: str):
-    systemInfoMinorFaction = EBGSAPIAPIRequester.requestSystemFactionData(systemname, "Empire Corsairs")
+    systemInfoMinorFaction = EliteBGSAPIAPIRequester.requestSystemFactionData(systemname, "Empire Corsairs")
     await interaction.response.send_message(embed=bot.getSystemMinorFactionRecapEmbed(systemInfoMinorFaction))
 
 

@@ -5,7 +5,7 @@ from APIRequester.AbstractAPIRequester import AbstractAPIRequester
 from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
 
-class EBGSAPIAPIRequester(AbstractAPIRequester):
+class EliteBGSAPIAPIRequester(AbstractAPIRequester):
     def requestSystemFactionData(systemName: str, minorFactionName: str):
 
         jsonData = requests.get(f"https://elitebgs.app/api/ebgs/v5/systems?name={systemName}&factionDetails=true").json()
