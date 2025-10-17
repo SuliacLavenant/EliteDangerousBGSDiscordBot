@@ -46,7 +46,6 @@ class DataManager:
         data["name"] = minorFaction.name
         data["allegiance"] = minorFaction.allegiance
         data["government"] = minorFaction.government
-        data["population"] = minorFaction.population
         data["systems"] = {}
 
         #atomic write
