@@ -1,3 +1,6 @@
 .env
 *.pyc
-quicktest.py
+
+data/*
+
+test.py
