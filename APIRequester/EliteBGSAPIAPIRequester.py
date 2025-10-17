@@ -1,11 +1,23 @@
 import requests
+import urllib.parse
 
 # Custom Class
 from APIRequester.AbstractAPIRequester import AbstractAPIRequester
+
+from DataClass.System import System
+from DataClass.MinorFaction import MinorFaction
+
 from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
 
 class EliteBGSAPIAPIRequester(AbstractAPIRequester):
+
+    def requestMinorFactionBaseInformation(minorFactionName: str):
+
+        jsonData = requests.get(f"https://elitebgs.app/api/ebgs/v5/factions?name={urllib.parse.quote(minorFactionName)}&minimal=true&systemDetails=false").json()
+
+        return MinorFaction(jsonData["docs"][0]["name_lower"], jsonData["docs"][0]["allegiance"], jsonData["docs"][0]["government"])
+
 
     def requestMinorFactionSystemsList(minorFactionName: str):
         systems=[]

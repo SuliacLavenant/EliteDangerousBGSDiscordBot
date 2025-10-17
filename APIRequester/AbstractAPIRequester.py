@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 import requests
+import urllib.parse
 
 # Custom Class
-from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
-
+from DataClass.System import System
+from DataClass.MinorFaction import MinorFaction
 
 class AbstractAPIRequester(ABC):
     @abstractmethod
