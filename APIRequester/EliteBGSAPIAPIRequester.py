@@ -6,6 +6,25 @@ from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
 
 class EliteBGSAPIAPIRequester(AbstractAPIRequester):
+
+    def requestMinorFactionSystemsList(minorFactionName: str):
+        systems=[]
+        page=1
+        pageToRead = True
+
+        while pageToRead:
+            jsonData = requests.get(f"https://elitebgs.app/api/ebgs/v5/systems?faction={minorFactionName}&minimal=true&factionDetails=false&factionHistory=false&page={page}").json()
+
+            for s in jsonData["docs"]:
+                systems.append(s["name_lower"])
+
+            pageToRead = jsonData["nextPage"]!=None
+            page+=1
+
+        return systems
+        
+
+
     def requestSystemFactionData(systemName: str, minorFactionName: str):
 
         jsonData = requests.get(f"https://elitebgs.app/api/ebgs/v5/systems?name={systemName}&factionDetails=true").json()
