@@ -71,6 +71,12 @@ class DataManager:
         data["systems"][system.name] = {}
         data["systems"][system.name]["name"] = system.name
         data["systems"][system.name]["population"] = system.population
+        data["systems"][system.name]["security"] = system.security
+        data["systems"][system.name]["economy"] = system.economy
+        data["systems"][system.name]["secondEconomy"] = system.secondEconomy
+        data["systems"][system.name]["reserve"] = system.reserve
+
+
         data["systems"][system.name]["controllingFaction"] = system.controllingFaction
         data["systems"][system.name]["factions"] = system.factions
 
