@@ -19,4 +19,12 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
         return system
 
-#jsonData = requests.get(f"https://www.edsm.net/api-system-v1/factions?systemName={urllib.parse.quote(systemName)}").json()
+    def requestMinorFactionSystemData(system: System):
+        jsonData = requests.get(f"https://www.edsm.net/api-system-v1/factions?systemName={urllib.parse.quote(system.name)}").json()
+
+        for faction in jsonData["factions"]:
+            if faction["influence"]!=0:
+                system.addFaction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], faction["state"])
+
+
+        return system
