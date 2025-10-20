@@ -5,7 +5,7 @@ from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
 
 #TODO refaire proprement avec des catch
-class DataManager:
+class DataStorageManager:
 
     #create storage file for the discord
     def createDataFile(guild_id: str):
