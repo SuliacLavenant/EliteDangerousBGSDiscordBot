@@ -13,10 +13,25 @@ from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 class EliteBGSAPIAPIRequester(AbstractAPIRequester):
 
     def requestMinorFactionBaseInformation(minorFactionName: str):
+        url = f"https://elitebgs.app/api/ebgs/v5/factions?name={urllib.parse.quote(minorFactionName)}&minimal=true&systemDetails=false"
 
-        jsonData = requests.get(f"https://elitebgs.app/api/ebgs/v5/factions?name={urllib.parse.quote(minorFactionName)}&minimal=true&systemDetails=false").json()
+        try:
+            response = requests.get(url, timeout=10) #timeout 10 sec
+            response.raise_for_status() #detect request error
 
-        return MinorFaction(jsonData["docs"][0]["name_lower"], jsonData["docs"][0]["allegiance"], jsonData["docs"][0]["government"])
+            jsonData = response.json()
+
+            minorFaction = MinorFaction(jsonData["docs"][0]["name_lower"], jsonData["docs"][0]["allegiance"], jsonData["docs"][0]["government"])
+
+            return minorFaction
+
+        except requests.exceptions.Timeout:
+            print("Error: Timeout.")
+            return None
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error: HTTP {e}")
+            return None
 
 
     def requestMinorFactionSystemsList(minorFactionName: str):
@@ -25,7 +40,7 @@ class EliteBGSAPIAPIRequester(AbstractAPIRequester):
         pageToRead = True
 
         while pageToRead:
-            jsonData = requests.get(f"https://elitebgs.app/api/ebgs/v5/systems?faction={minorFactionName}&minimal=true&factionDetails=false&factionHistory=false&page={page}").json()
+            jsonData = EliteBGSAPIAPIRequester.requestToApi(f"https://elitebgs.app/api/ebgs/v5/systems?faction={minorFactionName}&minimal=true&factionDetails=false&factionHistory=false&page={page}")
 
             for s in jsonData["docs"]:
                 systems.append(s["name_lower"])

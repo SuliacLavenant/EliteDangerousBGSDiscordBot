@@ -12,19 +12,45 @@ from DataClass.MinorFaction import MinorFaction
 class EDSMAPIRequester(AbstractAPIRequester):
 
     def requestSystemData(systemName: str):
+        url = f"https://www.edsm.net/api-v1/system?systemName={urllib.parse.quote(systemName)}&showInformation=1"
 
-        jsonData = requests.get(f"https://www.edsm.net/api-v1/system?systemName={urllib.parse.quote(systemName)}&showInformation=1").json()
+        try:
+            response = requests.get(url, timeout=10) #timeout 10 sec
+            response.raise_for_status() #detect request error
 
-        system = System(jsonData["name"], jsonData["information"]["population"], jsonData["information"]["security"], jsonData["information"]["economy"], jsonData["information"]["secondEconomy"], jsonData["information"]["reserve"], jsonData["information"]["faction"])
+            jsonData = response.json()
 
-        return system
+            system = System(jsonData["name"], jsonData["information"]["population"], jsonData["information"]["security"], jsonData["information"]["economy"], jsonData["information"]["secondEconomy"], jsonData["information"]["reserve"], jsonData["information"]["faction"])
+            return system
+
+        except requests.exceptions.Timeout:
+            print("Error: Timeout.")
+            return None
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error: HTTP {e}")
+            return None
+
 
     def requestMinorFactionSystemData(system: System):
-        jsonData = requests.get(f"https://www.edsm.net/api-system-v1/factions?systemName={urllib.parse.quote(system.name)}").json()
+        url = f"https://www.edsm.net/api-system-v1/factions?systemName={urllib.parse.quote(system.name)}"
 
-        for faction in jsonData["factions"]:
-            if faction["influence"]!=0:
-                system.addFaction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], faction["state"])
+        try:
+            response = requests.get(url, timeout=10) #timeout 10 sec
+            response.raise_for_status() #detect request error
 
+            jsonData = response.json()
 
-        return system
+            for faction in jsonData["factions"]:
+                if faction["influence"]!=0:
+                    system.addFaction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], faction["state"])
+
+            return system
+
+        except requests.exceptions.Timeout:
+            print("Error: Timeout.")
+            return None
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error: HTTP {e}")
+            return None
