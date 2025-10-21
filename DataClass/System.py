@@ -49,5 +49,37 @@ class System:
         return safe
 
 
+    # Return influence difference between leader and second 
+    def getLeaderInfluenceMargin(self):
+        leaderInfluence = self.factions[self.controllingFaction]["influence"]
+        secondInfluence = 0
+
+        for faction in self.factions:
+            if faction!=self.controllingFaction:
+                factionInfluence = self.factions[faction]["influence"]
+                if factionInfluence>secondInfluence:
+                    secondInfluence = factionInfluence
+
+        return leaderInfluence-secondInfluence
+
+    
+    # Return influence difference between leader and second 
+    def getSecondAndItsInfluence(self):
+        leaderInfluence = self.factions[self.controllingFaction]["influence"]
+        secondInfluence = 0
+        second = ""
+
+        for faction in self.factions:
+            if faction!=self.controllingFaction:
+                factionInfluence = self.factions[faction]["influence"]
+                if factionInfluence>secondInfluence:
+                    secondInfluence = factionInfluence
+                    second = faction
+
+        return (second,secondInfluence)
+
+
+
     def lower(self, string: str):
         return string.lower() if isinstance(string, str) else string
+        
