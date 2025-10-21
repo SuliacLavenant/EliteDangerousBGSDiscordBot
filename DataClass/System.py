@@ -19,7 +19,7 @@ class System:
         self.controllingFaction = self.lower(controllingFaction)
 
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, state: str):
-        self.factions[name] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "state": self.lower(state)}
+        self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "state": self.lower(state)}
 
     #init from stored data
     def initFromStoredData(self, systemData: dict):
@@ -30,12 +30,24 @@ class System:
         self.secondEconomy = systemData["secondEconomy"]
         self.reserve = systemData["reserve"]
         self.controllingFaction = systemData["controllingFaction"]
+        self.factions = systemData["factions"]
 
     ### Method
     def isControlledBy(self, minorFactionName: str):
         return self.controllingFaction == minorFactionName
 
-    ###
+    # Check if leader influence difference is safe
+    def isLeaderSafe(self, safePercentDifference: int):
+        safe = True
+        leaderInfluence = self.factions[self.controllingFaction]["influence"]
+
+        for faction in self.factions:
+            if faction!=self.controllingFaction:
+                factionInfluence = self.factions[faction]["influence"]
+                safe = safe and ((leaderInfluence-factionInfluence)>safePercentDifference)
+
+        return safe
+
 
     def lower(self, string: str):
         return string.lower() if isinstance(string, str) else string
