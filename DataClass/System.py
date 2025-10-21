@@ -32,7 +32,7 @@ class System:
         self.controllingFaction = systemData["controllingFaction"]
 
     ### Method
-    def isControledBy(self, minorFactionName: str):
+    def isControlledBy(self, minorFactionName: str):
         return self.controllingFaction == minorFactionName
 
     ###
