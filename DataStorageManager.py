@@ -86,3 +86,38 @@ class DataStorageManager:
         os.replace(filePath+".tmp", filePath)
 
         return True
+
+
+    ############################################# GET
+
+    def getMinorFactionName(guild_id: str):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data["name"]
+
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            return ""
+
+
+    #TODO add check if system in data
+    def getSystem(guild_id: str, systemName: str):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                system = System()
+                system.initFromStoredData(data["systems"][systemName])
+                return system
+
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            return {}
+
+        
