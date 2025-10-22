@@ -7,6 +7,10 @@ from DataClass.System import System
 #TODO refaire proprement avec des catch
 class DataStorageManager:
 
+    def isGuildFileExist(guild_id: str):
+        filePath = f"data/{guild_id}.json"
+        return os.path.exists(filePath)
+
     #create storage file for the discord
     def createDataFile(guild_id: str):
         filePath = f"data/{guild_id}.json"
@@ -23,7 +27,7 @@ class DataStorageManager:
     def resetDataFile(guild_id: str):
         filePath = f"data/{guild_id}.json"
 
-        if not os.path.exists(filePath):
+        if os.path.exists(filePath):
             with open(filePath, "w", encoding="utf-8") as f:
                 f.write("{}")
         else:
