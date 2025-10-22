@@ -20,8 +20,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
             jsonData = response.json()
 
-            system = System()
-            system.initFromAPI(jsonData["name"], jsonData["information"]["population"], jsonData["information"]["security"], jsonData["information"]["economy"], jsonData["information"]["secondEconomy"], jsonData["information"]["reserve"], jsonData["information"]["faction"])
+            system = System(jsonData["name"], jsonData["information"]["population"], jsonData["information"]["security"], jsonData["information"]["economy"], jsonData["information"]["secondEconomy"], jsonData["information"]["reserve"], jsonData["information"]["faction"])
             return system
 
         except requests.exceptions.Timeout:

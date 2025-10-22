@@ -1,15 +1,19 @@
+from dataclasses import dataclass, field
+from copy import deepcopy
+
+@dataclass
 class System:
-    name = ""
-    population = -1
-    security = ""
-    economy = ""
-    secondEconomy = ""
-    reserve = ""
+    name: str = ""
+    population: int = -1
+    security: str = ""
+    economy: str = ""
+    secondEconomy: str = ""
+    reserve: str = ""
 
-    controllingFaction = ""
-    factions = {}
+    controllingFaction: str = ""
+    factions: dict[str, dict] = field(default_factory=dict)
 
-    def initFromAPI(self, name: str, population: int, security: str, economy: str, secondEconomy: str, reserve: str, controllingFaction: str):
+    def __init__(self, name: str, population: int, security: str, economy: str, secondEconomy: str, reserve: str, controllingFaction: str, factions: dict | None = None):
         self.name = self.lower(name)
         self.population = population
         self.security = self.lower(security)
@@ -17,20 +21,17 @@ class System:
         self.secondEconomy = self.lower(secondEconomy)
         self.reserve = self.lower(reserve)
         self.controllingFaction = self.lower(controllingFaction)
+        self.factions = deepcopy(factions) if factions is not None else {}
+    
+    #init from stored data
+    @classmethod
+    def initFromStoredData(cls, systemData: dict):
+        return cls(systemData["name"], systemData["population"], systemData["security"], systemData["economy"], systemData["secondEconomy"], systemData["reserve"], systemData["controllingFaction"], systemData["factions"])
 
+    
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, state: str):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "state": self.lower(state)}
 
-    #init from stored data
-    def initFromStoredData(self, systemData: dict):
-        self.name = systemData["name"]
-        self.population = systemData["population"]
-        self.security = systemData["security"]
-        self.economy = systemData["economy"]
-        self.secondEconomy = systemData["secondEconomy"]
-        self.reserve = systemData["reserve"]
-        self.controllingFaction = systemData["controllingFaction"]
-        self.factions = systemData["factions"]
 
     ### Method
     def isControlledBy(self, minorFactionName: str):
@@ -82,4 +83,3 @@ class System:
 
     def lower(self, string: str):
         return string.lower() if isinstance(string, str) else string
-        

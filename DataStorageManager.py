@@ -112,8 +112,7 @@ class DataStorageManager:
         try:
             with open(filePath, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                system = System()
-                system.initFromStoredData(data["systems"][systemName])
+                system = System.initFromStoredData(data["systems"][systemName])
                 return system
 
         except (FileNotFoundError, json.JSONDecodeError) as e:
