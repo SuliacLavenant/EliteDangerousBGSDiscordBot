@@ -16,3 +16,6 @@ class APIManager:
 
     def requestMinorFactionSystemData(system: System):
         return EDSMAPIRequester.requestMinorFactionSystemData(system)
+
+    def requestMinorFactionSystemsList(minorFactionName: str):
+        return EliteBGSAPIAPIRequester.requestMinorFactionSystemsList(minorFactionName)
