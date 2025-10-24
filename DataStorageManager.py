@@ -47,9 +47,10 @@ class DataStorageManager:
             data = {}
 
         #data update
-        data["name"] = minorFaction.name
-        data["allegiance"] = minorFaction.allegiance
-        data["government"] = minorFaction.government
+        data["faction"] = {}
+        data["faction"]["name"] = minorFaction.name
+        data["faction"]["allegiance"] = minorFaction.allegiance
+        data["faction"]["government"] = minorFaction.government
         data["systems"] = {}
 
         #atomic write
@@ -101,7 +102,21 @@ class DataStorageManager:
         try:
             with open(filePath, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                return data["name"]
+                return data["faction"]["name"]
+
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            return ""
+
+
+    def getMinorFactionGovernment(guild_id: str):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data["faction"]["government"]
 
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Error: {type(e).__name__}")
