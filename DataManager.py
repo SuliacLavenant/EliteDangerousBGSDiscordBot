@@ -17,6 +17,14 @@ class DataManager:
         DataStorageManager.setMinorFactionToDataFile(guild_id,minorFaction)
 
 
+    def addSystemToIgnoreList(guild_id: str, systemName: str):
+        DataStorageManager.addSystemToIgnoreListToDataFile(guild_id, systemName)
+
+    
+    def removeSystemFromIgnoreList(guild_id: str, systemName: str):
+        DataStorageManager.removeSystemFromIgnoreListFromDataFile(guild_id, systemName)
+
+
     #fetch systems data from APIs
     def fetchSystemsData(guild_id: str):
         minorFactionName = DataStorageManager.getMinorFactionName(guild_id)
