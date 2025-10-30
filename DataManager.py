@@ -43,6 +43,9 @@ class DataManager:
     ############################
     ############################ GET
     ############################
+
+    def getMinorFactionName(guild_id: str):
+        return DataStorageManager.getMinorFactionName(guild_id)
     
     #get the systems list from storage
     def getSystemNamesList(guild_id: str):
