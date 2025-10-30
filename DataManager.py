@@ -39,3 +39,15 @@ class DataManager:
         system = APIManager.requestSystemData(systemName)
         system = APIManager.requestMinorFactionSystemData(system)
         DataStorageManager.addSystemToDataFile(guild_id,system)
+
+    ############################
+    ############################ GET
+    ############################
+    
+    #get the systems list from storage
+    def getSystemNamesList(guild_id: str):
+        return DataStorageManager.getSystemNamesList(guild_id)
+    
+    #get the system from storage
+    def getSystem(guild_id: str, systemName: str):
+        return DataStorageManager.getSystem(guild_id, systemName)

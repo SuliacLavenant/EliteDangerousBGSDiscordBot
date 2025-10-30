@@ -172,6 +172,19 @@ class DataStorageManager:
             return ""
 
 
+    def getSystemNamesList(guild_id: str):
+        filePath = f"data/{guild_id}.json"
+
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data["systems"].keys()
+
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            return None
+
+
     #TODO add check if system in data
     def getSystem(guild_id: str, systemName: str):
         filePath = f"data/{guild_id}.json"
