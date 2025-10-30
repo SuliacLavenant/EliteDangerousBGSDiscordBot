@@ -64,7 +64,7 @@ class System:
         return leaderInfluence-secondInfluence
 
     
-    # Return influence difference between leader and second 
+    # Return name and influence of the second 
     def getSecondAndItsInfluence(self):
         leaderInfluence = self.factions[self.controllingFaction]["influence"]
         secondInfluence = 0
@@ -78,6 +78,14 @@ class System:
                     second = faction
 
         return (second,secondInfluence)
+
+    
+    # Return influence of the minor faction
+    def getMinorFactionInfluence(self, minorFactionName: str):
+        if minorFactionName in self.factions:
+            return self.factions[minorFactionName]["influence"]
+        else:
+            return 0
 
 
 
