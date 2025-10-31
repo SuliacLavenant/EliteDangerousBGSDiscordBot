@@ -30,21 +30,35 @@ class DataManager:
     def removeSystemFromIgnoreList(guild_id: str, systemName: str):
         DataStorageManager.removeSystemFromIgnoreListFromDataFile(guild_id, systemName)
 
+    ############################
+    ############################ API Request
+    ############################
 
-    #fetch systems data from APIs
-    def fetchSystemsData(guild_id: str):
+    #request system names list from APIs
+    def requestSystemNamesList(minorFactionName: str):
+        return APIManager.requestMinorFactionSystemsList(minorFactionName)
+
+    #request systems data from APIs
+    def requestAndStoreSystemsData(guild_id: str):
         minorFactionName = DataStorageManager.getMinorFactionName(guild_id)
-        systemsNames = APIManager.requestMinorFactionSystemsList(minorFactionName)
+        systems = DataManager.requestSystemsData(minorFactionName)
+        for system in systems:
+            DataStorageManager.addSystemToDataFile(guild_id,system)
+        return True
 
-        for systemName in systemsNames:
-            DataManager.fetchSystemData(guild_id, systemName)
+    #request systems data from APIs
+    def requestSystemsData(minorFactionName: str):
+        systems = []
+        for systemName in DataManager.requestSystemNamesList(minorFactionName):
+            systems.append(DataManager.requestSystemData(systemName))
+        return systems
 
-
-    #fetch system data from API
-    def fetchSystemData(guild_id: str, systemName: str):
+    #request system data from API
+    def requestSystemData(systemName: str):
         system = APIManager.requestSystemData(systemName)
         system = APIManager.requestMinorFactionSystemData(system)
-        DataStorageManager.addSystemToDataFile(guild_id,system)
+        return system
+
 
     ############################
     ############################ GET
@@ -65,18 +79,4 @@ class DataManager:
 
     ############################ UPDATE
     def updateSystemsData(guild_id: str):
-        pass
-
-
-    def updateMinorFactionSystemData(guild_id: str):
-        pass
-
-
-
-    def aze(guild_id: str):
-        pass
-
-
-
-    def aze(guild_id: str):
         pass
