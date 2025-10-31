@@ -10,6 +10,8 @@ from BGSManagementBot import BGSManagementBot
 from APIRequester.EliteBGSAPIAPIRequester import EliteBGSAPIAPIRequester
 from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
+from DataManager import DataManager
+
 #Discord app token
 load_dotenv()
 token = os.getenv("DISCORD_TOKEN")
@@ -24,6 +26,21 @@ bot = BGSManagementBot(command_prefix=".", intents=intents)
 
 guild = discord.Object(id=guildID)
 
+####################################################################
+
+#Set minor faction for the discord
+#TODO restrict permission + confirmation to reset if already set
+@bot.tree.command(name="setminorfaction", description="set the minor faction for this discord", guild=guild)
+async def setminorfaction(interaction: discord.Interaction, minorfactionname: str):
+    print(interaction.guild_id)
+    if DataManager.setPlayerMinorFaction(interaction.guild_id,minorfactionname):
+        await interaction.response.send_message(f"Minor Faction \"{minorfactionname.lower().title()}\" Successfully set!")
+    else:
+        await interaction.response.send_message(f"cannot find \"{minorfactionname.lower().title()}\" Minor Faction. This can happen if the faction does not exist, if it is a recent addition, or if the API has not responded.")
+
+
+
+####################################################################
 
 @bot.tree.command(name="hello", description="say Hello World", guild=guild)
 async def helloworld(interaction: discord.Interaction):

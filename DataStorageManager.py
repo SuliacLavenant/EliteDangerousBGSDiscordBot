@@ -19,6 +19,7 @@ class DataStorageManager:
         if not os.path.exists(filePath):
             with open(filePath, "w", encoding="utf-8") as f:
                 f.write("{}")
+            print("Data file created")
         else:
             print("Data file already exist")
     
@@ -30,6 +31,7 @@ class DataStorageManager:
         if os.path.exists(filePath):
             with open(filePath, "w", encoding="utf-8") as f:
                 f.write("{}")
+            print("Data file reset")
         else:
             print("Data file do not exist")
 

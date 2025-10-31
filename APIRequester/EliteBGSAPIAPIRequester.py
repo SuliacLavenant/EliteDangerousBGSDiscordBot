@@ -21,9 +21,11 @@ class EliteBGSAPIAPIRequester(AbstractAPIRequester):
 
             jsonData = response.json()
 
-            minorFaction = MinorFaction(jsonData["docs"][0]["name_lower"], jsonData["docs"][0]["allegiance"], jsonData["docs"][0]["government"])
+            docs = jsonData.get("docs", [])
+            if not docs: #no "docs" or empty "docs"
+                return None
 
-            return minorFaction
+            return MinorFaction(jsonData["docs"][0]["name_lower"], jsonData["docs"][0]["allegiance"], jsonData["docs"][0]["government"])
 
         except requests.exceptions.Timeout:
             print("Error: Timeout.")
@@ -31,6 +33,10 @@ class EliteBGSAPIAPIRequester(AbstractAPIRequester):
 
         except requests.exceptions.RequestException as e:
             print(f"Error: HTTP {e}")
+            return None
+
+        except Exception as e:
+            print(f"Error: Invalid API response: {e}")
             return None
 
 

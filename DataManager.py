@@ -14,7 +14,13 @@ class DataManager:
             DataStorageManager.createDataFile(guild_id)
         
         minorFaction = APIManager.requestMinorFactionBaseInformation(minorFactionName)
-        DataStorageManager.setMinorFactionToDataFile(guild_id,minorFaction)
+        
+        if minorFaction == None:
+            print("no minor faction found")
+            return False
+        else:
+            DataStorageManager.setMinorFactionToDataFile(guild_id,minorFaction)
+            return True
 
 
     def addSystemToIgnoreList(guild_id: str, systemName: str):
@@ -54,3 +60,23 @@ class DataManager:
     #get the system from storage
     def getSystem(guild_id: str, systemName: str):
         return DataStorageManager.getSystem(guild_id, systemName)
+
+
+
+    ############################ UPDATE
+    def updateSystemsData(guild_id: str):
+        pass
+
+
+    def updateMinorFactionSystemData(guild_id: str):
+        pass
+
+
+
+    def aze(guild_id: str):
+        pass
+
+
+
+    def aze(guild_id: str):
+        pass
