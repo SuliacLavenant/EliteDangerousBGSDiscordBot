@@ -95,6 +95,28 @@ class DataStorageManager:
 
         return True
 
+    def removeSystemFromDataFile(guild_id: str, systemName: str):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            data = {}
+
+        #data update
+        if systemName in data["systems"]:
+            del data["systems"][systemName]
+
+        #atomic write
+        with open(filePath+".tmp", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(filePath+".tmp", filePath)
+
+        return True
+
     def addSystemToIgnoreListToDataFile(guild_id: str, systemName: str):
         filePath = f"data/{guild_id}.json"
 
