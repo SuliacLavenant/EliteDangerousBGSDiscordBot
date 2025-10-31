@@ -70,6 +70,9 @@ class DataManager:
     ############################ GET
     ############################
 
+    def getMinorFaction(guild_id: str):
+        return DataStorageManager.getMinorFaction(guild_id)
+
     def getMinorFactionName(guild_id: str):
         return DataStorageManager.getMinorFactionName(guild_id)
     

@@ -192,6 +192,21 @@ class DataStorageManager:
 
     ############################################# GET
 
+    def getMinorFaction(guild_id: str):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                minorFaction = MinorFaction(data["faction"]["name"],data["faction"]["allegiance"],data["faction"]["government"])
+                minorFaction.setNumberOfSystems(len(data["systems"]))
+                return minorFaction
+
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            return None
+
     def getMinorFactionName(guild_id: str):
         filePath = f"data/{guild_id}.json"
 

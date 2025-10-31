@@ -45,12 +45,23 @@ async def forceupdatebgsdata(interaction: discord.Interaction):
     print(interaction.guild_id)
     await interaction.response.defer(thinking=True)
 
-    # Exécute la fonction bloquante dans un thread
     await asyncio.to_thread(DataManager.updateSystemsBGSData, interaction.guild_id)
 
-    # Mets à jour la réponse initiale
     await interaction.edit_original_response(
         content="Systems BGS Data Updated Successfully!"
+    )
+
+#get faction info recap
+@bot.tree.command(name="getminorfactioninfo", description="show info on minor faction", guild=guild)
+async def getminorfactioninfo(interaction: discord.Interaction):
+    print(interaction.guild_id)
+    await interaction.response.defer(thinking=True)
+
+    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, interaction.guild_id)
+    print(minorFaction)
+
+    await interaction.edit_original_response(
+        content=minorFaction
     )
 
 
