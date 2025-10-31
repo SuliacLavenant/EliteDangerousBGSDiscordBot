@@ -13,6 +13,8 @@ from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
 from DataManager import DataManager
 
+from View.MinorFactionView import MinorFactionView
+
 #Discord app token
 load_dotenv()
 token = os.getenv("DISCORD_TOKEN")
@@ -58,11 +60,13 @@ async def getminorfactioninfo(interaction: discord.Interaction):
     await interaction.response.defer(thinking=True)
 
     minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, interaction.guild_id)
-    print(minorFaction)
+    minorFactionView = MinorFactionView(minorFaction)
+    
+    #embed answer
+    await interaction.edit_original_response(embed=minorFactionView.getEmbed(), view=minorFactionView)
 
-    await interaction.edit_original_response(
-        content=minorFaction
-    )
+    #text answer
+    #await interaction.edit_original_response(content=minorFaction)
 
 
 ####################################################################
