@@ -59,6 +59,12 @@ class DataManager:
         system = APIManager.requestMinorFactionSystemData(system)
         return system
 
+    #request system data from API
+    def requestAndStoreSystemData(guild_id: str, systemName: str):
+        system = DataManager.requestSystemData(systemName)
+        DataStorageManager.addSystemToDataFile(guild_id, system)
+        return True
+
 
     ############################
     ############################ GET
@@ -80,3 +86,35 @@ class DataManager:
     ############################ UPDATE
     def updateSystemsData(guild_id: str):
         pass
+
+    def updateSystemsBGSData(guild_id: str):
+        storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
+        if storedSystemNamesList==None:
+            return False
+        elif len(storedSystemNamesList)==0:
+            DataManager.requestAndStoreSystemsData(guild_id)
+            return True
+        else:
+            minorFactionName = DataStorageManager.getMinorFactionName(guild_id)
+            apiSystemNamesList = DataManager.requestSystemNamesList(minorFactionName)
+
+            # remove lost systems
+            for systemName in (set(storedSystemNamesList)-set(apiSystemNamesList)):
+                DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
+
+            # add aquiered systems
+            for systemName in (set(apiSystemNamesList)-set(storedSystemNamesList)):
+                DataStorageManager.requestAndStoreSystemData(guild_id,systemName)
+
+            # update the other systems
+            storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
+            for systemName in storedSystemNamesList:
+                print(systemName)
+                DataManager.updateSystemBGSData(guild_id, systemName)
+            
+            return True
+
+
+    def updateSystemBGSData(guild_id: str, systemName: str):
+        system = DataManager.requestSystemData(systemName)
+        return DataStorageManager.updateSystemFactions(guild_id, system)

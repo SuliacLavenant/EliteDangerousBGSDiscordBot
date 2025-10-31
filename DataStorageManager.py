@@ -166,6 +166,30 @@ class DataStorageManager:
 
         return True
 
+
+    def updateSystemFactions(guild_id: str, system: System):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            data = {}
+
+        #data update
+        data["systems"][system.name]["controllingFaction"] = system.controllingFaction
+        data["systems"][system.name]["factions"] = system.factions
+
+        #atomic write
+        with open(filePath+".tmp", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(filePath+".tmp", filePath)
+
+        return True
+
+
     ############################################# GET
 
     def getMinorFactionName(guild_id: str):

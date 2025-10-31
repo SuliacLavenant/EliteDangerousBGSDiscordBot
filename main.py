@@ -4,6 +4,7 @@ from discord import app_commands
 #import logging
 from dotenv import load_dotenv
 import os
+import asyncio
 
 #custom files
 from BGSManagementBot import BGSManagementBot
@@ -38,6 +39,19 @@ async def setminorfaction(interaction: discord.Interaction, minorfactionname: st
     else:
         await interaction.response.send_message(f"cannot find \"{minorfactionname.lower().title()}\" Minor Faction. This can happen if the faction does not exist, if it is a recent addition, or if the API has not responded.")
 
+#force update systems BGS data
+@bot.tree.command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild=guild)
+async def forceupdatebgsdata(interaction: discord.Interaction):
+    print(interaction.guild_id)
+    await interaction.response.defer(thinking=True)
+
+    # Exécute la fonction bloquante dans un thread
+    await asyncio.to_thread(DataManager.updateSystemsBGSData, interaction.guild_id)
+
+    # Mets à jour la réponse initiale
+    await interaction.edit_original_response(
+        content="Systems BGS Data Updated Successfully!"
+    )
 
 
 ####################################################################
