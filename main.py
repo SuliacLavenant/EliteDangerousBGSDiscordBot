@@ -12,6 +12,7 @@ from APIRequester.EliteBGSAPIAPIRequester import EliteBGSAPIAPIRequester
 from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
 from DataManager import DataManager
+from DataProcessor import DataProcessor
 
 from View.MinorFactionView import MinorFactionView
 
@@ -53,6 +54,7 @@ async def forceupdatebgsdata(interaction: discord.Interaction):
         content="Systems BGS Data Updated Successfully!"
     )
 
+
 #get faction info recap
 @bot.tree.command(name="getminorfactioninfo", description="show info on minor faction", guild=guild)
 async def getminorfactioninfo(interaction: discord.Interaction):
@@ -61,12 +63,32 @@ async def getminorfactioninfo(interaction: discord.Interaction):
 
     minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, interaction.guild_id)
     minorFactionView = MinorFactionView(minorFaction)
-    
+
     #embed answer
     await interaction.edit_original_response(embed=minorFactionView.getEmbed(), view=minorFactionView)
 
     #text answer
     #await interaction.edit_original_response(content=minorFaction)
+
+
+#get systems info recap
+@bot.tree.command(name="getsystemsrecap", description="show info on systems", guild=guild)
+async def getsystemsrecap(interaction: discord.Interaction):
+    print(interaction.guild_id)
+    await interaction.response.defer(thinking=True)
+
+    systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, interaction.guild_id)
+    #minorFactionView = MinorFactionView(minorFaction)
+    
+    #embed answer
+    #await interaction.edit_original_response(embed=minorFactionView.getEmbed(), view=minorFactionView)
+
+    #text answer
+    sytemsRecapStr = ""
+    for systemRecap in systemsRecap:
+        sytemsRecapStr = sytemsRecapStr + systemRecap.__str__() + "\n"
+    await interaction.edit_original_response(content=sytemsRecapStr)
+
 
 
 ####################################################################
