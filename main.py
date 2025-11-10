@@ -76,19 +76,17 @@ async def getminorfactioninfo(interaction: discord.Interaction):
 @bot.tree.command(name="getsystemsrecap", description="show info on systems", guild=guild)
 async def getsystemsrecap(interaction: discord.Interaction):
     print(interaction.guild_id)
-    await interaction.response.defer(thinking=True)
+    await interaction.response.defer(thinking=True,ephemeral=True)
 
     systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, interaction.guild_id)
-
-
     embeds = bot.getSystemsMinorFactionRecapEmbeds(systemsRecap)
-    #systemsRecapView = SystemsRecapView("test", systemsRecap)
     
-    #embed answer
-    await interaction.edit_original_response(embed=embeds[0])
-    if len(embeds)>1:
-        for i in range(len(embeds)-1):
-            await interaction.followup.send(embed=embeds[i+1])
+    #edit original message
+    await interaction.edit_original_response(content="Done")
+
+    #send embeds to discords
+    for i in range(len(embeds)):
+        await interaction.channel.send(embed=embeds[i])
 
     #text answer
     # sytemsRecapStr = ""
