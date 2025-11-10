@@ -2,7 +2,9 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 
-from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
+from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
+
+from View.SystemsRecapView import SystemsRecapView
 
 INARASYSTEMPAGE = "https://inara.cz/elite/starsystem/?search="
 
@@ -18,27 +20,20 @@ class BGSManagementBot(commands.Bot):
         except Exception as e:
             print(f"Error syncing commands: {e}")
 
-    def getSystemMinorFactionRecapEmbed(self, systemInfoMinorFaction: SystemInfoMinorFactionFocused):
-        title = systemInfoMinorFaction.systemName
-        if systemInfoMinorFaction.controllingFaction == systemInfoMinorFaction.minorFactionName:
-            title += "   :crown:"
+    def getSystemsMinorFactionRecapEmbeds(self, systemsRecap: dict):
+        systemsName = list(systemsRecap.keys())
+        systemsName.sort()
 
-        description = f"**Leader**: [{systemInfoMinorFaction.controllingFaction}]({systemInfoMinorFaction.controllingFactionInaraLink}), "
-        description += "        "
-        description += f"**Influence**: {round(systemInfoMinorFaction.controllingFactionInfluence*100,1)}%"
+        embeds=[]
+        systems = {}
+        for systemName in systemsName:
+            systems[systemName] = systemsRecap[systemName]
+            if len(systems)>=20:
+                embeds.append(SystemsRecapView("test", systems).getEmbed())
+                systems = {}
+        if len(systems)>0:
+            embeds.append(SystemsRecapView("test", systems).getEmbed())
 
-        systemRecapEmbed = discord.Embed(title=title, url=INARASYSTEMPAGE+systemInfoMinorFaction.systemName, description=description)
-
-        if systemInfoMinorFaction.controllingFaction != systemInfoMinorFaction.minorFactionName:
-            systemRecapEmbed.add_field(name=f"{systemInfoMinorFaction.minorFactionName} Influence", value=round(systemInfoMinorFaction.influence*100,1), inline=False)
-
-        systemRecapEmbed.add_field(name="Population", value=systemInfoMinorFaction.populationStr, inline=True)
-        systemRecapEmbed.add_field(name="Current State(s)", value="TODO", inline=False)
-
-        #systemRecapEmbed.add_field(name="Influence Since Yesterday", value="", inline=True)
-        #systemRecapEmbed.add_field(name="Influence Since Last Week", value="", inline=True)
-        #systemRecapEmbed.add_field(name="", value="", inline=True)
-        systemRecapEmbed.set_footer(text=f"Info updated: {systemInfoMinorFaction.dateStr}")
-
-        return systemRecapEmbed
+        
+        return embeds
 

@@ -15,6 +15,7 @@ from DataManager import DataManager
 from DataProcessor import DataProcessor
 
 from View.MinorFactionView import MinorFactionView
+from View.SystemsRecapView import SystemsRecapView
 
 #Discord app token
 load_dotenv()
@@ -78,16 +79,22 @@ async def getsystemsrecap(interaction: discord.Interaction):
     await interaction.response.defer(thinking=True)
 
     systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, interaction.guild_id)
-    #minorFactionView = MinorFactionView(minorFaction)
+
+
+    embeds = bot.getSystemsMinorFactionRecapEmbeds(systemsRecap)
+    #systemsRecapView = SystemsRecapView("test", systemsRecap)
     
     #embed answer
-    #await interaction.edit_original_response(embed=minorFactionView.getEmbed(), view=minorFactionView)
+    await interaction.edit_original_response(embed=embeds[0])
+    if len(embeds)>1:
+        for i in range(len(embeds)-1):
+            await interaction.followup.send(embed=embeds[i+1])
 
     #text answer
-    sytemsRecapStr = ""
-    for systemRecap in systemsRecap:
-        sytemsRecapStr = sytemsRecapStr + systemRecap.__str__() + "\n"
-    await interaction.edit_original_response(content=sytemsRecapStr)
+    # sytemsRecapStr = ""
+    # for systemRecap in systemsRecap:
+    #     sytemsRecapStr = sytemsRecapStr + systemRecap.__str__() + "\n"
+    # await interaction.edit_original_response(content=sytemsRecapStr)
 
 
 
@@ -101,10 +108,6 @@ async def helloworld(interaction: discord.Interaction):
 async def helloworldparameter(interaction: discord.Interaction, word: str):
     await interaction.response.send_message(f"Helloo World! {word}")
 
-@bot.tree.command(name="getsystemrecap", description="send an embed contenant a recap of the requested system", guild=guild)
-async def getsystemrecap(interaction: discord.Interaction, systemname: str):
-    systemInfoMinorFaction = EliteBGSAPIAPIRequester.requestSystemFactionData(systemname, "Empire Corsairs")
-    await interaction.response.send_message(embed=bot.getSystemMinorFactionRecapEmbed(systemInfoMinorFaction))
 
 
 
