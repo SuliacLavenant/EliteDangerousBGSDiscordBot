@@ -11,26 +11,30 @@ class SystemMinorFactionRecap:
     leaderInfluenceMargin: int = None
     influenceWarningLevel: int = -1
     isArchitect: bool = None
+    numberOfFactions: int = -1
+    leaderInfluence: int = -1
 
     def __init__(self, system: System, minorFactionName: str):
         self.name = system.name
         self.influence = system.getMinorFactionInfluence(minorFactionName)
+        self.numberOfFactions = len(system.factions)
         self.isLeader = system.isControlledBy(minorFactionName)
         if self.isLeader:
             self.leaderInfluenceMargin = system.getLeaderInfluenceMargin()
             self.calculateInfluenceWarningLevel()
+        self.leaderInfluence = system.getLeaderInfluence()
 
 
     #Calculate influence warning
     def calculateInfluenceWarningLevel(self):
-        if self.leaderInfluenceMargin > 0.15:
-            self.influenceWarningLevel = 0
-        elif self.leaderInfluenceMargin > 0.10:
-            self.influenceWarningLevel = 1
-        elif self.leaderInfluenceMargin > 0.05:
-            self.influenceWarningLevel = 2
-        else:
+        if self.leaderInfluenceMargin <= 0.05:
             self.influenceWarningLevel = 3
+        elif self.leaderInfluenceMargin <= 0.10:
+            self.influenceWarningLevel = 2
+        elif self.leaderInfluenceMargin < 0.20:
+            self.influenceWarningLevel = 1
+        else:
+            self.influenceWarningLevel = 0
 
 
     def __str__(self):
