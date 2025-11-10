@@ -51,8 +51,12 @@ class System:
 
 
     # Return influence difference between leader and second 
+    def getLeaderInfluence(self):
+        return self.factions[self.controllingFaction]["influence"]
+
+    # Return influence difference between leader and second 
     def getLeaderInfluenceMargin(self):
-        leaderInfluence = self.factions[self.controllingFaction]["influence"]
+        leaderInfluence = self.getLeaderInfluence()
         secondInfluence = 0
 
         for faction in self.factions:
