@@ -6,10 +6,10 @@ class DataProcessor:
     def getMinorFactionSystemsRecap(guild_id: str):
         systemNames = DataManager.getSystemNamesList(guild_id)
         minorFactionName = DataManager.getMinorFactionName(guild_id)
-        minorFactionSystemsRecap = []
+        minorFactionSystemsRecap = {}
 
         for systemName in systemNames:
-            minorFactionSystemsRecap.append(DataProcessor.getMinorFactionSystemRecap(guild_id, systemName, minorFactionName))
+            minorFactionSystemsRecap[systemName] = DataProcessor.getMinorFactionSystemRecap(guild_id, systemName, minorFactionName)
 
         return minorFactionSystemsRecap
         
