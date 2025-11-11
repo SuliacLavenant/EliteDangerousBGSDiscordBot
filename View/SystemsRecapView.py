@@ -10,8 +10,9 @@ class SystemsRecapView(discord.ui.View):
     leaderEmote: str = ":crown:"
     noLeaderEmote: str = ":bust_in_silhouette:"
 
-    securisedEmote: str = ":lock:"
-    notSecurisedEmote: str = ":unlock:"
+    maximumFactionEmote: str = ":lock:"
+    minimumFactionEmote: str = ":shield:"
+
 
     warningLevelOtherEmote: str = ":white_circle:"
     warningLevel0Emote: str = ":green_circle:"
@@ -91,7 +92,9 @@ class SystemsRecapView(discord.ui.View):
 
     def getNumberFactionEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.numberOfFactions<=3:
-            return self.securisedEmote
+            return self.minimumFactionEmote
+        elif systemRecap.numberOfFactions>=7:
+            return self.maximumFactionEmote
         else:
             return f":number_{systemRecap.numberOfFactions}:"
             #return self.notSecurisedEmote
