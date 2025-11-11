@@ -79,7 +79,7 @@ async def getsystemsrecap(interaction: discord.Interaction):
     await interaction.response.defer(thinking=True,ephemeral=True)
 
     systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, interaction.guild_id)
-    embeds = bot.getSystemsMinorFactionRecapEmbeds(systemsRecap)
+    embeds = bot.getRawSystemsMinorFactionRecapEmbeds(systemsRecap)
     
     #edit original message
     await interaction.edit_original_response(content="Done")

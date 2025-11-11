@@ -21,15 +21,13 @@ class SystemsRecapView(discord.ui.View):
     warningLevel3Emote: str = ":red_circle:"
 
 
-    def __init__(self, minorFactionName: str, systemsRecap: dict):
+    def __init__(self, systemsRecap: dict, title: str = None):
         super().__init__()
-        self.minorFactionName = minorFactionName
         self.systemsRecap = systemsRecap
+        self.title = title
 
 
     def getEmbed(self):
-        title = f"{self.minorFactionName} Systems"
-
         description=""
         i=0
         for systemRecap in self.systemsRecap.values():
@@ -39,7 +37,7 @@ class SystemsRecapView(discord.ui.View):
             if i>20:
                 break
         print(len(description))
-        embed = discord.Embed(title=title, description=description)
+        embed = discord.Embed(title=self.title, description=description)
 
         return embed
 

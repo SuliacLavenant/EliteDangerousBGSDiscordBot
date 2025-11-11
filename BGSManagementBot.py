@@ -20,19 +20,24 @@ class BGSManagementBot(commands.Bot):
         except Exception as e:
             print(f"Error syncing commands: {e}")
 
-    def getSystemsMinorFactionRecapEmbeds(self, systemsRecap: dict):
+    def getRawSystemsMinorFactionRecapEmbeds(self, systemsRecap: dict):
         systemsName = list(systemsRecap.keys())
         systemsName.sort()
 
+        titleSet = False
         embeds=[]
         systems = {}
         for systemName in systemsName:
             systems[systemName] = systemsRecap[systemName]
             if len(systems)>=20:
-                embeds.append(SystemsRecapView("test", systems).getEmbed())
+                if not titleSet:
+                    embeds.append(SystemsRecapView(systems, "Raw Systems Recap").getEmbed())
+                    titleSet = True
+                else:
+                    embeds.append(SystemsRecapView(systems).getEmbed())
                 systems = {}
         if len(systems)>0:
-            embeds.append(SystemsRecapView("test", systems).getEmbed())
+            embeds.append(SystemsRecapView(systems).getEmbed())
 
         
         return embeds
