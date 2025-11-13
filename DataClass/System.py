@@ -28,9 +28,8 @@ class System:
     def initFromStoredData(cls, systemData: dict):
         return cls(systemData["name"], systemData["population"], systemData["security"], systemData["economy"], systemData["secondEconomy"], systemData["reserve"], systemData["controllingFaction"], systemData["factions"])
 
-    
-    def addFaction(self, name: str, allegiance: str, government: str, influence: int, state: str):
-        self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "state": self.lower(state)}
+    def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
+        self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
 
 
     ### Method

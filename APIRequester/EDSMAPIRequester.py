@@ -47,7 +47,19 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
             for faction in jsonData["factions"]:
                 if faction["influence"]!=0:
-                    system.addFaction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], faction["state"])
+                    pendingStates = []
+                    activeStates = []
+                    recoveringStates = []
+                    for state in faction["pendingStates"]:
+                        pendingStates.append(state["state"].lower())
+                    for state in faction["activeStates"]:
+                        activeStates.append(state["state"].lower())
+                    if faction["state"].lower()!= "none" and faction["state"].lower() not in activeStates:
+                        activeStates.append(faction["state"].lower())
+                    for state in faction["recoveringStates"]:
+                        recoveringStates.append(state["state"].lower())
+
+                    system.addFaction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], pendingStates, activeStates, recoveringStates)
 
             return system
 
