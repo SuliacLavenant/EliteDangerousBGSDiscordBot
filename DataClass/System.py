@@ -90,7 +90,15 @@ class System:
         else:
             return 0
 
-
+    def doMinorFactionHaveState(self, minorFactionName: str, state: str):
+        if state in self.factions[minorFactionName]["pendingStates"]:
+            return "pending"
+        elif state in self.factions[minorFactionName]["activeStates"]:
+            return "active"
+        elif state in self.factions[minorFactionName]["recoveringStates"]:
+            return "recovering"
+        else:
+            return None
 
     def lower(self, string: str):
         return string.lower() if isinstance(string, str) else string

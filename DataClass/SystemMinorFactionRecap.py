@@ -13,6 +13,7 @@ class SystemMinorFactionRecap:
     isArchitect: bool = None
     numberOfFactions: int = -1
     leaderInfluence: int = -1
+    retreatWarning: bool = False
 
     def __init__(self, system: System, minorFactionName: str):
         self.name = system.name
@@ -23,6 +24,7 @@ class SystemMinorFactionRecap:
             self.leaderInfluenceMargin = system.getLeaderInfluenceMargin()
             self.calculateInfluenceWarningLevel()
         self.leaderInfluence = system.getLeaderInfluence()
+        self.checkRetreatWarning(system, minorFactionName)
 
 
     #Calculate influence warning
@@ -35,6 +37,13 @@ class SystemMinorFactionRecap:
             self.influenceWarningLevel = 1
         else:
             self.influenceWarningLevel = 0
+
+
+    def checkRetreatWarning(self, system: System, minorFactionName: str):
+        if system.getMinorFactionInfluence(minorFactionName)<=0.025 or system.doMinorFactionHaveState(minorFactionName, "retreat") != None:
+            self.retreatWarning = True
+        else:
+            self.retreatWarning = False
 
 
     def __str__(self):
