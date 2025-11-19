@@ -9,6 +9,7 @@ from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 class SystemsRecapView(discord.ui.View):
     leaderEmote: str = ":crown:"
     noLeaderEmote: str = ":bust_in_silhouette:"
+    inRetreatEmote: str = ":skull_crossbones:"
 
     maximumFactionEmote: str = ":lock:"
     minimumFactionEmote: str = ":shield:"
@@ -84,6 +85,8 @@ class SystemsRecapView(discord.ui.View):
     def getIsLeaderEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isLeader:
             return self.leaderEmote
+        elif systemRecap.retreatWarning:
+            return self.inRetreatEmote
         else:
             return self.noLeaderEmote
     
@@ -99,14 +102,14 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getWarningLevelEmote(self, systemRecap: SystemMinorFactionRecap):
-        if systemRecap.influenceWarningLevel == 0:
-            return self.warningLevel0Emote
-        elif systemRecap.influenceWarningLevel == 1:
-            return self.warningLevel1Emote
+        if systemRecap.influenceWarningLevel == 3 or systemRecap.retreatWarning:
+            return self.warningLevel3Emote
         elif systemRecap.influenceWarningLevel == 2:
             return self.warningLevel2Emote
-        elif systemRecap.influenceWarningLevel == 3:
-            return self.warningLevel3Emote
+        elif systemRecap.influenceWarningLevel == 1:
+            return self.warningLevel1Emote
+        if systemRecap.influenceWarningLevel == 0:
+            return self.warningLevel0Emote
         else:
             return self.warningLevelOtherEmote
 
