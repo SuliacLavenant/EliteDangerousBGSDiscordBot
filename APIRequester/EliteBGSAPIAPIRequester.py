@@ -78,16 +78,36 @@ class EliteBGSAPIAPIRequester(AbstractAPIRequester):
         pageToRead = True
 
         while pageToRead:
-            jsonData = EliteBGSAPIAPIRequester.requestToApi(f"https://elitebgs.app/api/ebgs/v5/systems?faction={minorFactionName}&minimal=true&factionDetails=false&factionHistory=false&page={page}")
+            jsonData = EliteBGSAPIAPIRequester.requestMinorFactionSystemsPage(minorFactionName,page)
+            if jsonData != None:
+                for s in jsonData["docs"]:
+                    systems.append(s["name_lower"])
 
-            for s in jsonData["docs"]:
-                systems.append(s["name_lower"])
-
-            pageToRead = jsonData["nextPage"]!=None
-            page+=1
+                pageToRead = jsonData["nextPage"]!=None
+                page+=1
+            else:
+                return None
 
         return systems
         
+
+    def requestMinorFactionSystemsPage(minorFactionName: str, page: int):
+        url = f"https://elitebgs.app/api/ebgs/v5/systems?faction={minorFactionName}&minimal=true&factionDetails=false&factionHistory=false&page={page}"
+
+        try:
+            response = requests.get(url, timeout=10) #timeout 10 sec
+            response.raise_for_status() #detect request error
+            jsonData = response.json()
+
+            return jsonData
+
+        except requests.exceptions.Timeout:
+            print("Error: Timeout.")
+            return None
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error: HTTP {e}")
+            return None
 
 
     def requestSystemFactionData(systemName: str, minorFactionName: str):
