@@ -101,13 +101,14 @@ class DataManager:
             minorFactionName = DataStorageManager.getMinorFactionName(guild_id)
             apiSystemNamesList = DataManager.requestSystemNamesList(minorFactionName)
 
-            # remove lost systems
-            for systemName in (set(storedSystemNamesList)-set(apiSystemNamesList)):
-                DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
+            if apiSystemNamesList != None:
+                # remove lost systems
+                for systemName in (set(storedSystemNamesList)-set(apiSystemNamesList)):
+                    DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
 
-            # add aquiered systems
-            for systemName in (set(apiSystemNamesList)-set(storedSystemNamesList)):
-                DataStorageManager.requestAndStoreSystemData(guild_id,systemName)
+                # add aquiered systems
+                for systemName in (set(apiSystemNamesList)-set(storedSystemNamesList)):
+                    DataStorageManager.requestAndStoreSystemData(guild_id,systemName)
 
             # update the other systems
             storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
