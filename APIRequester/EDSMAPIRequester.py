@@ -10,6 +10,39 @@ from DataClass.MinorFaction import MinorFaction
 
 
 class EDSMAPIRequester(AbstractAPIRequester):
+    def getStatus():
+        status = {}
+        status["name"] = "EDSM API"
+
+        onlineStatus = EDSMAPIRequester.isAPIOnline()
+        if onlineStatus == "Online":
+            status["online"] = True
+            status["issue"] = None
+        else:
+            status["online"] = False
+            status["issue"] = onlineStatus
+
+        return status
+
+
+    def isAPIOnline():
+        url = f"https://www.edsm.net/api-v1/system?systemName={urllib.parse.quote('empire corsairs')}&showInformation=1"
+
+        try:
+            response = requests.get(url, timeout=10) #timeout 10 sec
+            response.raise_for_status() #detect request error
+            jsonData = response.json()
+
+            return "Online"
+
+        except requests.exceptions.Timeout:
+            print("Error: Timeout.")
+            return "Timeout"
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error: HTTP {e}")
+            return "HTTP Error"
+
 
     def requestSystemData(systemName: str):
         url = f"https://www.edsm.net/api-v1/system?systemName={urllib.parse.quote(systemName)}&showInformation=1"

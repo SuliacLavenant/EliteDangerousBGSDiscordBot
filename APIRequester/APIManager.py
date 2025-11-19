@@ -7,6 +7,13 @@ from DataClass.System import System
 
 # TODO check different api to get the most up to date data
 class APIManager:
+    def getAPIStatus():
+        aPIStatus = {}
+
+        aPIStatus["EliteBGSAPI"] = EliteBGSAPIAPIRequester.getStatus()
+        aPIStatus["EDSMAPI"] = EDSMAPIRequester.getStatus()
+
+        return aPIStatus
 
     def requestSystemData(systemName: str):
         return EDSMAPIRequester.requestSystemData(systemName)

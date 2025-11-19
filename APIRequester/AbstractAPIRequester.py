@@ -8,6 +8,9 @@ from DataClass.MinorFaction import MinorFaction
 
 class AbstractAPIRequester(ABC):
     @abstractmethod
+    def isAPIOnline():
+        pass
+    @abstractmethod
     def requestMinorFactionSystemsList(minorFactionName: str):
         pass
     @abstractmethod

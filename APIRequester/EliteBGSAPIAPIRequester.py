@@ -11,6 +11,38 @@ from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
 
 class EliteBGSAPIAPIRequester(AbstractAPIRequester):
+    def getStatus():
+        status = {}
+        status["name"] = "Elite BGS API"
+
+        onlineStatus = EliteBGSAPIAPIRequester.isAPIOnline()
+        if onlineStatus == "Online":
+            status["online"] = True
+            status["issue"] = None
+        else:
+            status["online"] = False
+            status["issue"] = onlineStatus
+
+        return status
+
+
+    def isAPIOnline():
+        url = f"https://elitebgs.app/api/ebgs/v5/factions?name={urllib.parse.quote('empire corsairs')}&minimal=true&systemDetails=false"
+
+        try:
+            response = requests.get(url, timeout=10) #timeout 10 sec
+            response.raise_for_status() #detect request error
+            jsonData = response.json()
+
+            return "Online"
+
+        except requests.exceptions.Timeout:
+            print("Error: Timeout.")
+            return "Timeout"
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error: HTTP {e}")
+            return "HTTP Error"
 
     def requestMinorFactionBaseInformation(minorFactionName: str):
         url = f"https://elitebgs.app/api/ebgs/v5/factions?name={urllib.parse.quote(minorFactionName)}&minimal=true&systemDetails=false"

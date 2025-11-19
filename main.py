@@ -13,9 +13,11 @@ from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
 
 from DataManager import DataManager
 from DataProcessor import DataProcessor
+from APIRequester.APIManager import APIManager
 
 from View.MinorFactionView import MinorFactionView
 from View.SystemsRecapView import SystemsRecapView
+from View.APIStatusView import APIStatusView
 
 #Discord app token
 load_dotenv()
@@ -94,6 +96,17 @@ async def getsystemsrecap(interaction: discord.Interaction):
     #     sytemsRecapStr = sytemsRecapStr + systemRecap.__str__() + "\n"
     # await interaction.edit_original_response(content=sytemsRecapStr)
 
+
+#get api status
+@bot.tree.command(name="apistatus", description="show status of each used apis", guild=guild)
+async def apistatus(interaction: discord.Interaction):
+    print(interaction.guild_id)
+    await interaction.response.defer(thinking=True)
+
+    aPIStatus = APIManager.getAPIStatus()
+    aPIStatusView = APIStatusView(aPIStatus)
+
+    await interaction.edit_original_response(embed=aPIStatusView.getEmbed(), view=aPIStatusView)
 
 
 ####################################################################
