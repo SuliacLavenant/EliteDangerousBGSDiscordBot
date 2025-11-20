@@ -3,6 +3,7 @@ import json
 
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
+from DataClass.SystemGroup import SystemGroup
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
@@ -55,6 +56,7 @@ class DataStorageManager:
         data["faction"]["government"] = minorFaction.government
         data["systems"] = {}
         data["ignoredSystem"] = []
+        data["systemGroup"] = {}
 
         #atomic write
         with open(filePath+".tmp", "w", encoding="utf-8") as f:
@@ -264,3 +266,56 @@ class DataStorageManager:
             return {}
 
         
+######################### Group
+    def storeSystemGroup(guild_id: str, systemGroup: SystemGroup):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            data = {}
+
+        #data update
+        data["systemGroup"][systemGroup.name] = {}
+        data["systemGroup"][systemGroup.name]["name"] = systemGroup.name
+        data["systemGroup"][systemGroup.name]["color"] = systemGroup.color
+        data["systemGroup"][systemGroup.name]["systems"] = systemGroup.systems
+
+        #atomic write
+        with open(filePath+".tmp", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(filePath+".tmp", filePath)
+
+        return True
+    
+    def getSystemGroupList(guild_id: str):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            data = {}
+
+        return list(data["systemGroup"].keys())
+
+    def getSystemGroup(guild_id: str, systemGroupName: str):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            data = {}
+
+        if systemGroupName in data["systemGroup"].keys():
+            return data["systemGroup"][systemGroupName]
+        else:
+            return None
