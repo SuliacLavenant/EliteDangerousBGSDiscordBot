@@ -7,8 +7,6 @@ from APIRequester.AbstractAPIRequester import AbstractAPIRequester
 from DataClass.System import System
 from DataClass.MinorFaction import MinorFaction
 
-from SystemInfoMinorFactionFocused import SystemInfoMinorFactionFocused
-
 
 class EliteBGSAPIAPIRequester(AbstractAPIRequester):
     def getStatus():
