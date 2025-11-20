@@ -1,7 +1,4 @@
 import discord
-from discord.ext import commands
-from discord import app_commands
-import urllib.parse
 
 class APIStatusView(discord.ui.View):
     onlineEmote: str = ":green_circle:"

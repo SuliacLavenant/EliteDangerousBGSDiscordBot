@@ -6,7 +6,7 @@
 
 # Requierement
 Python extra packages:
-- discord.py
+- py-cord
 - dotenv
 - python-dotenv
 - requests

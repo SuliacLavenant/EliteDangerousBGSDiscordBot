@@ -1,6 +1,4 @@
 import discord
-from discord.ext import commands
-from discord import app_commands
 
 #custom
 from DataManager import DataManager
@@ -15,11 +13,11 @@ class ManageSystemGroupView(discord.ui.View):
 
 
     @discord.ui.button(label="Create New Group", style=discord.ButtonStyle.primary)
-    async def CreateNewGroup(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def CreateNewGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
         createSystemGroupModal = CreateSystemGroupModal()
         await interaction.response.send_modal(createSystemGroupModal)
         await createSystemGroupModal.wait()
-        groupName = str(createSystemGroupModal.groupName)
+        groupName = str(createSystemGroupModal.systemGroupName.value)
         if DataManager.getSystemGroup(interaction.guild_id, groupName) == None:
             systemGroup = SystemGroup(name=groupName)
             DataManager.createSystemGroup(interaction.guild_id, systemGroup)
