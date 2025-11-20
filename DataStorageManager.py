@@ -56,7 +56,7 @@ class DataStorageManager:
         data["faction"]["government"] = minorFaction.government
         data["systems"] = {}
         data["ignoredSystem"] = []
-        data["systemGroup"] = {}
+        data["systemGroups"] = {}
 
         #atomic write
         with open(filePath+".tmp", "w", encoding="utf-8") as f:
@@ -279,10 +279,10 @@ class DataStorageManager:
             data = {}
 
         #data update
-        data["systemGroup"][systemGroup.name] = {}
-        data["systemGroup"][systemGroup.name]["name"] = systemGroup.name
-        data["systemGroup"][systemGroup.name]["color"] = systemGroup.color
-        data["systemGroup"][systemGroup.name]["systems"] = systemGroup.systems
+        data["systemGroups"][systemGroup.name] = {}
+        data["systemGroups"][systemGroup.name]["name"] = systemGroup.name
+        data["systemGroups"][systemGroup.name]["color"] = systemGroup.color
+        data["systemGroups"][systemGroup.name]["systems"] = systemGroup.systems
 
         #atomic write
         with open(filePath+".tmp", "w", encoding="utf-8") as f:
@@ -291,7 +291,7 @@ class DataStorageManager:
 
         return True
     
-    def getSystemGroupList(guild_id: str):
+    def getSystemGroupNames(guild_id: str):
         filePath = f"data/{guild_id}.json"
 
         #read actual content
@@ -302,7 +302,24 @@ class DataStorageManager:
             print(f"Error: {type(e).__name__}")
             data = {}
 
-        return list(data["systemGroup"].keys())
+        return list(data["systemGroups"].keys())
+
+    def getSystemGroups(guild_id: str):
+        filePath = f"data/{guild_id}.json"
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            data = {}
+
+        systemGroups = []
+        for systemGroupDict in data["systemGroups"].values():
+            systemGroups.append(SystemGroup.initFromDict(systemGroupDict))
+
+        return systemGroups
 
     def getSystemGroup(guild_id: str, systemGroupName: str):
         filePath = f"data/{guild_id}.json"
@@ -315,7 +332,7 @@ class DataStorageManager:
             print(f"Error: {type(e).__name__}")
             data = {}
 
-        if systemGroupName in data["systemGroup"].keys():
-            return data["systemGroup"][systemGroupName]
+        if systemGroupName in data["systemGroups"].keys():
+            return SystemGroup.initFromDict(data["systemGroups"][systemGroupName])
         else:
             return None

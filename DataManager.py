@@ -4,6 +4,8 @@ from DataStorageManager import DataStorageManager
 
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
+from DataClass.SystemGroup import SystemGroup
+
 
 class DataManager:
     #Set tracked minor faction
@@ -29,6 +31,9 @@ class DataManager:
     
     def removeSystemFromIgnoreList(guild_id: str, systemName: str):
         DataStorageManager.removeSystemFromIgnoreListFromDataFile(guild_id, systemName)
+
+    def createSystemGroup(guild_id: str, systemGroup: SystemGroup):
+        DataStorageManager.storeSystemGroup(guild_id, systemGroup)
 
     ############################
     ############################ API Request
@@ -84,6 +89,11 @@ class DataManager:
     def getSystem(guild_id: str, systemName: str):
         return DataStorageManager.getSystem(guild_id, systemName)
 
+    def getSystemGroups(guild_id: str):
+        return DataStorageManager.getSystemGroups(guild_id)
+
+    def getSystemGroup(guild_id: str, systemGroupName: str):
+        return DataStorageManager.getSystemGroup(guild_id, systemGroupName)
 
 
     ############################ UPDATE

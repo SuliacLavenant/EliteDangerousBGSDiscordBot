@@ -18,6 +18,7 @@ from APIRequester.APIManager import APIManager
 from View.MinorFactionView import MinorFactionView
 from View.SystemsRecapView import SystemsRecapView
 from View.APIStatusView import APIStatusView
+from View.SystemGroup.ManageSystemGroupView import ManageSystemGroupView
 
 #Discord app token
 load_dotenv()
@@ -108,6 +109,15 @@ async def apistatus(interaction: discord.Interaction):
 
     await interaction.edit_original_response(embed=aPIStatusView.getEmbed(), view=aPIStatusView)
 
+
+#manage system group
+@bot.tree.command(name="managesystemgroup", description="manage system group (create, add system to group)", guild=guild)
+async def managesystemgroup(interaction: discord.Interaction):
+    await interaction.response.defer(thinking=True)
+
+    manageSystemGroupView = ManageSystemGroupView(DataManager.getSystemGroups(interaction.guild_id))
+
+    await interaction.edit_original_response(embed=manageSystemGroupView.getEmbed(), view=manageSystemGroupView)
 
 ####################################################################
 
