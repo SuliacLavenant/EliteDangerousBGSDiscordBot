@@ -8,14 +8,9 @@ class MinorFaction:
     government: str = ""
     numberOfSystems: int = -1
 
-    def __init__(self, name: str, allegiance: str, government: str):
-        self.name = name
-        self.allegiance = allegiance
-        self.government = government
-
     @classmethod
     def initFromStoredData(cls, minorFactionData: dict):
-        return cls(minorFactionData["name"], minorFactionData["allegiance"], minorFactionData["government"])
+        return cls(name=minorFactionData["name"], allegiance=minorFactionData["allegiance"], government=minorFactionData["government"])
 
     def setNumberOfSystems(self, numberOfSystems: int):
         self.numberOfSystems = numberOfSystems

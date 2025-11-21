@@ -55,7 +55,7 @@ class EliteBGSAPIAPIRequester(AbstractAPIRequester):
             if not docs: #no "docs" or empty "docs"
                 return None
 
-            return MinorFaction(jsonData["docs"][0]["name_lower"], jsonData["docs"][0]["allegiance"], jsonData["docs"][0]["government"])
+            return MinorFaction(name=jsonData["docs"][0]["name_lower"], allegiance=jsonData["docs"][0]["allegiance"], government=jsonData["docs"][0]["government"])
 
         except requests.exceptions.Timeout:
             print("Error: Timeout.")
