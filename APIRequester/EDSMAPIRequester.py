@@ -26,14 +26,17 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
 
     def isAPIOnline():
-        url = f"https://www.edsm.net/api-v1/system?systemName={urllib.parse.quote('empire corsairs')}&showInformation=1"
+        url = f"https://www.edsm.net/api-v1/system?systemName=Sol"
 
         try:
             response = requests.get(url, timeout=10) #timeout 10 sec
             response.raise_for_status() #detect request error
             jsonData = response.json()
 
-            return "Online"
+            if jsonData["name"]=="Sol":
+                return "Online"
+            else:
+                return "Error"
 
         except requests.exceptions.Timeout:
             print("Error: Timeout.")
