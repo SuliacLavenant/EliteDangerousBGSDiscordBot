@@ -13,6 +13,10 @@ class MinorFaction:
         self.allegiance = allegiance
         self.government = government
 
+    @classmethod
+    def initFromStoredData(cls, minorFactionData: dict):
+        return cls(minorFactionData["name"], minorFactionData["allegiance"], minorFactionData["government"])
+
     def setNumberOfSystems(self, numberOfSystems: int):
         self.numberOfSystems = numberOfSystems
 

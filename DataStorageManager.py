@@ -18,8 +18,13 @@ class DataStorageManager:
 
         os.makedirs(os.path.dirname(filePath), exist_ok=True)
         if not os.path.exists(filePath):
+            data = {}
+            data["faction"] = {}
+            data["systems"] = {}
+            data["ignoredSystem"] = []
+            data["systemGroups"] = {}
             with open(filePath, "w", encoding="utf-8") as f:
-                f.write("{}")
+                json.dump(data, f, indent=2, ensure_ascii=False)
             print("Data file created")
         else:
             print("Data file already exist")
@@ -201,9 +206,12 @@ class DataStorageManager:
         try:
             with open(filePath, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                minorFaction = MinorFaction(data["faction"]["name"],data["faction"]["allegiance"],data["faction"]["government"])
-                minorFaction.setNumberOfSystems(len(data["systems"]))
-                return minorFaction
+                if len(data["faction"])!=0 and data["faction"]["name"]!="":
+                    minorFaction = MinorFaction.initFromStoredData(data["faction"])
+                    minorFaction.setNumberOfSystems(len(data["systems"]))
+                    return minorFaction
+                else:
+                    return None
 
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Error: {type(e).__name__}")

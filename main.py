@@ -36,6 +36,15 @@ async def on_ready():
 
 ####################################################################
 
+@bot.slash_command(name="init", description="init", guild_ids=[guildID])
+async def init(ctx: discord.ApplicationContext):
+    await ctx.defer()
+    if DataManager.initStorage(ctx.guild_id):
+        await ctx.edit(content="Init")
+    else:
+        await ctx.edit(content="Already Init")
+
+
 #Set minor faction for the discord
 #TODO restrict permission + confirmation to reset if already set
 @bot.slash_command(name="setminorfaction", description="set the minor faction for this discord", guild_ids=[guildID])
@@ -53,19 +62,12 @@ async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
 
 
-#get faction info recap
-@bot.slash_command(name="getminorfactioninfo", description="show info on minor faction", guild_ids=[guildID])
-async def getminorfactioninfo(ctx: discord.ApplicationContext):
+@bot.slash_command(name="minorfaction", description="show info on minor faction", guild_ids=[guildID])
+async def minorfaction(ctx: discord.ApplicationContext):
     await ctx.defer()
-
     minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id)
     minorFactionView = MinorFactionView(minorFaction)
-
-    #embed answer
     await ctx.edit(embed=minorFactionView.getEmbed(), view=minorFactionView)
-
-    #text answer
-    #await interaction.edit_original_response(content=minorFaction)
 
 
 #get systems info recap

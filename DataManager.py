@@ -8,6 +8,14 @@ from DataClass.SystemGroup import SystemGroup
 
 
 class DataManager:
+    def initStorage(guild_id: str):
+        if DataStorageManager.isGuildFileExist(guild_id):
+            return False
+        else:
+            DataStorageManager.createDataFile(guild_id)
+            return True
+        
+
     #Set tracked minor faction
     def setPlayerMinorFaction(guild_id: str, minorFactionName: str):
         if DataStorageManager.isGuildFileExist(guild_id):
