@@ -20,8 +20,10 @@ from Discord.View.APIMonitorView import APIMonitorView
 #Discord app token
 load_dotenv()
 token = os.getenv("DISCORD_TOKEN")
-guildID = int(os.getenv("DISCORD_GUILD"))
 
+guildIDs_raw = os.getenv("DISCORD_GUILDS")
+guildIDs = [int(guildID) for guildID in guildIDs_raw.split(",") if guildID]
+print(guildIDs)
 #Intents for discord
 intents = discord.Intents.default()
 intents.message_content = True
@@ -37,7 +39,7 @@ async def on_ready():
 
 ####################################################################
 
-@bot.slash_command(name="init", description="init", guild_ids=[guildID])
+@bot.slash_command(name="init", description="init", guild_ids=guildIDs)
 async def init(ctx: discord.ApplicationContext):
     await ctx.defer()
     if DataManager.initStorage(ctx.guild_id):
@@ -48,7 +50,7 @@ async def init(ctx: discord.ApplicationContext):
 
 #Set minor faction for the discord
 #TODO restrict permission + confirmation to reset if already set
-@bot.slash_command(name="setminorfaction", description="set the minor faction for this discord", guild_ids=[guildID])
+@bot.slash_command(name="setminorfaction", description="set the minor faction for this discord", guild_ids=guildIDs)
 async def setminorfaction(interaction: discord.Interaction, minorfactionname: str):
     if DataManager.setPlayerMinorFaction(interaction.guild_id,minorfactionname):
         await interaction.response.send_message(f"Minor Faction \"{minorfactionname.lower().title()}\" Successfully set!")
@@ -56,14 +58,14 @@ async def setminorfaction(interaction: discord.Interaction, minorfactionname: st
         await interaction.response.send_message(f"cannot find \"{minorfactionname.lower().title()}\" Minor Faction. This can happen if the faction does not exist, if it is a recent addition, or if the API has not responded.")
 
 
-@bot.slash_command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild_ids=[guildID])
+@bot.slash_command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild_ids=guildIDs)
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.defer()
     await asyncio.to_thread(DataManager.updateSystemsBGSData, ctx.guild_id)
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
 
 
-@bot.slash_command(name="minorfaction", description="show info on minor faction", guild_ids=[guildID])
+@bot.slash_command(name="minorfaction", description="show info on minor faction", guild_ids=guildIDs)
 async def minorfaction(ctx: discord.ApplicationContext):
     await ctx.defer()
     minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id)
@@ -72,7 +74,7 @@ async def minorfaction(ctx: discord.ApplicationContext):
 
 
 #get systems info recap
-@bot.slash_command(name="getsystemsrecap", description="show info on systems", guild_ids=[guildID])
+@bot.slash_command(name="getsystemsrecap", description="show info on systems", guild_ids=guildIDs)
 async def getsystemsrecap(ctx: discord.ApplicationContext):
     await ctx.defer(ephemeral=True)
 
@@ -93,7 +95,7 @@ async def getsystemsrecap(ctx: discord.ApplicationContext):
     # await interaction.edit_original_response(content=sytemsRecapStr)
 
 
-@bot.slash_command(name="apimonitor", description="show status of each used apis", guild_ids=[guildID])
+@bot.slash_command(name="apimonitor", description="show status of each used apis", guild_ids=guildIDs)
 async def apimonitor(ctx: discord.ApplicationContext):
     await ctx.defer()
     aPIStatus = APIManager.getAPIStatus()
@@ -102,7 +104,7 @@ async def apimonitor(ctx: discord.ApplicationContext):
 
 
 #manage system group
-@bot.slash_command(name="managesystemgroup", description="manage system group (create, add system to group)", guild_ids=[guildID])
+@bot.slash_command(name="managesystemgroup", description="manage system group (create, add system to group)", guild_ids=guildIDs)
 async def managesystemgroup(ctx: discord.ApplicationContext):
     await ctx.defer()
 
