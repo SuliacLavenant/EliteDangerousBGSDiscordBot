@@ -1,6 +1,6 @@
 import discord
 
-class APIStatusView(discord.ui.View):
+class APIMonitorView(discord.ui.View):
     onlineEmote: str = ":green_circle:"
     offlineEmote: str = ":red_circle:"
 
@@ -10,7 +10,7 @@ class APIStatusView(discord.ui.View):
 
 
     def getEmbed(self):
-        title = "API Status"
+        title = "API Monitor"
         description = ""
 
         for api in self.aPIStatus.values():

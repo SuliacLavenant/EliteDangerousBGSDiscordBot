@@ -13,8 +13,9 @@ from APIRequester.APIManager import APIManager
 
 from View.MinorFactionView import MinorFactionView
 from View.SystemsRecapViews import SystemsRecapViews
-from View.APIStatusView import APIStatusView
 from View.SystemGroup.ManageSystemGroupView import ManageSystemGroupView
+
+from Discord.View.APIMonitorView import APIMonitorView
 
 #Discord app token
 load_dotenv()
@@ -92,13 +93,12 @@ async def getsystemsrecap(ctx: discord.ApplicationContext):
     # await interaction.edit_original_response(content=sytemsRecapStr)
 
 
-#get api status
-@bot.slash_command(name="apistatus", description="show status of each used apis", guild_ids=[guildID])
-async def apistatus(ctx: discord.ApplicationContext):
+@bot.slash_command(name="apimonitor", description="show status of each used apis", guild_ids=[guildID])
+async def apimonitor(ctx: discord.ApplicationContext):
     await ctx.defer()
     aPIStatus = APIManager.getAPIStatus()
-    aPIStatusView = APIStatusView(aPIStatus)
-    await ctx.edit(embed=aPIStatusView.getEmbed(), view=aPIStatusView)
+    aPIMonitorView = APIMonitorView(aPIStatus)
+    await ctx.edit(embed=aPIMonitorView.getEmbed(), view=aPIMonitorView)
 
 
 #manage system group
