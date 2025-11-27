@@ -48,16 +48,6 @@ async def init(ctx: discord.ApplicationContext):
         await ctx.edit(content="Already Init")
 
 
-#Set minor faction for the discord
-#TODO restrict permission + confirmation to reset if already set
-@bot.slash_command(name="setminorfaction", description="set the minor faction for this discord", guild_ids=guildIDs)
-async def setminorfaction(interaction: discord.Interaction, minorfactionname: str):
-    if DataManager.setPlayerMinorFaction(interaction.guild_id,minorfactionname):
-        await interaction.response.send_message(f"Minor Faction \"{minorfactionname.lower().title()}\" Successfully set!")
-    else:
-        await interaction.response.send_message(f"cannot find \"{minorfactionname.lower().title()}\" Minor Faction. This can happen if the faction does not exist, if it is a recent addition, or if the API has not responded.")
-
-
 @bot.slash_command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild_ids=guildIDs)
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.defer()
