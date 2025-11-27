@@ -126,7 +126,7 @@ class DataManager:
 
                 # add aquiered systems
                 for systemName in (set(apiSystemNamesList)-set(storedSystemNamesList)):
-                    DataStorageManager.requestAndStoreSystemData(guild_id,systemName)
+                    DataManager.requestAndStoreSystemData(guild_id,systemName)
 
             # update the other systems
             storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
