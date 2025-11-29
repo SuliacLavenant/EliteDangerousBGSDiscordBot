@@ -2,7 +2,8 @@ import discord
 
 #custom
 from DataManager import DataManager
-from View.SystemGroup.CreateSystemGroupModal import CreateSystemGroupModal
+from Discord.Modal.CreateSystemGroupModal import CreateSystemGroupModal
+
 from DataClass.SystemGroup import SystemGroup
 
 class ManageSystemGroupView(discord.ui.View):
