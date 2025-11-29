@@ -11,7 +11,7 @@ from DataManager import DataManager
 from DataProcessor import DataProcessor
 from APIRequester.APIManager import APIManager
 
-from View.MinorFactionView import MinorFactionView
+from Discord.View.MinorFactionView import MinorFactionView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
 from View.SystemGroup.ManageSystemGroupView import ManageSystemGroupView
 
