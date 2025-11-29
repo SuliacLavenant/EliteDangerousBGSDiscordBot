@@ -14,6 +14,7 @@ from APIRequester.APIManager import APIManager
 from Discord.View.MinorFactionView import MinorFactionView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
 from View.SystemGroup.ManageSystemGroupView import ManageSystemGroupView
+from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
 
 from Discord.View.APIMonitorView import APIMonitorView
 
@@ -59,23 +60,22 @@ async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
 
 
-@bot.slash_command(name="minorfaction", description="show info on minor faction", guild_ids=guildIDs)
-async def minorfaction(ctx: discord.ApplicationContext):
-    await ctx.defer()
+@bot.slash_command(name="bgsrecap", description="show recap of bgs (minor faction and system)", guild_ids=guildIDs)
+async def bgsrecap(ctx: discord.ApplicationContext):
+    await ctx.defer(ephemeral=True)
+
     minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id)
     minorFactionView = MinorFactionView(minorFaction)
-    await ctx.edit(embed=minorFactionView.getEmbed(), view=minorFactionView)
 
-
-@bot.slash_command(name="systemsrecap", description="show info on systems", guild_ids=guildIDs)
-async def systemsrecap(ctx: discord.ApplicationContext):
-    await ctx.defer(ephemeral=True)
+    systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
 
     systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, ctx.guild_id)
     embeds = SystemsRecapViews.getRawSystemsMinorFactionRecapEmbeds(systemsRecap)
     
+    #Send Messages
     await ctx.edit(content="Done")
-
+    await ctx.channel.send(embed=minorFactionView.getEmbed(), view=minorFactionView)
+    await ctx.channel.send(embed=systemsRecapLegendView.getEmbed())
     for i in range(len(embeds)):
         await ctx.channel.send(embed=embeds[i])
 
