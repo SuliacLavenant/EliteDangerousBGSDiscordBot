@@ -35,7 +35,7 @@ class SystemsRecapView(discord.ui.View):
             i+=1
             if i>20:
                 break
-        print(len(description))
+
         embed = discord.Embed(title=self.title, description=description)
 
         return embed

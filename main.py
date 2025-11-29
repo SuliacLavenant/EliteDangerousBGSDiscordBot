@@ -12,7 +12,7 @@ from DataProcessor import DataProcessor
 from APIRequester.APIManager import APIManager
 
 from View.MinorFactionView import MinorFactionView
-from View.SystemsRecapViews import SystemsRecapViews
+from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
 from View.SystemGroup.ManageSystemGroupView import ManageSystemGroupView
 
 from Discord.View.APIMonitorView import APIMonitorView
@@ -63,26 +63,17 @@ async def minorfaction(ctx: discord.ApplicationContext):
     await ctx.edit(embed=minorFactionView.getEmbed(), view=minorFactionView)
 
 
-#get systems info recap
-@bot.slash_command(name="getsystemsrecap", description="show info on systems", guild_ids=guildIDs)
-async def getsystemsrecap(ctx: discord.ApplicationContext):
+@bot.slash_command(name="systemsrecap", description="show info on systems", guild_ids=guildIDs)
+async def systemsrecap(ctx: discord.ApplicationContext):
     await ctx.defer(ephemeral=True)
 
     systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, ctx.guild_id)
     embeds = SystemsRecapViews.getRawSystemsMinorFactionRecapEmbeds(systemsRecap)
     
-    #edit original message
     await ctx.edit(content="Done")
 
-    #send embeds to discords
     for i in range(len(embeds)):
         await ctx.channel.send(embed=embeds[i])
-
-    #text answer
-    # sytemsRecapStr = ""
-    # for systemRecap in systemsRecap:
-    #     sytemsRecapStr = sytemsRecapStr + systemRecap.__str__() + "\n"
-    # await interaction.edit_original_response(content=sytemsRecapStr)
 
 
 @bot.slash_command(name="apimonitor", description="show status of each used apis", guild_ids=guildIDs)

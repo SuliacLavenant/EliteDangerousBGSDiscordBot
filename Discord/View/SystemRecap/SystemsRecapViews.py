@@ -1,5 +1,5 @@
 #custom
-from View.SystemsRecapView import SystemsRecapView
+from Discord.View.SystemRecap.SystemsRecapView import SystemsRecapView
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 class SystemsRecapViews:
