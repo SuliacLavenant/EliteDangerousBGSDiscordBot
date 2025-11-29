@@ -13,7 +13,7 @@ from APIRequester.APIManager import APIManager
 
 from Discord.View.MinorFactionView import MinorFactionView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
-from View.SystemGroup.ManageSystemGroupView import ManageSystemGroupView
+from View.SystemGroup.ManageSystemGroupsView import ManageSystemGroupsView
 from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
 
 from Discord.View.APIMonitorView import APIMonitorView
@@ -93,9 +93,9 @@ async def apimonitor(ctx: discord.ApplicationContext):
 async def managesystemgroup(ctx: discord.ApplicationContext):
     await ctx.defer()
 
-    manageSystemGroupView = ManageSystemGroupView(DataManager.getSystemGroups(ctx.guild_id))
+    manageSystemGroupsView = ManageSystemGroupsView(DataManager.getSystemGroups(ctx.guild_id))
 
-    await ctx.edit(embed=manageSystemGroupView.getEmbed(), view=manageSystemGroupView)
+    await ctx.edit(embed=manageSystemGroupsView.getEmbed(), view=manageSystemGroupsView)
 
 ####################################################################
 

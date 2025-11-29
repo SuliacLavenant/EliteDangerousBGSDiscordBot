@@ -3,10 +3,11 @@ import discord
 #custom
 from DataManager import DataManager
 from Discord.Modal.CreateSystemGroupModal import CreateSystemGroupModal
+from Discord.View.SystemGroup.Edit.SelectSystemGroupToEditView import SelectSystemGroupToEditView
 
 from DataClass.SystemGroup import SystemGroup
 
-class ManageSystemGroupView(discord.ui.View):
+class ManageSystemGroupsView(discord.ui.View):
     def __init__(self, systemGroups):
         super().__init__()
         self.systemGroups = systemGroups
@@ -30,13 +31,20 @@ class ManageSystemGroupView(discord.ui.View):
             await interaction.edit_original_response(embed=self.getGroupAlreadyExistEmbed(groupName), view=self)
 
 
+    @discord.ui.button(label="Edit System Group", style=discord.ButtonStyle.primary)
+    async def editSystemGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
+        selectSystemGroupToEditView = SelectSystemGroupToEditView(self.systemGroups)
+
+        await interaction.response.edit_message(embed=selectSystemGroupToEditView.getEmbed(),view=selectSystemGroupToEditView)
+
+
     def getEmbed(self):
         title = "Manage System Groups"
         description = f"Number of Groups: {len(self.systemGroups)}"
         embed = discord.Embed(title=title, description=description)
 
         for systemGroup in self.systemGroups:
-            embed.add_field(name=systemGroup.name, value="system list TODO", inline=True)
+            embed.add_field(name=systemGroup.name, value="system list TODO", inline=False)
 
         return embed
 
