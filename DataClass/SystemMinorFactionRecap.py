@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 
+from BotConfig import BotConfig
 from DataClass.System import System
 
 @dataclass
@@ -29,18 +30,18 @@ class SystemMinorFactionRecap:
 
     #Calculate influence warning
     def calculateInfluenceWarningLevel(self):
-        if self.leaderInfluenceMargin <= 0.05:
+        if self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level3"]:
             self.influenceWarningLevel = 3
-        elif self.leaderInfluenceMargin <= 0.10:
+        elif self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level2"]:
             self.influenceWarningLevel = 2
-        elif self.leaderInfluenceMargin < 0.20:
+        elif self.leaderInfluenceMargin < BotConfig.leaderInfluenceWarning["level1"]:
             self.influenceWarningLevel = 1
         else:
             self.influenceWarningLevel = 0
 
 
     def checkRetreatWarning(self, system: System, minorFactionName: str):
-        if system.getMinorFactionInfluence(minorFactionName)<=0.025 or system.doMinorFactionHaveState(minorFactionName, "retreat") != None:
+        if system.getMinorFactionInfluence(minorFactionName)<=BotConfig.influenceRetreatWarning or system.doMinorFactionHaveState(minorFactionName, "retreat") != None:
             self.retreatWarning = True
         else:
             self.retreatWarning = False
