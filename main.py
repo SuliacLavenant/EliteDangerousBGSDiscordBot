@@ -13,7 +13,7 @@ from APIRequester.APIManager import APIManager
 
 from Discord.View.MinorFactionView import MinorFactionView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
-from View.SystemGroup.ManageSystemGroupsView import ManageSystemGroupsView
+from Discord.View.SystemGroup.ManageSystemGroupsView import ManageSystemGroupsView
 from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
 
 from Discord.View.APIMonitorView import APIMonitorView

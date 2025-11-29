@@ -14,7 +14,7 @@ class ManageSystemGroupsView(discord.ui.View):
         print(systemGroups)
 
 
-    @discord.ui.button(label="Create New Group", style=discord.ButtonStyle.primary)
+    @discord.ui.button(label="Create New Group", style=discord.ButtonStyle.success)
     async def CreateNewGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
         createSystemGroupModal = CreateSystemGroupModal()
         await interaction.response.send_modal(createSystemGroupModal)
@@ -31,7 +31,7 @@ class ManageSystemGroupsView(discord.ui.View):
             await interaction.edit_original_response(embed=self.getGroupAlreadyExistEmbed(groupName), view=self)
 
 
-    @discord.ui.button(label="Edit System Group", style=discord.ButtonStyle.primary)
+    @discord.ui.button(label="Edit System Group", style=discord.ButtonStyle.secondary)
     async def editSystemGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
         selectSystemGroupToEditView = SelectSystemGroupToEditView(self.systemGroups)
 
