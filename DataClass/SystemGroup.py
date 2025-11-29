@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 @dataclass
 class SystemGroup:
     name: str = ""
-    color: str = ""
+    color: int = 9936031
     systems: list = field(default_factory=list)
 
     #init from Dict
@@ -14,7 +14,7 @@ class SystemGroup:
     def rename(self, name: str):
         self.name = name
     
-    def setColor(self, color: str):
+    def setColor(self, color: int):
         self.color = color
     
     def haveSystem(self, systemName: str):

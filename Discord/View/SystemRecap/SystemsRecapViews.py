@@ -31,14 +31,14 @@ class SystemsRecapViews:
             systemNames = systemGroup.systems
             if systemNames!=None and len(systemNames)>0:
                 systemNames.sort()
-                embeds += SystemsRecapViews.getSystemGroupRecapEmbeds(systemRecaps,systemNames,systemGroup.name)
+                embeds += SystemsRecapViews.getSystemGroupRecapEmbeds(systemRecaps,systemNames,systemGroup.name,systemGroup.color)
 
         if len(systemsWithNoGroups)>0:
             systemsWithNoGroups.sort()
             embeds += SystemsRecapViews.getSystemGroupRecapEmbeds(systemRecaps,systemsWithNoGroups)
         return embeds
 
-    def getSystemGroupRecapEmbeds(systemRecaps: dict, systemNames: list, groupName: str = "Other"):
+    def getSystemGroupRecapEmbeds(systemRecaps: dict, systemNames: list, groupName: str = "Other", color: int = None):
         titleSet = False
         embeds=[]
         systems = {}
@@ -46,12 +46,12 @@ class SystemsRecapViews:
             systems[systemName] = systemRecaps[systemName]
             if len(systems)>=20:
                 if not titleSet:
-                    embeds.append(SystemsRecapView(systems, groupName).getEmbed())
+                    embeds.append(SystemsRecapView(systems, color, groupName).getEmbed())
                     titleSet = True
                 else:
-                    embeds.append(SystemsRecapView(systems).getEmbed())
+                    embeds.append(SystemsRecapView(systems, color).getEmbed())
                 systems = {}
         if len(systems)>0:
-            embeds.append(SystemsRecapView(systems).getEmbed())
+            embeds.append(SystemsRecapView(systems, color).getEmbed())
 
         return embeds

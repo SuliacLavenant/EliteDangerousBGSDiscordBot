@@ -6,9 +6,10 @@ from BotConfig import BotConfig
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 class SystemsRecapView(discord.ui.View):
-    def __init__(self, systemsRecap: dict, title: str = None):
+    def __init__(self, systemsRecap: dict, color: int = None, title: str = None):
         super().__init__()
         self.systemsRecap = systemsRecap
+        self.color = color
         self.title = title
 
 
@@ -21,8 +22,11 @@ class SystemsRecapView(discord.ui.View):
             i+=1
             if i>20:
                 break
-
-        embed = discord.Embed(title=self.title, description=description)
+        
+        if self.color!=None:
+            embed = discord.Embed(title=self.title, description=description, color=discord.Color(self.color))
+        else:
+            embed = discord.Embed(title=self.title, description=description)
 
         return embed
 
