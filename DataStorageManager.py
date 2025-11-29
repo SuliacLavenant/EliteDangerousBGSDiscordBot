@@ -7,14 +7,18 @@ from DataClass.SystemGroup import SystemGroup
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
+    guildsDataFolder: str = "guildsData"
+
+    def getGuildFilePath(guild_id: str):
+        return f"{DataStorageManager.guildsDataFolder}/{guild_id}.json"
 
     def isGuildFileExist(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
         return os.path.exists(filePath)
 
     #create storage file for the discord
     def createDataFile(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         os.makedirs(os.path.dirname(filePath), exist_ok=True)
         if not os.path.exists(filePath):
@@ -32,7 +36,7 @@ class DataStorageManager:
 
     #reset the data file content
     def resetDataFile(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         if os.path.exists(filePath):
             with open(filePath, "w", encoding="utf-8") as f:
@@ -44,7 +48,7 @@ class DataStorageManager:
 
     #set minor faction to the data file
     def setMinorFactionToDataFile(guild_id: str, minorFaction: MinorFaction):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -72,7 +76,7 @@ class DataStorageManager:
 
 
     def addSystemToDataFile(guild_id: str, system: System):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -103,7 +107,7 @@ class DataStorageManager:
         return True
 
     def removeSystemFromDataFile(guild_id: str, systemName: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -125,7 +129,7 @@ class DataStorageManager:
         return True
 
     def addSystemToIgnoreListToDataFile(guild_id: str, systemName: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -149,7 +153,7 @@ class DataStorageManager:
         return True
 
     def removeSystemFromIgnoreListFromDataFile(guild_id: str, systemName: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -175,7 +179,7 @@ class DataStorageManager:
 
 
     def updateSystemFactions(guild_id: str, system: System):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -200,7 +204,7 @@ class DataStorageManager:
     ############################################# GET
 
     def getMinorFaction(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -218,7 +222,7 @@ class DataStorageManager:
             return None
 
     def getMinorFactionName(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -232,7 +236,7 @@ class DataStorageManager:
 
 
     def getMinorFactionGovernment(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -246,7 +250,7 @@ class DataStorageManager:
 
 
     def getSystemNamesList(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         try:
             with open(filePath, "r", encoding="utf-8") as f:
@@ -260,7 +264,7 @@ class DataStorageManager:
 
     #TODO add check if system in data
     def getSystem(guild_id: str, systemName: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -276,7 +280,7 @@ class DataStorageManager:
         
 ######################### Group
     def storeSystemGroup(guild_id: str, systemGroup: SystemGroup):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -300,7 +304,7 @@ class DataStorageManager:
         return True
     
     def getSystemGroupNames(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -313,7 +317,7 @@ class DataStorageManager:
         return list(data["systemGroups"].keys())
 
     def getSystemGroups(guild_id: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
@@ -330,7 +334,7 @@ class DataStorageManager:
         return systemGroups
 
     def getSystemGroup(guild_id: str, systemGroupName: str):
-        filePath = f"data/{guild_id}.json"
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
         #read actual content
         try:
