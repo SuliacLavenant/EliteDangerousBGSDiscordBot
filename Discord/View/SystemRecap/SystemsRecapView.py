@@ -2,24 +2,10 @@ import discord
 import urllib.parse
 
 #custom
+from BotConfig import BotConfig
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 class SystemsRecapView(discord.ui.View):
-    leaderEmote: str = ":crown:"
-    noLeaderEmote: str = ":bust_in_silhouette:"
-    inRetreatEmote: str = ":skull_crossbones:"
-
-    maximumFactionEmote: str = ":lock:"
-    minimumFactionEmote: str = ":shield:"
-
-
-    warningLevelOtherEmote: str = ":white_circle:"
-    warningLevel0Emote: str = ":green_circle:"
-    warningLevel1Emote: str = ":yellow_circle:"
-    warningLevel2Emote: str = ":orange_circle:"
-    warningLevel3Emote: str = ":red_circle:"
-
-
     def __init__(self, systemsRecap: dict, title: str = None):
         super().__init__()
         self.systemsRecap = systemsRecap
@@ -82,18 +68,18 @@ class SystemsRecapView(discord.ui.View):
     
     def getIsLeaderEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isLeader:
-            return self.leaderEmote
+            return BotConfig.emotes["leader"]
         elif systemRecap.retreatWarning:
-            return self.inRetreatEmote
+            return BotConfig.emotes["retreat"]
         else:
-            return self.noLeaderEmote
+            return BotConfig.emotes["noLeader"]
     
 
     def getNumberFactionEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.numberOfFactions<=3:
-            return self.minimumFactionEmote
+            return BotConfig.emotes["minimumFaction"]
         elif systemRecap.numberOfFactions>=7:
-            return self.maximumFactionEmote
+            return BotConfig.emotes["maximumFaction"]
         else:
             return f":number_{systemRecap.numberOfFactions}:"
             #return self.notSecurisedEmote
@@ -101,15 +87,15 @@ class SystemsRecapView(discord.ui.View):
 
     def getWarningLevelEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.influenceWarningLevel == 3 or systemRecap.retreatWarning:
-            return self.warningLevel3Emote
+            return BotConfig.emotes["warningLevel3"]
         elif systemRecap.influenceWarningLevel == 2:
-            return self.warningLevel2Emote
+            return BotConfig.emotes["warningLevel2"]
         elif systemRecap.influenceWarningLevel == 1:
-            return self.warningLevel1Emote
+            return BotConfig.emotes["warningLevel1"]
         if systemRecap.influenceWarningLevel == 0:
-            return self.warningLevel0Emote
+            return BotConfig.emotes["warningLevel0"]
         else:
-            return self.warningLevelOtherEmote
+            return BotConfig.emotes["warningLevelOther"]
 
     def getInfluenceDiffLevelStr(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isLeader:

@@ -1,3 +1,17 @@
 {
-    "guilds_data_folder": "guildsData"
+    "guilds_data_folder": "guildsData",
+    "systemRecap": {
+        "emotes":{
+            "leader": ":crown:",
+            "noLeader": ":bust_in_silhouette:",
+            "retreat": ":skull_crossbones:",
+            "maximumFaction": ":lock:",
+            "minimumFaction": ":shield:",
+            "warningLevelOther": ":white_circle:",
+            "warningLevel0": ":green_circle:",
+            "warningLevel1": ":yellow_circle:",
+            "warningLevel2": ":orange_circle:",
+            "warningLevel3": ":red_circle:"
+        }
+    }
 }
