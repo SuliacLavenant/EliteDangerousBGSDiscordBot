@@ -17,6 +17,10 @@ from View.SystemGroup.ManageSystemGroupView import ManageSystemGroupView
 
 from Discord.View.APIMonitorView import APIMonitorView
 
+from BotConfig import BotConfig
+BotConfig.load()
+
+
 #Discord app token
 load_dotenv()
 token = os.getenv("DISCORD_TOKEN")

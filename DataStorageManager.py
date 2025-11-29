@@ -1,16 +1,17 @@
 import os
 import json
 
+from BotConfig import BotConfig
+
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
-    guildsDataFolder: str = "guildsData"
 
     def getGuildFilePath(guild_id: str):
-        return f"{DataStorageManager.guildsDataFolder}/{guild_id}.json"
+        return f"{BotConfig.guildsDataFolder}/{guild_id}.json"
 
     def isGuildFileExist(guild_id: str):
         filePath = DataStorageManager.getGuildFilePath(guild_id)
