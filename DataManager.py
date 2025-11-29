@@ -105,7 +105,15 @@ class DataManager:
 
     def getSystemGroup(guild_id: str, systemGroupName: str):
         return DataStorageManager.getSystemGroup(guild_id, systemGroupName)
-
+    
+    def getSystemNamesWithNoGroupList(guild_id: str):
+        systemNames = DataManager.getSystemNamesList(guild_id)
+        systemGroups = DataManager.getSystemGroups(guild_id)
+        for systemGroup in systemGroups:
+            for systemName in systemNames[:]:
+                if systemGroup.haveSystem(systemName):
+                    systemNames.remove(systemName)
+        return systemNames
 
     ############################ UPDATE
     def updateSystemsData(guild_id: str):

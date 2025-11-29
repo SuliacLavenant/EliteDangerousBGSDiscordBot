@@ -16,9 +16,12 @@ class SystemGroup:
     
     def setColor(self, color: str):
         self.color = color
+    
+    def haveSystem(self, systemName: str):
+        return systemName.lower() in self.systems
 
     def addSystem(self, systemName: str):
-        self.systems.append(systemName)
+        self.systems.append(systemName.lower())
 
     def removeSystem(self, systemName: str):
         if systemName in self.systems:
