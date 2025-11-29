@@ -105,7 +105,7 @@ class DataManager:
 
     def getSystemGroup(guild_id: str, systemGroupName: str):
         return DataStorageManager.getSystemGroup(guild_id, systemGroupName)
-    
+
     def getSystemNamesWithNoGroupList(guild_id: str):
         systemNames = DataManager.getSystemNamesList(guild_id)
         systemGroups = DataManager.getSystemGroups(guild_id)

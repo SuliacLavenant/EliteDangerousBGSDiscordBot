@@ -70,7 +70,9 @@ async def bgsrecap(ctx: discord.ApplicationContext):
     systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
 
     systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, ctx.guild_id)
-    embeds = SystemsRecapViews.getRawSystemsMinorFactionRecapEmbeds(systemsRecap)
+    systemGroups = await asyncio.to_thread(DataManager.getSystemGroups, ctx.guild_id)
+    systemsWithNoGroups = await asyncio.to_thread(DataManager.getSystemNamesWithNoGroupList, ctx.guild_id)
+    embeds = SystemsRecapViews.getSystemsMinorFactionRecapEmbeds(systemsRecap,systemGroups,systemsWithNoGroups)
     
     #Send Messages
     await ctx.edit(content="Done")
