@@ -40,7 +40,7 @@ class DataManager:
     def removeSystemFromIgnoreList(guild_id: str, systemName: str):
         DataStorageManager.removeSystemFromIgnoreListFromDataFile(guild_id, systemName)
 
-    def createSystemGroup(guild_id: str, systemGroup: SystemGroup):
+    def saveSystemGroup(guild_id: str, systemGroup: SystemGroup):
         DataStorageManager.storeSystemGroup(guild_id, systemGroup)
 
     def removeSystemGroup(guild_id: str, systemGroupName: str):

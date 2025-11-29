@@ -22,7 +22,7 @@ class ManageSystemGroupsView(discord.ui.View):
         groupName = str(createSystemGroupModal.systemGroupName.value)
         if DataManager.getSystemGroup(interaction.guild_id, groupName) == None:
             systemGroup = SystemGroup(name=groupName)
-            DataManager.createSystemGroup(interaction.guild_id, systemGroup)
+            DataManager.saveSystemGroup(interaction.guild_id, systemGroup)
             
             self.clear_items()
             await interaction.edit_original_response(embed=self.getGroupCreatedEmbed(systemGroup), view=self)
