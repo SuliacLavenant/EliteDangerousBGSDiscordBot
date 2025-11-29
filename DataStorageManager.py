@@ -349,3 +349,28 @@ class DataStorageManager:
             return SystemGroup.initFromDict(data["systemGroups"][systemGroupName])
         else:
             return None
+        
+    def removeSystemGroup(guild_id: str, systemGroupName: str):
+        filePath = DataStorageManager.getGuildFilePath(guild_id)
+
+        #read actual content
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            data = {}
+
+        #data update
+        
+        if systemGroupName in data["systemGroups"].keys():
+            data["systemGroups"].pop(systemGroupName)
+        else:
+            return False
+
+        #atomic write
+        with open(filePath+".tmp", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(filePath+".tmp", filePath)
+
+        return True
