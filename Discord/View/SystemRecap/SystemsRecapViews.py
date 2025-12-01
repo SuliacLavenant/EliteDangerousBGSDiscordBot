@@ -52,6 +52,9 @@ class SystemsRecapViews:
                     embeds.append(SystemsRecapView(systems, color).getEmbed())
                 systems = {}
         if len(systems)>0:
-            embeds.append(SystemsRecapView(systems, color).getEmbed())
+            if not titleSet:
+                embeds.append(SystemsRecapView(systems, color, groupName).getEmbed())
+            else:
+                embeds.append(SystemsRecapView(systems, color).getEmbed())
 
         return embeds
