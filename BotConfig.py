@@ -7,7 +7,11 @@ class BotConfig:
     leaderInfluenceWarning: dict
     influenceExpansionWarning: float
     influenceRetreatWarning: float
+
     emotes: dict
+    numberOfFactionEmotes: dict
+    positionInSystemEmotes: dict
+    stateEmotes: dict
 
     @classmethod
     def load(cls):
@@ -17,5 +21,9 @@ class BotConfig:
         cls.leaderInfluenceWarning = data["systemRecap"]["influenceWarning"]["leader"]
         cls.influenceExpansionWarning = data["systemRecap"]["influenceWarning"]["other"]["expansion"]
         cls.influenceRetreatWarning = data["systemRecap"]["influenceWarning"]["other"]["retreat"]
+
         cls.emotes = data["systemRecap"]["emotes"]
+        cls.numberOfFactionEmotes = data["systemRecap"]["emotes"]["numberOfFaction"]
+        cls.positionInSystemEmotes = data["systemRecap"]["emotes"]["positionInSystem"]
+        cls.stateEmotes = data["systemRecap"]["emotes"]["states"]
 

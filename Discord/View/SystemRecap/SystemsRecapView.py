@@ -35,83 +35,59 @@ class SystemsRecapView(discord.ui.View):
         systemLine = ""
 
         #faction name + inara link
-        systemLine += f"{self.getWarningLevelEmote(systemRecap)} {self.getIsLeaderEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} **{round(systemRecap.influence*100,1)}**% {self.getInfluenceDiffLevelStr(systemRecap)}"
-
-        return systemLine
-
-
-    def getSystemRecapLines(self, systemRecap: SystemMinorFactionRecap):
-        systemLine = ""
-
-        #faction name + inara link
-        systemLine += f"{self.getSystemNameWithInaraLink(systemRecap)}"
-        systemLine += "\n"
-
-        # is leader + influence + influence warning
-        if systemRecap.isLeader:
-            systemLine += f"{self.getIsLeaderEmote(systemRecap)} {self.getWarningLevelEmote(systemRecap)} | {round(systemRecap.influence*100,2)}% | (margin: {round(systemRecap.leaderInfluenceMargin*100,1)}%)"
-        else:
-            systemLine += f"{self.getIsLeaderEmote(systemRecap)} {self.warningLevelOtherEmote}"
-            systemLine += f" | {round(systemRecap.influence*100,2)}% | (Leader influence: {round(systemRecap.leaderInfluence*100,1)}%)"
-        systemLine += "\n"
-
-        # can be kicked + number of factions
-        if systemRecap.numberOfFactions<=3:
-            systemLine += " ".ljust(5)+self.securisedEmote
-        else:
-            systemLine += " ".ljust(5)+self.notSecurisedEmote
-        systemLine += f" ({systemRecap.numberOfFactions} factions present)"
-        systemLine += "\n"
+        systemLine += f"{self.getWarningLevelEmote(systemRecap)} {self.getImportantStatusEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} **{round(systemRecap.influence*100,1)}**% {self.getInfluenceDiffLevelStr(systemRecap)}"
 
         return systemLine
 
 
     def getSystemNameWithInaraLink(self, systemRecap: SystemMinorFactionRecap):
-        return f"[**{systemRecap.name.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(systemRecap.name)})"
+        return f"[**{systemRecap.system.name.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(systemRecap.name)})"
 
     
-    def getIsLeaderEmote(self, systemRecap: SystemMinorFactionRecap):
-        if systemRecap.isLeader:
-            return BotConfig.emotes["leader"]
-        else:
-            return BotConfig.emotes["noLeader"]
+    def getPositionEmote(self, systemRecap: SystemMinorFactionRecap):
+        match systemRecap.positionInSystem:
+            case "leader":
+                return BotConfig.positionInSystemEmotes["leader"]
+            case "other":
+                return BotConfig.positionInSystemEmotes["other"]
+
+
+    def getImportantStatusEmote(self, systemRecap: SystemMinorFactionRecap):
+        match systemRecap.importantState:
+            case None:
+                return BotConfig.stateEmotes["none"]
+            case "war" | "civil war":
+                return BotConfig.stateEmotes["war"]
+            case "election":
+                return BotConfig.stateEmotes["election"]
+            case "retreat":
+                return BotConfig.stateEmotes["retreat"]
     
 
     def getNumberFactionEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.numberOfFactions<=3:
-            return BotConfig.emotes["minimumFaction"]
+            return BotConfig.numberOfFactionEmotes["minimumFaction"]
         elif systemRecap.numberOfFactions>=7:
-            return BotConfig.emotes["maximumFaction"]
+            return BotConfig.numberOfFactionEmotes["maximumFaction"]
         else:
             return f":number_{systemRecap.numberOfFactions}:"
-            #return self.notSecurisedEmote
 
 
     def getWarningLevelEmote(self, systemRecap: SystemMinorFactionRecap):
-        # important states
-        match systemRecap.conflictState:
-            case "war" | "civil war":
-                return BotConfig.emotes["war"]
-            case "election":
-                return BotConfig.emotes["election"]
+        match systemRecap.warning:
+            case "expansion":
+                return BotConfig.emotes["warningExpansion"]
+            case None:
+                return BotConfig.emotes["warningLevelOther"]
+            case "marginLvl0":
+                return BotConfig.emotes["warningLevel0"]
+            case "marginLvl1":
+                return BotConfig.emotes["warningLevel1"]
+            case "marginLvl2":
+                return BotConfig.emotes["warningLevel2"]
+            case "marginLvl3" | "status":
+                return BotConfig.emotes["warningLevel3"]
 
-        if systemRecap.retreatWarning:
-            return BotConfig.emotes["retreat"]
-        
-
-        if systemRecap.expansionWarning:
-            return BotConfig.emotes["warningExpansion"]
-
-        if systemRecap.influenceWarningLevel == 3:
-            return BotConfig.emotes["warningLevel3"]
-        elif systemRecap.influenceWarningLevel == 2:
-            return BotConfig.emotes["warningLevel2"]
-        elif systemRecap.influenceWarningLevel == 1:
-            return BotConfig.emotes["warningLevel1"]
-        elif systemRecap.influenceWarningLevel == 0:
-            return BotConfig.emotes["warningLevel0"]
-        else:
-            return BotConfig.emotes["warningLevelOther"]
 
     def getInfluenceDiffLevelStr(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isLeader:

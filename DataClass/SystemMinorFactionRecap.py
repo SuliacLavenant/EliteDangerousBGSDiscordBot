@@ -12,55 +12,81 @@ class SystemMinorFactionRecap:
     leaderInfluenceMargin: int = None
     influenceWarningLevel: int = -1
     isArchitect: bool = None
-    numberOfFactions: int = -1
     leaderInfluence: int = -1
+
     expansionWarning: bool = False
     retreatWarning: bool = False
-    conflictState: str = None
+
+    warning: str = None
+    importantState: str = None
+    positionInSystem: str = None
+    numberOfFactions: int = 0
 
     def __init__(self, system: System, minorFactionName: str):
-        self.name = system.name
-        self.influence = system.getMinorFactionInfluence(minorFactionName)
-        self.numberOfFactions = len(system.factions)
-        self.isLeader = system.isControlledBy(minorFactionName)
-        if self.isLeader:
-            self.leaderInfluenceMargin = system.getLeaderInfluenceMargin()
-            self.calculateInfluenceWarningLevel()
+        self.system = system
+        self.minorFactionName = minorFactionName
+
+        self.influence = system.getMinorFactionInfluence(self.minorFactionName)
         self.leaderInfluence = system.getLeaderInfluence()
-        self.checkRetreatWarning(system, minorFactionName)
-        self.checkExpansionWarning(system, minorFactionName)
-        self.checkConflictState(system, minorFactionName)
+        self.isLeader = system.isControlledBy(self.minorFactionName)
+        if self.isLeader:
+            self.leaderInfluenceMargin = self.system.getLeaderInfluenceMargin()
+            self.calculateLeaderInfluenceMarginWarning()
+
+        self.checkRetreatWarning()
+        self.checkExpansionWarning()
+
+        self.checkImportantState()
+        self.checkPositionInSystem()
+        self.checkInfluenceWarning()
+        self.numberOfFactions = len(system.factions)
 
 
     #Calculate influence warning
-    def calculateInfluenceWarningLevel(self):
+    def checkInfluenceWarning(self):
+        if self.isLeader:
+            self.warning = self.calculateLeaderInfluenceMarginWarning()
+        if self.retreatWarning:
+            self.warning = "retreat"
+        if self.expansionWarning:
+            self.warning = "expansion"
+        if self.importantState != None:
+            self.warning = "status"
+
+    def calculateLeaderInfluenceMarginWarning(self):
         if self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level3"]:
-            self.influenceWarningLevel = 3
+            return "marginLvl3"
         elif self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level2"]:
-            self.influenceWarningLevel = 2
+            return "marginLvl2"
         elif self.leaderInfluenceMargin < BotConfig.leaderInfluenceWarning["level1"]:
-            self.influenceWarningLevel = 1
+            return "marginLvl1"
         else:
-            self.influenceWarningLevel = 0
+            return "marginLvl0"
+
+    def checkExpansionWarning(self):
+        self.expansionWarning = self.system.getMinorFactionInfluence(self.minorFactionName)>=BotConfig.influenceExpansionWarning
+
+    def checkRetreatWarning(self):
+        self.retreatWarning = self.system.getMinorFactionInfluence(self.minorFactionName)<=BotConfig.influenceRetreatWarning or self.system.doMinorFactionHaveState(self.minorFactionName, "retreat") != None
 
 
-    def checkExpansionWarning(self, system: System, minorFactionName: str):
-        self.expansionWarning = system.getMinorFactionInfluence(minorFactionName)>=BotConfig.influenceExpansionWarning
+    def checkImportantState(self):
+        if self.retreatWarning:
+            self.importantState = "retreat"
+        conflictState = self.system.getMinorFactionConflictState(self.minorFactionName)
+        if conflictState!=None:
+            self.importantState = conflictState
 
 
-    def checkRetreatWarning(self, system: System, minorFactionName: str):
-        if system.getMinorFactionInfluence(minorFactionName)<=BotConfig.influenceRetreatWarning or system.doMinorFactionHaveState(minorFactionName, "retreat") != None:
-            self.retreatWarning = True
+    def checkPositionInSystem(self):
+        if self.isLeader:
+            self.positionInSystem = "leader"
         else:
-            self.retreatWarning = False
-
-
-    def checkConflictState(self, system: System, minorFactionName: str):
-        self.conflictState = system.getMinorFactionConflictState(minorFactionName)
+            self.positionInSystem = "other"
 
 
     def __str__(self):
         if self.isLeader:
-            return f"{self.name} — influence {round(self.influence*100, 2)}% | leader, influence warning level {self.influenceWarningLevel} ({round(self.leaderInfluenceMargin*100, 2)}% margin) | architect {self.isArchitect}"
+            return f"{self.system.name} — influence {round(self.influence*100, 2)}% | leader, influence warning level {self.influenceWarningLevel} ({round(self.leaderInfluenceMargin*100, 2)}% margin) | architect {self.isArchitect}"
         else:
-            return f"{self.name} — influence {round(self.influence*100, 2)}% | architect {self.isArchitect}"
+            return f"{self.system.name} — influence {round(self.influence*100, 2)}% | architect {self.isArchitect}"

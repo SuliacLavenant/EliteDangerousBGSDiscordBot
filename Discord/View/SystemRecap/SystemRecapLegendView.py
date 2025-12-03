@@ -17,29 +17,32 @@ class SystemsRecapLegendView(discord.ui.View):
         description=""
         embed = discord.Embed(title=self.title, description=description)
 
-        #status
+        #status Warning Indicator
         status = f"{BotConfig.emotes["warningLevel0"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level1"]*100)}%** margin.\n"
         status += f"{BotConfig.emotes["warningLevel1"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level2"]*100)}%**-**{int(BotConfig.leaderInfluenceWarning["level1"]*100)}%** margin.\n"
         status += f"{BotConfig.emotes["warningLevel2"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%**-**{int(BotConfig.leaderInfluenceWarning["level2"]*100)}%** margin.\n"
-        status += f"{BotConfig.emotes["warningLevel3"]}: **{self.minorFactionName}** is leader with less than a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%** margin.\n"
+        status += f"{BotConfig.emotes["warningLevel3"]}: **{self.minorFactionName}** is leader with less than a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%** margin, or have an Important State.\n"
         status += f"{BotConfig.emotes["warningExpansion"]}: **{self.minorFactionName}** is close to trigger an **Expansion** (influence>**{int(BotConfig.influenceExpansionWarning*100)}%**, **75%** to trigger an **Expansion**).\n"
-        status += f"{BotConfig.emotes["warningLevelOther"]}: **{self.minorFactionName}** have no specific status in this System (not leader and not in retreat).\n"
+        status += f"{BotConfig.emotes["warningLevelOther"]}: **{self.minorFactionName}** have no specific status in this System (not leader and not in retreat)."
+        embed.add_field(name=f"Status Warning Indicator", value=status, inline=False)
 
-        
-        status += f"{BotConfig.emotes["war"]}: **{self.minorFactionName}** is engaged in a **War** or a **Civil War** in this System.\n"
-        status += f"{BotConfig.emotes["election"]}: **{self.minorFactionName}** is engaged in an**Election** in this System.\n"
-        status += f"{BotConfig.emotes["retreat"]}: **{self.minorFactionName}** is **retreating** from this System."
-        embed.add_field(name=f"Status Indication", value=status, inline=False)
+        #important State
+        importantState = f"{BotConfig.stateEmotes["war"]}: **{self.minorFactionName}** is engaged in a **War** or a **Civil War**.\n"
+        importantState += f"{BotConfig.stateEmotes["election"]}: **{self.minorFactionName}** is engaged in an **Election**.\n"
+        importantState += f"{BotConfig.stateEmotes["retreat"]}: **{self.minorFactionName}** is in **Retreat**.\n"
+        importantState += f"{BotConfig.stateEmotes["expansion"]}: **{self.minorFactionName}** is in **Expansion**. (not implemented yet)\n"
+        importantState += f"{BotConfig.stateEmotes["none"]}: **{self.minorFactionName}** does not have an important state."
+        embed.add_field(name=f"Important State", value=importantState, inline=False)
 
         #position in system
-        position = f"{BotConfig.emotes["leader"]}: **{self.minorFactionName}** is **leader** of the System.\n"
-        position += f"{BotConfig.emotes["noLeader"]}: **{self.minorFactionName}** is in the System."
+        position = f"{BotConfig.positionInSystemEmotes["leader"]}: **{self.minorFactionName}** is **Leader**.\n"
+        position += f"{BotConfig.positionInSystemEmotes["other"]}: **{self.minorFactionName}** is **present**."
         embed.add_field(name=f"Position in System", value=position, inline=False)
 
         #number of faction in system
-        number = f"{BotConfig.emotes["minimumFaction"]}: **Minimum** of Minor Factions in this System, **{self.minorFactionName}** can't be retreated.\n"
-        number += ":number_4::number_5::number_6:" + ": **Number** of Minor Factions in System.\n"
-        number += f"{BotConfig.emotes["maximumFaction"]}: **Maximum** of Minor Factions in this System, no other Minor Factions can expend into this System."
+        number = f"{BotConfig.numberOfFactionEmotes["minimumFaction"]}: **Minimum** of Minor Factions, **{self.minorFactionName}** can't be retreated.\n"
+        number += ":number_4::number_5::number_6:" + ": **Number** of Minor Factions.\n"
+        number += f"{BotConfig.numberOfFactionEmotes["maximumFaction"]}: **Maximum** of Minor Factions, no other Minor Factions can expand into this System."
         embed.add_field(name=f"Number of faction", value=number, inline=False)
 
         return embed
