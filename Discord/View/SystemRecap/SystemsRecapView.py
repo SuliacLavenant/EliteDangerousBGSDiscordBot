@@ -41,7 +41,7 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getSystemNameWithInaraLink(self, systemRecap: SystemMinorFactionRecap):
-        return f"[**{systemRecap.system.name.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(systemRecap.name)})"
+        return f"[**{systemRecap.system.name.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(systemRecap.system.name)})"
 
     
     def getPositionEmote(self, systemRecap: SystemMinorFactionRecap):
