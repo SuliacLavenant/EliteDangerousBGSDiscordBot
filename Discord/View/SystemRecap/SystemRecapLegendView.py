@@ -22,7 +22,12 @@ class SystemsRecapLegendView(discord.ui.View):
         status += f"{BotConfig.emotes["warningLevel1"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level2"]*100)}%**-**{int(BotConfig.leaderInfluenceWarning["level1"]*100)}%** margin.\n"
         status += f"{BotConfig.emotes["warningLevel2"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%**-**{int(BotConfig.leaderInfluenceWarning["level2"]*100)}%** margin.\n"
         status += f"{BotConfig.emotes["warningLevel3"]}: **{self.minorFactionName}** is leader with less than a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%** margin.\n"
+        status += f"{BotConfig.emotes["warningExpansion"]}: **{self.minorFactionName}** is close to trigger an **Expansion** (influence>**{int(BotConfig.influenceExpansionWarning*100)}%**, **75%** to trigger an **Expansion**).\n"
         status += f"{BotConfig.emotes["warningLevelOther"]}: **{self.minorFactionName}** have no specific status in this System (not leader and not in retreat).\n"
+
+        
+        status += f"{BotConfig.emotes["war"]}: **{self.minorFactionName}** is engaged in a **War** or a **Civil War** in this System.\n"
+        status += f"{BotConfig.emotes["election"]}: **{self.minorFactionName}** is engaged in an**Election** in this System.\n"
         status += f"{BotConfig.emotes["retreat"]}: **{self.minorFactionName}** is **retreating** from this System."
         embed.add_field(name=f"Status Indication", value=status, inline=False)
 
