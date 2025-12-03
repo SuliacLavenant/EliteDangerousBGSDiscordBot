@@ -67,19 +67,21 @@ async def bgsrecap(ctx: discord.ApplicationContext):
     minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id)
     minorFactionView = MinorFactionView(minorFaction)
 
-    systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
+    if minorFaction!=None:
+        systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
 
-    systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, ctx.guild_id)
-    systemGroups = await asyncio.to_thread(DataManager.getSystemGroups, ctx.guild_id)
-    systemsWithNoGroups = await asyncio.to_thread(DataManager.getSystemNamesWithNoGroupList, ctx.guild_id)
-    embeds = SystemsRecapViews.getSystemsMinorFactionRecapEmbeds(systemsRecap,systemGroups,systemsWithNoGroups)
+        systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, ctx.guild_id)
+        systemGroups = await asyncio.to_thread(DataManager.getSystemGroups, ctx.guild_id)
+        systemsWithNoGroups = await asyncio.to_thread(DataManager.getSystemNamesWithNoGroupList, ctx.guild_id)
+        embeds = SystemsRecapViews.getSystemsMinorFactionRecapEmbeds(systemsRecap,systemGroups,systemsWithNoGroups)
     
     #Send Messages
     await ctx.edit(content="Done")
     await ctx.channel.send(embed=minorFactionView.getEmbed(), view=minorFactionView)
-    await ctx.channel.send(embed=systemsRecapLegendView.getEmbed())
-    for i in range(len(embeds)):
-        await ctx.channel.send(embed=embeds[i])
+    if minorFaction!=None:
+        await ctx.channel.send(embed=systemsRecapLegendView.getEmbed())
+        for i in range(len(embeds)):
+            await ctx.channel.send(embed=embeds[i])
 
 
 @bot.slash_command(name="apimonitor", description="show status of each used apis", guild_ids=guildIDs)
