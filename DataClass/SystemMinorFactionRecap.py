@@ -15,6 +15,7 @@ class SystemMinorFactionRecap:
     numberOfFactions: int = -1
     leaderInfluence: int = -1
     retreatWarning: bool = False
+    conflictState: str = None
 
     def __init__(self, system: System, minorFactionName: str):
         self.name = system.name
@@ -26,6 +27,7 @@ class SystemMinorFactionRecap:
             self.calculateInfluenceWarningLevel()
         self.leaderInfluence = system.getLeaderInfluence()
         self.checkRetreatWarning(system, minorFactionName)
+        self.checkConflictState(system, minorFactionName)
 
 
     #Calculate influence warning
@@ -45,6 +47,10 @@ class SystemMinorFactionRecap:
             self.retreatWarning = True
         else:
             self.retreatWarning = False
+
+
+    def checkConflictState(self, system: System, minorFactionName: str):
+        self.conflictState = system.getMinorFactionConflictState(minorFactionName)
 
 
     def __str__(self):

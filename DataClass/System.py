@@ -99,6 +99,18 @@ class System:
             return "recovering"
         else:
             return None
+        
+    def getMinorFactionConflictState(self, minorFactionName: str):
+        war = self.doMinorFactionHaveState(minorFactionName, "war")
+        if war == "pending" or war == "active":
+            return "war"
+        civilWar = self.doMinorFactionHaveState(minorFactionName, "civil war")
+        if civilWar == "pending" or civilWar == "active":
+            return "civil war"
+        election = self.doMinorFactionHaveState(minorFactionName, "election")
+        if election == "pending" or election == "active":
+            return "election"
+        return None
 
     def lower(self, string: str):
         return string.lower() if isinstance(string, str) else string

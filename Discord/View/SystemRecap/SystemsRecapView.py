@@ -73,8 +73,6 @@ class SystemsRecapView(discord.ui.View):
     def getIsLeaderEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isLeader:
             return BotConfig.emotes["leader"]
-        elif systemRecap.retreatWarning:
-            return BotConfig.emotes["retreat"]
         else:
             return BotConfig.emotes["noLeader"]
     
@@ -90,13 +88,23 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getWarningLevelEmote(self, systemRecap: SystemMinorFactionRecap):
-        if systemRecap.influenceWarningLevel == 3 or systemRecap.retreatWarning:
+        # important states
+        match systemRecap.conflictState:
+            case "war" | "civil war":
+                return BotConfig.emotes["war"]
+            case "election":
+                return BotConfig.emotes["election"]
+
+        if systemRecap.retreatWarning:
+            return BotConfig.emotes["retreat"]
+
+        if systemRecap.influenceWarningLevel == 3:
             return BotConfig.emotes["warningLevel3"]
         elif systemRecap.influenceWarningLevel == 2:
             return BotConfig.emotes["warningLevel2"]
         elif systemRecap.influenceWarningLevel == 1:
             return BotConfig.emotes["warningLevel1"]
-        if systemRecap.influenceWarningLevel == 0:
+        elif systemRecap.influenceWarningLevel == 0:
             return BotConfig.emotes["warningLevel0"]
         else:
             return BotConfig.emotes["warningLevelOther"]
