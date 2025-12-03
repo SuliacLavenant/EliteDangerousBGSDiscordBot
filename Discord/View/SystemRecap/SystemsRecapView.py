@@ -97,6 +97,10 @@ class SystemsRecapView(discord.ui.View):
 
         if systemRecap.retreatWarning:
             return BotConfig.emotes["retreat"]
+        
+
+        if systemRecap.expansionWarning:
+            return BotConfig.emotes["warningExpansion"]
 
         if systemRecap.influenceWarningLevel == 3:
             return BotConfig.emotes["warningLevel3"]

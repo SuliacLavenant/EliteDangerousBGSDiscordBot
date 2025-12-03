@@ -14,6 +14,7 @@ class SystemMinorFactionRecap:
     isArchitect: bool = None
     numberOfFactions: int = -1
     leaderInfluence: int = -1
+    expansionWarning: bool = False
     retreatWarning: bool = False
     conflictState: str = None
 
@@ -27,6 +28,7 @@ class SystemMinorFactionRecap:
             self.calculateInfluenceWarningLevel()
         self.leaderInfluence = system.getLeaderInfluence()
         self.checkRetreatWarning(system, minorFactionName)
+        self.checkExpansionWarning(system, minorFactionName)
         self.checkConflictState(system, minorFactionName)
 
 
@@ -40,6 +42,10 @@ class SystemMinorFactionRecap:
             self.influenceWarningLevel = 1
         else:
             self.influenceWarningLevel = 0
+
+
+    def checkExpansionWarning(self, system: System, minorFactionName: str):
+        self.expansionWarning = system.getMinorFactionInfluence(minorFactionName)>=BotConfig.influenceExpansionWarning
 
 
     def checkRetreatWarning(self, system: System, minorFactionName: str):

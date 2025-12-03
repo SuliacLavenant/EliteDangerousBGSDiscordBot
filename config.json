@@ -14,7 +14,8 @@
             "warningLevel0": ":green_circle:",
             "warningLevel1": ":yellow_circle:",
             "warningLevel2": ":orange_circle:",
-            "warningLevel3": ":red_circle:"
+            "warningLevel3": ":red_circle:",
+            "warningExpansion": ":blue_circle:"
         },
         "influenceWarning": {
             "leader": {
@@ -23,7 +24,8 @@
                 "level1": 0.2
             },
             "other": {
-                "retreat": 0.025
+                "retreat": 0.025,
+                "expansion": 0.7
             }
         }
     }

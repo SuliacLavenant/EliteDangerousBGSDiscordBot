@@ -5,6 +5,7 @@ class BotConfig:
 
     guildsDataFolder: str
     leaderInfluenceWarning: dict
+    influenceExpansionWarning: float
     influenceRetreatWarning: float
     emotes: dict
 
@@ -14,6 +15,7 @@ class BotConfig:
             data = json.load(f)
         cls.guildsDataFolder = data["guilds_data_folder"]
         cls.leaderInfluenceWarning = data["systemRecap"]["influenceWarning"]["leader"]
+        cls.influenceExpansionWarning = data["systemRecap"]["influenceWarning"]["other"]["expansion"]
         cls.influenceRetreatWarning = data["systemRecap"]["influenceWarning"]["other"]["retreat"]
         cls.emotes = data["systemRecap"]["emotes"]
 
