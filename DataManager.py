@@ -18,7 +18,7 @@ class DataManager:
 
     #Set tracked minor faction
     def setPlayerMinorFaction(guild_id: str, minorFactionName: str):
-        if DataStorageManager.isGuildFileExist(guild_id):
+        if DataStorageManager.isGuildFilesExist(guild_id):
             DataStorageManager.resetDataFile(guild_id)
         else:
             DataStorageManager.createDataFile(guild_id)

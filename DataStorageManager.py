@@ -38,7 +38,7 @@ class DataStorageManager:
             return False
         
         for fileName in DataStorageManager.filesName:
-            if not os.path.exists(guildFolderPath+fileName,guildFolderPath+fileName):
+            if not os.path.exists(guildFolderPath+fileName):
                 print(f"file {fileName} do not exist")
                 return False
 
