@@ -1,4 +1,5 @@
 import os
+import shutil
 import json
 
 from BotConfig import BotConfig
@@ -9,6 +10,72 @@ from DataClass.SystemGroup import SystemGroup
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
+
+    def readFileContent(filePath: str):
+        try:
+            with open(filePath, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error: {type(e).__name__}")
+            return {}
+    
+    def atomicWriteFileContent(filePath: str, data: dict):
+        with open(filePath+".tmp", "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(filePath+".tmp", filePath)
+
+
+    def getGuildFolderPath(guild_id: str):
+        return f"{BotConfig.guildsDataFolder}/{guild_id}/"
+
+    def initDataFiles(guild_id: str):
+        guildFolderPath = DataStorageManager.getGuildFolderPath(guild_id)
+        templateFolderPath = DataStorageManager.getGuildFolderPath("template")
+
+        #create guild data folder if not exist
+        if not os.path.exists(guildFolderPath):
+            os.makedirs(guildFolderPath)
+
+        #copy requiered files
+        fileNames = ["minorFaction.json","systems.json"]
+        for fileName in fileNames:
+            shutil.copy(templateFolderPath+fileName,guildFolderPath+fileName)
+            print(fileName)
+
+
+##################################################
+################################################## Minor Faction
+
+    #set minor faction to the data file
+    def storeMinorFaction(guild_id: str, minorFaction: MinorFaction):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"minorFaction.json"
+        minorFactionData = DataStorageManager.readFileContent(filePath)
+
+        #data update
+        minorFactionData["name"] = minorFaction.name
+        minorFactionData["allegiance"] = minorFaction.allegiance
+        minorFactionData["government"] = minorFaction.government
+        DataStorageManager.atomicWriteFileContent(filePath,minorFactionData)
+        return True
+
+
+    def getMinorFaction(guild_id: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"minorFaction.json"
+        minorFactionData = DataStorageManager.readFileContent(filePath)
+
+        if minorFactionData!=None and minorFactionData["name"]!= "":
+            minorFaction = MinorFaction.initFromStoredData(minorFactionData)
+            return minorFaction
+        else:
+            return None
+
+
+##################################################
+##################################################
+
+
+############ To refactor
+
 
     def getGuildFilePath(guild_id: str):
         return f"{BotConfig.guildsDataFolder}/{guild_id}.json"
@@ -45,36 +112,6 @@ class DataStorageManager:
             print("Data file reset")
         else:
             print("Data file do not exist")
-
-
-    #set minor faction to the data file
-    def setMinorFactionToDataFile(guild_id: str, minorFaction: MinorFaction):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        #data update
-        data["faction"] = {}
-        data["faction"]["name"] = minorFaction.name
-        data["faction"]["allegiance"] = minorFaction.allegiance
-        data["faction"]["government"] = minorFaction.government
-        data["systems"] = {}
-        data["ignoredSystem"] = []
-        data["systemGroups"] = {}
-
-        #atomic write
-        with open(filePath+".tmp", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        os.replace(filePath+".tmp", filePath)
-
-        return True
-
 
     def addSystemToDataFile(guild_id: str, system: System):
         filePath = DataStorageManager.getGuildFilePath(guild_id)
@@ -203,51 +240,6 @@ class DataStorageManager:
 
 
     ############################################# GET
-
-    def getMinorFaction(guild_id: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                if len(data["faction"])!=0 and data["faction"]["name"]!="":
-                    minorFaction = MinorFaction.initFromStoredData(data["faction"])
-                    minorFaction.setNumberOfSystems(len(data["systems"]))
-                    return minorFaction
-                else:
-                    return None
-
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            return None
-
-    def getMinorFactionName(guild_id: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                return data["faction"]["name"]
-
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            return ""
-
-
-    def getMinorFactionGovernment(guild_id: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                return data["faction"]["government"]
-
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            return ""
 
 
     def getSystemNamesList(guild_id: str):

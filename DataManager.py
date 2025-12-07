@@ -29,7 +29,7 @@ class DataManager:
             print("no minor faction found")
             return False
         else:
-            DataStorageManager.setMinorFactionToDataFile(guild_id,minorFaction)
+            DataStorageManager.storeMinorFaction(guild_id,minorFaction)
             return True
 
 
@@ -56,7 +56,7 @@ class DataManager:
 
     #request systems data from APIs
     def requestAndStoreSystemsData(guild_id: str):
-        minorFactionName = DataStorageManager.getMinorFactionName(guild_id)
+        minorFactionName = DataManager.getMinorFactionName(guild_id)
         systems = DataManager.requestSystemsData(minorFactionName)
         for system in systems:
             DataStorageManager.addSystemToDataFile(guild_id,system)
@@ -90,8 +90,12 @@ class DataManager:
         return DataStorageManager.getMinorFaction(guild_id)
 
     def getMinorFactionName(guild_id: str):
-        return DataStorageManager.getMinorFactionName(guild_id)
-    
+        minorFaction = DataStorageManager.getMinorFaction(guild_id)
+        if minorFaction!=None:
+            return minorFaction.name
+        else:
+            return ""
+
     #get the systems list from storage
     def getSystemNamesList(guild_id: str):
         return DataStorageManager.getSystemNamesList(guild_id)
@@ -127,7 +131,7 @@ class DataManager:
             DataManager.requestAndStoreSystemsData(guild_id)
             return True
         else:
-            minorFactionName = DataStorageManager.getMinorFactionName(guild_id)
+            minorFactionName = DataManager.getMinorFactionName(guild_id)
             apiSystemNamesList = DataManager.requestSystemNamesList(minorFactionName)
 
             if apiSystemNamesList != None:
