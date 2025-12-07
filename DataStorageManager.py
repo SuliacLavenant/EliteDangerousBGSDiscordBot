@@ -10,6 +10,7 @@ from DataClass.SystemGroup import SystemGroup
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
+    filesName: list = ["minorFaction.json","systems.json","systemGroups.json"]
 
     def readFileContent(filePath: str):
         try:
@@ -28,6 +29,22 @@ class DataStorageManager:
     def getGuildFolderPath(guild_id: str):
         return f"{BotConfig.guildsDataFolder}/{guild_id}/"
 
+
+    def isGuildFilesExist(guild_id: str):
+        guildFolderPath = DataStorageManager.getGuildFolderPath(guild_id)
+
+        if not os.path.exists(guildFolderPath):
+            print("guild folder do not exist")
+            return False
+        
+        for fileName in DataStorageManager.filesName:
+            if not os.path.exists(guildFolderPath+fileName,guildFolderPath+fileName):
+                print(f"file {fileName} do not exist")
+                return False
+
+        return False
+
+
     def initDataFiles(guild_id: str):
         guildFolderPath = DataStorageManager.getGuildFolderPath(guild_id)
         templateFolderPath = DataStorageManager.getGuildFolderPath("template")
@@ -37,10 +54,8 @@ class DataStorageManager:
             os.makedirs(guildFolderPath)
 
         #copy requiered files
-        fileNames = ["minorFaction.json","systems.json","systemGroups.json"]
-        for fileName in fileNames:
+        for fileName in DataStorageManager.filesName:
             shutil.copy(templateFolderPath+fileName,guildFolderPath+fileName)
-            print(fileName)
 
 
 ##################################################
@@ -205,10 +220,6 @@ class DataStorageManager:
 
     def getGuildFilePath(guild_id: str):
         return f"{BotConfig.guildsDataFolder}/{guild_id}.json"
-
-    def isGuildFileExist(guild_id: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-        return os.path.exists(filePath)
 
     #create storage file for the discord
     def createDataFile(guild_id: str):

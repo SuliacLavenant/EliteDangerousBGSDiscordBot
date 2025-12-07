@@ -9,10 +9,10 @@ from DataClass.SystemGroup import SystemGroup
 
 class DataManager:
     def initStorage(guild_id: str):
-        if DataStorageManager.isGuildFileExist(guild_id):
+        if DataStorageManager.isGuildFilesExist(guild_id):
             return False
         else:
-            DataStorageManager.createDataFile(guild_id)
+            DataStorageManager.initDataFiles(guild_id)
             return True
         
 
