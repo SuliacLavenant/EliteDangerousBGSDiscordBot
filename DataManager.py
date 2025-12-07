@@ -154,4 +154,4 @@ class DataManager:
 
     def updateSystemBGSData(guild_id: str, systemName: str):
         system = DataManager.requestSystemData(systemName)
-        return DataStorageManager.updateSystemFactions(guild_id, system)
+        return DataStorageManager.updateSystem(guild_id, system)

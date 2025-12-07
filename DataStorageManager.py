@@ -71,6 +71,76 @@ class DataStorageManager:
 
 
 ##################################################
+################################################## Systems
+
+    def addSystemToDataFile(guild_id: str, system: System):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        systemsData = DataStorageManager.readFileContent(filePath)
+
+        systemsData[system.name] = {}
+        systemsData[system.name]["name"] = system.name
+        systemsData[system.name]["population"] = system.population
+        systemsData[system.name]["security"] = system.security
+        systemsData[system.name]["economy"] = system.economy
+        systemsData[system.name]["secondEconomy"] = system.secondEconomy
+        systemsData[system.name]["reserve"] = system.reserve
+        systemsData[system.name]["controllingFaction"] = system.controllingFaction
+        systemsData[system.name]["factions"] = system.factions
+
+        DataStorageManager.atomicWriteFileContent(filePath,systemsData)
+        return True
+
+
+    def removeSystemFromDataFile(guild_id: str, systemName: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        systemsData = DataStorageManager.readFileContent(filePath)
+
+        #data update
+        if systemName in systemsData:
+            del systemsData[systemName]
+
+        DataStorageManager.atomicWriteFileContent(filePath,systemsData)
+        return True
+
+
+    def getSystemNamesList(guild_id: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        systemsData = DataStorageManager.readFileContent(filePath)
+
+        return list(systemsData.keys())
+
+
+    def getSystem(guild_id: str, systemName: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        systemsData = DataStorageManager.readFileContent(filePath)
+
+        if systemName in systemsData:
+            system = System.initFromStoredData(systemsData[systemName])
+            return system
+        else:
+            return None
+
+
+    def updateSystem(guild_id: str, system: System):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        systemsData = DataStorageManager.readFileContent(filePath)
+
+        if system.name in systemsData:
+            systemsData[system.name]["population"] = system.population
+            systemsData[system.name]["security"] = system.security
+            systemsData[system.name]["economy"] = system.economy
+            systemsData[system.name]["secondEconomy"] = system.secondEconomy
+            systemsData[system.name]["reserve"] = system.reserve
+            systemsData[system.name]["controllingFaction"] = system.controllingFaction
+            systemsData[system.name]["factions"] = system.factions
+
+            DataStorageManager.atomicWriteFileContent(filePath,systemsData)
+            return True
+        else:
+            return False
+
+
+##################################################
 ##################################################
 
 
@@ -113,58 +183,6 @@ class DataStorageManager:
         else:
             print("Data file do not exist")
 
-    def addSystemToDataFile(guild_id: str, system: System):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        #data update
-        data["systems"][system.name] = {}
-        data["systems"][system.name]["name"] = system.name
-        data["systems"][system.name]["population"] = system.population
-        data["systems"][system.name]["security"] = system.security
-        data["systems"][system.name]["economy"] = system.economy
-        data["systems"][system.name]["secondEconomy"] = system.secondEconomy
-        data["systems"][system.name]["reserve"] = system.reserve
-
-
-        data["systems"][system.name]["controllingFaction"] = system.controllingFaction
-        data["systems"][system.name]["factions"] = system.factions
-
-        #atomic write
-        with open(filePath+".tmp", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        os.replace(filePath+".tmp", filePath)
-
-        return True
-
-    def removeSystemFromDataFile(guild_id: str, systemName: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        #data update
-        if systemName in data["systems"]:
-            del data["systems"][systemName]
-
-        #atomic write
-        with open(filePath+".tmp", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        os.replace(filePath+".tmp", filePath)
-
-        return True
 
     def addSystemToIgnoreListToDataFile(guild_id: str, systemName: str):
         filePath = DataStorageManager.getGuildFilePath(guild_id)
@@ -216,59 +234,10 @@ class DataStorageManager:
         return True
 
 
-    def updateSystemFactions(guild_id: str, system: System):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        #data update
-        data["systems"][system.name]["controllingFaction"] = system.controllingFaction
-        data["systems"][system.name]["factions"] = system.factions
-
-        #atomic write
-        with open(filePath+".tmp", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        os.replace(filePath+".tmp", filePath)
-
-        return True
-
 
     ############################################# GET
 
 
-    def getSystemNamesList(guild_id: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                return list(data["systems"].keys())
-
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            return None
-
-
-    #TODO add check if system in data
-    def getSystem(guild_id: str, systemName: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                system = System.initFromStoredData(data["systems"][systemName])
-                return system
-
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            return {}
 
         
 ######################### Group
