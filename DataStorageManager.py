@@ -37,7 +37,7 @@ class DataStorageManager:
             os.makedirs(guildFolderPath)
 
         #copy requiered files
-        fileNames = ["minorFaction.json","systems.json"]
+        fileNames = ["minorFaction.json","systems.json","systemGroups.json"]
         for fileName in fileNames:
             shutil.copy(templateFolderPath+fileName,guildFolderPath+fileName)
             print(fileName)
@@ -141,8 +141,64 @@ class DataStorageManager:
 
 
 ##################################################
-##################################################
+################################################## System Groups
 
+    def storeSystemGroup(guild_id: str, systemGroup: SystemGroup):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        systemGroupsData = DataStorageManager.readFileContent(filePath)
+
+        #data update
+        systemGroupsData[systemGroup.name] = {}
+        systemGroupsData[systemGroup.name]["name"] = systemGroup.name
+        systemGroupsData[systemGroup.name]["color"] = systemGroup.color
+        systemGroupsData[systemGroup.name]["systems"] = systemGroup.systems
+
+        DataStorageManager.atomicWriteFileContent(filePath,systemGroupsData)
+        return True
+    
+    
+    def getSystemGroupNames(guild_id: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        systemGroupsData = DataStorageManager.readFileContent(filePath)
+
+        return list(systemGroupsData["systemGroups"].keys())
+
+
+    def getSystemGroups(guild_id: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        systemGroupsData = DataStorageManager.readFileContent(filePath)
+
+        systemGroups = []
+        for systemGroupDict in systemGroupsData.values():
+            systemGroups.append(SystemGroup.initFromDict(systemGroupDict))
+
+        return systemGroups
+
+
+    def getSystemGroup(guild_id: str, systemGroupName: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        systemGroupsData = DataStorageManager.readFileContent(filePath)
+
+        if systemGroupName in systemGroupsData.keys():
+            return SystemGroup.initFromDict(systemGroupsData[systemGroupName])
+        else:
+            return None
+
+
+    def removeSystemGroup(guild_id: str, systemGroupName: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        systemGroupsData = DataStorageManager.readFileContent(filePath)
+        
+        if systemGroupName in systemGroupsData.keys():
+            systemGroupsData.pop(systemGroupName)
+            DataStorageManager.atomicWriteFileContent(filePath,systemGroupsData)
+            return True
+        else:
+            return False
+
+
+##################################################
+##################################################
 
 ############ To refactor
 
@@ -241,97 +297,4 @@ class DataStorageManager:
 
         
 ######################### Group
-    def storeSystemGroup(guild_id: str, systemGroup: SystemGroup):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
 
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        #data update
-        data["systemGroups"][systemGroup.name] = {}
-        data["systemGroups"][systemGroup.name]["name"] = systemGroup.name
-        data["systemGroups"][systemGroup.name]["color"] = systemGroup.color
-        data["systemGroups"][systemGroup.name]["systems"] = systemGroup.systems
-
-        #atomic write
-        with open(filePath+".tmp", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        os.replace(filePath+".tmp", filePath)
-
-        return True
-    
-    def getSystemGroupNames(guild_id: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        return list(data["systemGroups"].keys())
-
-    def getSystemGroups(guild_id: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        systemGroups = []
-        for systemGroupDict in data["systemGroups"].values():
-            systemGroups.append(SystemGroup.initFromDict(systemGroupDict))
-
-        return systemGroups
-
-    def getSystemGroup(guild_id: str, systemGroupName: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        if systemGroupName in data["systemGroups"].keys():
-            return SystemGroup.initFromDict(data["systemGroups"][systemGroupName])
-        else:
-            return None
-        
-    def removeSystemGroup(guild_id: str, systemGroupName: str):
-        filePath = DataStorageManager.getGuildFilePath(guild_id)
-
-        #read actual content
-        try:
-            with open(filePath, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error: {type(e).__name__}")
-            data = {}
-
-        #data update
-        
-        if systemGroupName in data["systemGroups"].keys():
-            data["systemGroups"].pop(systemGroupName)
-        else:
-            return False
-
-        #atomic write
-        with open(filePath+".tmp", "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        os.replace(filePath+".tmp", filePath)
-
-        return True
