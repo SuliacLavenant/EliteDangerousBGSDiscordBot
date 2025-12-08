@@ -13,6 +13,14 @@ class System:
     controllingFaction: str = ""
     factions: dict[str, dict] = field(default_factory=dict)
 
+    def __post_init__(self):
+        self.name = self.name.lower()
+        self.security = self.security.lower()
+        self.economy = self.economy.lower()
+        self.secondEconomy = self.secondEconomy.lower() if self.secondEconomy!=None else None
+        self.reserve = self.reserve.lower() if self.reserve!=None else None
+        self.controllingFaction = self.controllingFaction.lower()
+
     @classmethod
     def initFromStoredData(cls, systemData: dict):
         return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFaction=systemData["controllingFaction"], factions=systemData["factions"])
