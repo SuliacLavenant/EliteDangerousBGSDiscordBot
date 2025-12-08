@@ -13,20 +13,9 @@ class System:
     controllingFaction: str = ""
     factions: dict[str, dict] = field(default_factory=dict)
 
-    def __init__(self, name: str, population: int, security: str, economy: str, secondEconomy: str, reserve: str, controllingFaction: str, factions: dict | None = None):
-        self.name = self.lower(name)
-        self.population = population
-        self.security = self.lower(security)
-        self.economy = self.lower(economy)
-        self.secondEconomy = self.lower(secondEconomy)
-        self.reserve = self.lower(reserve)
-        self.controllingFaction = self.lower(controllingFaction)
-        self.factions = deepcopy(factions) if factions is not None else {}
-    
-    #init from stored data
     @classmethod
     def initFromStoredData(cls, systemData: dict):
-        return cls(systemData["name"], systemData["population"], systemData["security"], systemData["economy"], systemData["secondEconomy"], systemData["reserve"], systemData["controllingFaction"], systemData["factions"])
+        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFaction=systemData["controllingFaction"], factions=systemData["factions"])
 
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
