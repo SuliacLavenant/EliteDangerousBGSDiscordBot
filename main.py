@@ -57,7 +57,7 @@ async def init(ctx: discord.ApplicationContext):
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.defer()
     await asyncio.to_thread(DataManager.updateSystemsList, ctx.guild_id)
-    await asyncio.to_thread(DataManager.updateSystemsBGSData, ctx.guild_id)
+    await asyncio.to_thread(DataManager.updateStoredSystemsBGSData, ctx.guild_id)
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
 
 

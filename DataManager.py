@@ -132,16 +132,19 @@ class DataManager:
         if apiSystemNamesList != None:
             # remove lost systems
             for systemName in (set(storedSystemNamesList)-set(apiSystemNamesList)):
+                print(f"Retreated From System \"{systemName}\"")
                 DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
 
             # add aquiered systems
             for systemName in (set(apiSystemNamesList)-set(storedSystemNamesList)):
+                print(f"Aquiered System \"{systemName}\"")
                 DataManager.requestAndStoreSystemData(guild_id,systemName)
 
+        print("Check for new and lost systems: DONE")
         return True
 
 
-    def updateSystemsBGSData(guild_id: str):
+    def updateStoredSystemsBGSData(guild_id: str):
         storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
         systems = []
         for systemName in storedSystemNamesList:
@@ -149,6 +152,7 @@ class DataManager:
             systems.append(DataManager.requestSystemData(systemName))
         
         DataStorageManager.updateSystems(guild_id, systems)
+        print("updateStoredSystemsBGSData: DONE")
         return True
 
 
