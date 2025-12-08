@@ -56,6 +56,7 @@ async def init(ctx: discord.ApplicationContext):
 @bot.slash_command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild_ids=guildIDs)
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.defer()
+    await asyncio.to_thread(DataManager.updateSystemsList, ctx.guild_id)
     await asyncio.to_thread(DataManager.updateSystemsBGSData, ctx.guild_id)
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
 

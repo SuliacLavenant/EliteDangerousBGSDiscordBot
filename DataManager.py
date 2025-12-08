@@ -119,37 +119,37 @@ class DataManager:
                     systemNames.remove(systemName)
         return systemNames
 
-    ############################ UPDATE
-    def updateSystemsData(guild_id: str):
-        pass
+
+##################################################
+################################################## UPDATE
+
+    #TODO test when possible (elitebgsapi was down when writed)
+    def updateSystemsList(guild_id: str):
+        minorFactionName = DataManager.getMinorFactionName(guild_id)
+        storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
+        apiSystemNamesList = DataManager.requestSystemNamesList(minorFactionName)
+
+        if apiSystemNamesList != None:
+            # remove lost systems
+            for systemName in (set(storedSystemNamesList)-set(apiSystemNamesList)):
+                DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
+
+            # add aquiered systems
+            for systemName in (set(apiSystemNamesList)-set(storedSystemNamesList)):
+                DataManager.requestAndStoreSystemData(guild_id,systemName)
+
+        return True
+
 
     def updateSystemsBGSData(guild_id: str):
         storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
-        if storedSystemNamesList==None:
-            return False
-        elif len(storedSystemNamesList)==0:
-            DataManager.requestAndStoreSystemsData(guild_id)
-            return True
-        else:
-            minorFactionName = DataManager.getMinorFactionName(guild_id)
-            apiSystemNamesList = DataManager.requestSystemNamesList(minorFactionName)
-
-            if apiSystemNamesList != None:
-                # remove lost systems
-                for systemName in (set(storedSystemNamesList)-set(apiSystemNamesList)):
-                    DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
-
-                # add aquiered systems
-                for systemName in (set(apiSystemNamesList)-set(storedSystemNamesList)):
-                    DataManager.requestAndStoreSystemData(guild_id,systemName)
-
-            # update the other systems
-            storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
-            for systemName in storedSystemNamesList:
-                print(systemName)
-                DataManager.updateSystemBGSData(guild_id, systemName)
-            
-            return True
+        systems = []
+        for systemName in storedSystemNamesList:
+            print(systemName)
+            systems.append(DataManager.requestSystemData(systemName))
+        
+        DataStorageManager.updateSystems(guild_id, systems)
+        return True
 
 
     def updateSystemBGSData(guild_id: str, systemName: str):

@@ -155,6 +155,26 @@ class DataStorageManager:
             return False
 
 
+    def updateSystems(guild_id: str, systems: list):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        systemsData = DataStorageManager.readFileContent(filePath)
+
+        for system in systems:
+            if system.name in systemsData:
+                systemsData[system.name]["population"] = system.population
+                systemsData[system.name]["security"] = system.security
+                systemsData[system.name]["economy"] = system.economy
+                systemsData[system.name]["secondEconomy"] = system.secondEconomy
+                systemsData[system.name]["reserve"] = system.reserve
+                systemsData[system.name]["controllingFaction"] = system.controllingFaction
+                systemsData[system.name]["factions"] = system.factions
+            else:
+                print(f"{system.name} do not exist in storage")
+
+        DataStorageManager.atomicWriteFileContent(filePath,systemsData)
+        return True
+
+
 ##################################################
 ################################################## System Groups
 
