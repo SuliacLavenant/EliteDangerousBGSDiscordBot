@@ -98,16 +98,26 @@ class System:
             return None
         
     def getMinorFactionConflictState(self, minorFactionName: str):
-        war = self.doMinorFactionHaveState(minorFactionName, "war")
-        if war == "pending" or war == "active":
-            return "war"
-        civilWar = self.doMinorFactionHaveState(minorFactionName, "civil war")
-        if civilWar == "pending" or civilWar == "active":
-            return "civil war"
-        election = self.doMinorFactionHaveState(minorFactionName, "election")
-        if election == "pending" or election == "active":
-            return "election"
+        if self.doMinorFactionHaveTheSameInfluenceAsAnother(minorFactionName):
+            war = self.doMinorFactionHaveState(minorFactionName, "war")
+            if war == "pending" or war == "active":
+                return "war"
+            civilWar = self.doMinorFactionHaveState(minorFactionName, "civil war")
+            if civilWar == "pending" or civilWar == "active":
+                return "civil war"
+            election = self.doMinorFactionHaveState(minorFactionName, "election")
+            if election == "pending" or election == "active":
+                return "election"
         return None
+    
+    def doMinorFactionHaveTheSameInfluenceAsAnother(self, minorFactionName: str):
+        minorFactionInfluence = self.factions[minorFactionName]["influence"]
+        for factionName in self.factions:
+            if factionName != minorFactionName:
+                factionInfluence = self.factions[factionName]["influence"]
+                if factionInfluence == minorFactionInfluence:
+                    return True
+        return False
 
     def lower(self, string: str):
         return string.lower() if isinstance(string, str) else string
