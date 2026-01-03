@@ -121,3 +121,29 @@ class System:
 
     def lower(self, string: str):
         return string.lower() if isinstance(string, str) else string
+
+
+
+
+##########################################################################################################
+###################################### STR Functions #####################################################
+##########################################################################################################
+
+    def getStrSystemEconomy(self):
+        if self.secondEconomy == None:
+            return self.economy.title()
+        else:
+            return f"{self.economy.title()} / {self.secondEconomy.title()}"
+        
+    def getStrSystemPopulation(self):
+        if self.population == -1:
+            return "?"
+        match len(str(self.population)):
+            case 0 | 1 | 2 | 3:
+                return str(self.population)
+            case 4 | 5 | 6:
+                return f"{str(self.population)[:3]},{str(self.population)[3:]}"
+            case 7 | 8 | 9:
+                return f"{str(round(self.population/1000000,2))} million"
+            case _:
+                return f"{str(round(self.population/1000000000,2))} billion"
