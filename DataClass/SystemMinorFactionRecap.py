@@ -51,7 +51,7 @@ class SystemMinorFactionRecap:
         if self.expansionWarning:
             self.warning = "expansion"
         if self.importantState != None:
-            self.warning = "status"
+            self.warning = "state"
 
     def calculateLeaderInfluenceMarginWarning(self):
         if self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level3"]:

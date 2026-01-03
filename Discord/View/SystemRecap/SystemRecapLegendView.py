@@ -21,7 +21,8 @@ class SystemsRecapLegendView(discord.ui.View):
         status = f"{BotConfig.emotes["warningLevel0"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level1"]*100)}%** margin.\n"
         status += f"{BotConfig.emotes["warningLevel1"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level2"]*100)}%**-**{int(BotConfig.leaderInfluenceWarning["level1"]*100)}%** margin.\n"
         status += f"{BotConfig.emotes["warningLevel2"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%**-**{int(BotConfig.leaderInfluenceWarning["level2"]*100)}%** margin.\n"
-        status += f"{BotConfig.emotes["warningLevel3"]}: **{self.minorFactionName}** is leader with less than a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%** margin, or have an Important State.\n"
+        status += f"{BotConfig.emotes["warningLevel3"]}: **{self.minorFactionName}** is leader with less than a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%** margin.\n"
+        status += f"{BotConfig.emotes["warningImportantState"]}: **{self.minorFactionName}** have an Important state (conflict or retreat).\n"
         status += f"{BotConfig.emotes["warningExpansion"]}: **{self.minorFactionName}** is close to trigger an **Expansion** (influence>**{int(BotConfig.influenceExpansionWarning*100)}%**, **75%** to trigger an **Expansion**).\n"
         status += f"{BotConfig.emotes["warningLevelOther"]}: **{self.minorFactionName}** have no specific status in this System (not leader and not in retreat)."
         embed.add_field(name=f"Status Warning Indicator", value=status, inline=False)

@@ -85,8 +85,10 @@ class SystemsRecapView(discord.ui.View):
                 return BotConfig.emotes["warningLevel1"]
             case "marginLvl2":
                 return BotConfig.emotes["warningLevel2"]
-            case "marginLvl3" | "status":
+            case "marginLvl3":
                 return BotConfig.emotes["warningLevel3"]
+            case "state":
+                return BotConfig.emotes["warningImportantState"]
 
 
     def getInfluenceDiffLevelStr(self, systemRecap: SystemMinorFactionRecap):

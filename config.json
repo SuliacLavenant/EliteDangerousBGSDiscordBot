@@ -8,6 +8,7 @@
             "warningLevel2": ":orange_circle:",
             "warningLevel3": ":red_circle:",
             "warningExpansion": ":blue_circle:",
+            "warningImportantState": ":no_entry:",
             "numberOfFaction": {
                 "maximumFaction": ":lock:",
                 "minimumFaction": ":shield:"
