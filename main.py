@@ -11,7 +11,9 @@ from DataManager import DataManager
 from DataProcessor import DataProcessor
 from APIRequester.APIManager import APIManager
 
+from Discord.View.ErrorMessageView import ErrorMessageView
 from Discord.View.MinorFactionView import MinorFactionView
+from Discord.View.SystemView import SystemView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
 from Discord.View.SystemGroup.ManageSystemGroupsView import ManageSystemGroupsView
 from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
@@ -56,6 +58,7 @@ async def init(ctx: discord.ApplicationContext):
 @bot.slash_command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild_ids=guildIDs)
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.defer()
+    #print("!!! shortened for tests")
     await asyncio.to_thread(DataManager.updateSystemsList, ctx.guild_id)
     await asyncio.to_thread(DataManager.updateStoredSystemsBGSData, ctx.guild_id)
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
@@ -101,6 +104,29 @@ async def managesystemgroup(ctx: discord.ApplicationContext):
     manageSystemGroupsView = ManageSystemGroupsView(DataManager.getSystemGroups(ctx.guild_id))
 
     await ctx.edit(embed=manageSystemGroupsView.getEmbed(), view=manageSystemGroupsView)
+
+
+
+@bot.slash_command(name="system", description="show system information", guild_ids=guildIDs)
+async def system(ctx: discord.ApplicationContext, system_name: str):
+    await ctx.defer()
+
+    system = DataManager.getSystem(ctx.guild_id, system_name.lower())
+    if system != None:
+        view = SystemView(system)
+    else:
+        view = ErrorMessageView("System not found in Minor Faction systems")
+
+
+    await ctx.edit(embed=view.getEmbed(), view=view)
+
+
+
+
+
+
+
+
 
 ####################################################################
 
