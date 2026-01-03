@@ -160,3 +160,10 @@ class DataManager:
     def updateSystemBGSData(guild_id: str, systemName: str):
         system = DataManager.requestSystemData(systemName)
         return DataStorageManager.updateSystem(guild_id, system)
+
+
+    ###
+    def setSystemArchitect(guild_id: str, systemName: str, architectName: str):
+        system = DataManager.getSystem(guild_id, systemName)
+        system.architect = architectName.lower()
+        return DataStorageManager.updateSystem(guild_id, system)
