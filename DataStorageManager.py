@@ -100,7 +100,7 @@ class DataStorageManager:
         systemsData[system.name]["economy"] = system.economy
         systemsData[system.name]["secondEconomy"] = system.secondEconomy
         systemsData[system.name]["reserve"] = system.reserve
-        systemsData[system.name]["controllingFaction"] = system.controllingFaction
+        systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
         systemsData[system.name]["factions"] = system.factions
 
         DataStorageManager.atomicWriteFileContent(filePath,systemsData)
@@ -147,7 +147,7 @@ class DataStorageManager:
             systemsData[system.name]["economy"] = system.economy
             systemsData[system.name]["secondEconomy"] = system.secondEconomy
             systemsData[system.name]["reserve"] = system.reserve
-            systemsData[system.name]["controllingFaction"] = system.controllingFaction
+            systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
             systemsData[system.name]["factions"] = system.factions
 
             DataStorageManager.atomicWriteFileContent(filePath,systemsData)
@@ -167,7 +167,7 @@ class DataStorageManager:
                 systemsData[system.name]["economy"] = system.economy
                 systemsData[system.name]["secondEconomy"] = system.secondEconomy
                 systemsData[system.name]["reserve"] = system.reserve
-                systemsData[system.name]["controllingFaction"] = system.controllingFaction
+                systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
                 systemsData[system.name]["factions"] = system.factions
             else:
                 print(f"{system.name} do not exist in storage")

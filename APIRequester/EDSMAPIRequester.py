@@ -60,7 +60,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
             if "secondEconomy" in jsonData["information"]:
                 secondEconomy = jsonData["information"]["secondEconomy"]
 
-            system = System(name=jsonData["name"], population=jsonData["information"]["population"], security=jsonData["information"]["security"], economy=jsonData["information"]["economy"], secondEconomy=secondEconomy, reserve=jsonData["information"]["reserve"], controllingFaction=jsonData["information"]["faction"])
+            system = System(name=jsonData["name"], population=jsonData["information"]["population"], security=jsonData["information"]["security"], economy=jsonData["information"]["economy"], secondEconomy=secondEconomy, reserve=jsonData["information"]["reserve"], controllingFactionName=jsonData["information"]["faction"])
             return system
 
         except requests.exceptions.Timeout:

@@ -10,7 +10,7 @@ class System:
     secondEconomy: str = ""
     reserve: str = ""
 
-    controllingFaction: str = ""
+    controllingFactionName: str = ""
     factions: dict[str, dict] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -19,11 +19,11 @@ class System:
         self.economy = self.economy.lower()
         self.secondEconomy = self.secondEconomy.lower() if self.secondEconomy!=None else None
         self.reserve = self.reserve.lower() if self.reserve!=None else None
-        self.controllingFaction = self.controllingFaction.lower()
+        self.controllingFactionName = self.controllingFactionName.lower()
 
     @classmethod
     def initFromStoredData(cls, systemData: dict):
-        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFaction=systemData["controllingFaction"], factions=systemData["factions"])
+        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"])
 
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
@@ -31,15 +31,15 @@ class System:
 
     ### Method
     def isControlledBy(self, minorFactionName: str):
-        return self.controllingFaction == minorFactionName
+        return self.controllingFactionName == minorFactionName
 
     # Check if leader influence difference is safe
     def isLeaderSafe(self, safePercentDifference: int):
         safe = True
-        leaderInfluence = self.factions[self.controllingFaction]["influence"]
+        leaderInfluence = self.factions[self.controllingFactionName]["influence"]
 
         for faction in self.factions:
-            if faction!=self.controllingFaction:
+            if faction!=self.controllingFactionName:
                 factionInfluence = self.factions[faction]["influence"]
                 safe = safe and ((leaderInfluence-factionInfluence)>safePercentDifference)
 
@@ -48,7 +48,7 @@ class System:
 
     # Return influence difference between leader and second 
     def getLeaderInfluence(self):
-        return self.factions[self.controllingFaction]["influence"]
+        return self.factions[self.controllingFactionName]["influence"]
 
     # Return influence difference between leader and second 
     def getLeaderInfluenceMargin(self):
@@ -56,7 +56,7 @@ class System:
         secondInfluence = 0
 
         for faction in self.factions:
-            if faction!=self.controllingFaction:
+            if faction!=self.controllingFactionName:
                 factionInfluence = self.factions[faction]["influence"]
                 if factionInfluence>secondInfluence:
                     secondInfluence = factionInfluence
@@ -66,12 +66,12 @@ class System:
     
     # Return name and influence of the second 
     def getSecondAndItsInfluence(self):
-        leaderInfluence = self.factions[self.controllingFaction]["influence"]
+        leaderInfluence = self.factions[self.controllingFactionName]["influence"]
         secondInfluence = 0
         second = ""
 
         for faction in self.factions:
-            if faction!=self.controllingFaction:
+            if faction!=self.controllingFactionName:
                 factionInfluence = self.factions[faction]["influence"]
                 if factionInfluence>secondInfluence:
                     secondInfluence = factionInfluence
