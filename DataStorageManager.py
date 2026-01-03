@@ -102,6 +102,7 @@ class DataStorageManager:
         systemsData[system.name]["reserve"] = system.reserve
         systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
         systemsData[system.name]["factions"] = system.factions
+        systemsData[system.name]["architect"] = system.architect
 
         DataStorageManager.atomicWriteFileContent(filePath,systemsData)
         return True
@@ -149,6 +150,7 @@ class DataStorageManager:
             systemsData[system.name]["reserve"] = system.reserve
             systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
             systemsData[system.name]["factions"] = system.factions
+            systemsData[system.name]["architect"] = system.architect
 
             DataStorageManager.atomicWriteFileContent(filePath,systemsData)
             return True
@@ -169,6 +171,7 @@ class DataStorageManager:
                 systemsData[system.name]["reserve"] = system.reserve
                 systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
                 systemsData[system.name]["factions"] = system.factions
+                systemsData[system.name]["architect"] = system.architect
             else:
                 print(f"{system.name} do not exist in storage")
 

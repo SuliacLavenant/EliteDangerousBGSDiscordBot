@@ -13,6 +13,8 @@ class System:
     controllingFactionName: str = ""
     factions: dict[str, dict] = field(default_factory=dict)
 
+    architect: str = ""
+
     def __post_init__(self):
         self.name = self.name.lower()
         self.security = self.security.lower()
@@ -20,10 +22,11 @@ class System:
         self.secondEconomy = self.secondEconomy.lower() if self.secondEconomy!=None else None
         self.reserve = self.reserve.lower() if self.reserve!=None else None
         self.controllingFactionName = self.controllingFactionName.lower()
+        self.architect = self.architect.lower()
 
     @classmethod
     def initFromStoredData(cls, systemData: dict):
-        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"])
+        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"], architect=systemData["architect"])
 
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
