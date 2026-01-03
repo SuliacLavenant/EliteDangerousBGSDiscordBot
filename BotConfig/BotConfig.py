@@ -1,5 +1,7 @@
 import json
 
+from BotConfig.Emotes.Emotes import Emotes
+
 class BotConfig:
     configPath: str = "config.json"
 
@@ -13,6 +15,8 @@ class BotConfig:
     positionInSystemEmotes: dict
     stateEmotes: dict
 
+    emotesN: Emotes
+
     @classmethod
     def load(cls):
         with open(cls.configPath, "r", encoding="utf-8") as f:
@@ -21,6 +25,9 @@ class BotConfig:
         cls.leaderInfluenceWarning = data["systemRecap"]["influenceWarning"]["leader"]
         cls.influenceExpansionWarning = data["systemRecap"]["influenceWarning"]["other"]["expansion"]
         cls.influenceRetreatWarning = data["systemRecap"]["influenceWarning"]["other"]["retreat"]
+
+        # emotes
+        cls.emotesN = Emotes(data["emotes"])
 
         cls.emotes = data["systemRecap"]["emotes"]
         cls.numberOfFactionEmotes = data["systemRecap"]["emotes"]["numberOfFaction"]

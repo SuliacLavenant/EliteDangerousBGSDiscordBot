@@ -36,5 +36,13 @@
                 "expansion": 0.7
             }
         }
+    },
+    "emotes": {
+        "systemInformation": {
+            "economy": ":coin:",
+            "population": ":family_mwgb:",
+            "security": ":police_officer:",
+            "architect": ":construction_site:"
+        }
     }
 }
