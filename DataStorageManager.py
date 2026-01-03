@@ -2,7 +2,7 @@ import os
 import shutil
 import json
 
-from BotConfig import BotConfig
+from BotConfig.BotConfig import BotConfig
 
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System

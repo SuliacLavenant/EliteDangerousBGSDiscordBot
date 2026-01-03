@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 
-from BotConfig import BotConfig
+from BotConfig.BotConfig import BotConfig
 from DataClass.System import System
 
 @dataclass

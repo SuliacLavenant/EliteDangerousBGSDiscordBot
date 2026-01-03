@@ -18,7 +18,7 @@ from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendVie
 
 from Discord.View.APIMonitorView import APIMonitorView
 
-from BotConfig import BotConfig
+from BotConfig.BotConfig import BotConfig
 BotConfig.load()
 
 

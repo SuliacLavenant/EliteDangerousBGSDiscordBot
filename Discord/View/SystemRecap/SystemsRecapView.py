@@ -2,7 +2,7 @@ import discord
 import urllib.parse
 
 #custom
-from BotConfig import BotConfig
+from BotConfig.BotConfig import BotConfig
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 class SystemsRecapView(discord.ui.View):
