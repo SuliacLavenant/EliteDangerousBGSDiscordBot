@@ -56,7 +56,9 @@ class MinorFactionView(discord.ui.View):
     def getFactionRecapEmbed(self):
         title = self.minorFaction.name.title()
         description = f"Allegiance: **{self.minorFaction.allegiance.title()}**\n"
-        description += f"Government: **{self.minorFaction.government.title()}**"
+        description += f"Government: **{self.minorFaction.government.title()}**\n"
+        description += f"Capital: [**{self.minorFaction.capital.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.minorFaction.capital)})"
+        
         embed = discord.Embed(title=title, description=description)
 
         embed.add_field(name=f"Systems", value=f"Present in **{self.minorFaction.numberOfSystems}** systems. \n Controlling **TBA** systems.", inline=True)

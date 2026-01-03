@@ -70,6 +70,7 @@ class DataStorageManager:
         minorFactionData["name"] = minorFaction.name
         minorFactionData["allegiance"] = minorFaction.allegiance
         minorFactionData["government"] = minorFaction.government
+        minorFactionData["capital"] = minorFaction.capital
         DataStorageManager.atomicWriteFileContent(filePath,minorFactionData)
         return True
 
