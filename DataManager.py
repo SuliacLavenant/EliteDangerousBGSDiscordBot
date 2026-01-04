@@ -149,8 +149,9 @@ class DataManager:
         systems = []
         print(f"Updating {len(storedSystemNamesList)} systems")
         for systemName in storedSystemNamesList:
-            #print(systemName)
-            systems.append(DataManager.requestSystemData(systemName))
+            system = DataManager.getSystem(guild_id, systemName)
+            system.update(DataManager.requestSystemData(systemName))
+            systems.append(system)
         
         DataStorageManager.updateSystems(guild_id, systems)
         print("updateStoredSystemsBGSData: DONE")

@@ -31,6 +31,15 @@ class System:
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
 
+    def update(self, systemNew):
+        self.population = systemNew.population
+        self.security = systemNew.security
+        self.economy = systemNew.economy
+        self.secondEconomy = systemNew.secondEconomy
+        self.controllingFactionName = systemNew.controllingFactionName
+        self.factions = systemNew.factions
+
+
 
     ### Method
     def isControlledBy(self, minorFactionName: str):
