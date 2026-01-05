@@ -28,11 +28,11 @@ class SystemsRecapLegendView(discord.ui.View):
         embed.add_field(name=f"Status Warning Indicator", value=status, inline=False)
 
         #important State
-        importantState = f"{BotConfig.stateEmotes["war"]}: **{self.minorFactionName}** is engaged in a **War** or a **Civil War**.\n"
-        importantState += f"{BotConfig.stateEmotes["election"]}: **{self.minorFactionName}** is engaged in an **Election**.\n"
-        importantState += f"{BotConfig.stateEmotes["retreat"]}: **{self.minorFactionName}** is in **Retreat**.\n"
-        importantState += f"{BotConfig.stateEmotes["expansion"]}: **{self.minorFactionName}** is in **Expansion**. (not implemented yet)\n"
-        importantState += f"{BotConfig.stateEmotes["none"]}: **{self.minorFactionName}** does not have an important state."
+        importantState = f"{BotConfig.emotesN.minorFaction.state.war}: **{self.minorFactionName}** is engaged in a **War** or a **Civil War**.\n"
+        importantState += f"{BotConfig.emotesN.minorFaction.state.election}: **{self.minorFactionName}** is engaged in an **Election**.\n"
+        importantState += f"{BotConfig.emotesN.minorFaction.state.retreat}: **{self.minorFactionName}** is in **Retreat**.\n"
+        importantState += f"{BotConfig.emotesN.minorFaction.state.expansion}: **{self.minorFactionName}** is in **Expansion**. (not implemented yet)\n"
+        importantState += f"{BotConfig.emotesN.minorFaction.state.none}: **{self.minorFactionName}** does not have an important state."
         embed.add_field(name=f"Important State", value=importantState, inline=False)
 
         #position in system

@@ -32,5 +32,3 @@ class BotConfig:
         cls.emotes = data["systemRecap"]["emotes"]
         cls.numberOfFactionEmotes = data["systemRecap"]["emotes"]["numberOfFaction"]
         cls.positionInSystemEmotes = data["systemRecap"]["emotes"]["positionInSystem"]
-        cls.stateEmotes = data["systemRecap"]["emotes"]["states"]
-

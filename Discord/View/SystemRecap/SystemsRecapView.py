@@ -55,13 +55,13 @@ class SystemsRecapView(discord.ui.View):
     def getImportantStatusEmote(self, systemRecap: SystemMinorFactionRecap):
         match systemRecap.importantState:
             case None:
-                return BotConfig.stateEmotes["none"]
+                return BotConfig.emotesN.minorFaction.state.none
             case "war" | "civil war":
-                return BotConfig.stateEmotes["war"]
+                return BotConfig.emotesN.minorFaction.state.war
             case "election":
-                return BotConfig.stateEmotes["election"]
+                return BotConfig.emotesN.minorFaction.state.election
             case "retreat":
-                return BotConfig.stateEmotes["retreat"]
+                return BotConfig.emotesN.minorFaction.state.retreat
     
 
     def getNumberFactionEmote(self, systemRecap: SystemMinorFactionRecap):
