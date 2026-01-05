@@ -1,10 +1,10 @@
-from BotConfig.Emotes.SystemInformation import SystemInformation
+from BotConfig.Emotes.System.System import System
 from BotConfig.Emotes.MinorFaction.MinorFaction import MinorFaction
 
 class Emotes:
-    systemInformation: SystemInformation
+    system: System
     minorFaction: MinorFaction
 
     def __init__(self, emotesDict: dict):
-        self.systemInformation = SystemInformation(emotesDict["systemInformation"])
+        self.system = System(emotesDict["system"])
         self.minorFaction = MinorFaction(emotesDict["minorFaction"])

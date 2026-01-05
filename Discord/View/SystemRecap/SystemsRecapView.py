@@ -66,11 +66,11 @@ class SystemsRecapView(discord.ui.View):
 
     def getNumberFactionEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.numberOfFactions<=3:
-            return BotConfig.numberOfFactionEmotes["minimumFaction"]
+            return BotConfig.emotesN.system.numberOfMinorFaction[3]
         elif systemRecap.numberOfFactions>=7:
-            return BotConfig.numberOfFactionEmotes["maximumFaction"]
+            return BotConfig.emotesN.system.numberOfMinorFaction[7]
         else:
-            return f":number_{systemRecap.numberOfFactions}:"
+            return BotConfig.emotesN.system.numberOfMinorFaction[systemRecap.numberOfFactions]
 
 
     def getWarningLevelEmote(self, systemRecap: SystemMinorFactionRecap):

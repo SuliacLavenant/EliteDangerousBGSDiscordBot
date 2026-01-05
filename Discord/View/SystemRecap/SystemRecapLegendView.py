@@ -41,9 +41,9 @@ class SystemsRecapLegendView(discord.ui.View):
         embed.add_field(name=f"Position in System", value=position, inline=False)
 
         #number of faction in system
-        number = f"{BotConfig.numberOfFactionEmotes["minimumFaction"]}: **Minimum** of Minor Factions, **{self.minorFactionName}** can't be retreated.\n"
-        number += ":number_4::number_5::number_6:" + ": **Number** of Minor Factions.\n"
-        number += f"{BotConfig.numberOfFactionEmotes["maximumFaction"]}: **Maximum** of Minor Factions, no other Minor Factions can expand into this System."
+        number = f"{BotConfig.emotesN.system.numberOfMinorFaction[3]}: **Minimum** of Minor Factions, **{self.minorFactionName}** can't be retreated.\n"
+        number += BotConfig.emotesN.system.numberOfMinorFaction[4] + BotConfig.emotesN.system.numberOfMinorFaction[5] + BotConfig.emotesN.system.numberOfMinorFaction[6] + ": **Number** of Minor Factions.\n"
+        number += f"{BotConfig.emotesN.system.numberOfMinorFaction[7]}: **Maximum** of Minor Factions, no other Minor Factions can expand into this System."
         embed.add_field(name=f"Number of faction", value=number, inline=False)
 
         return embed

@@ -34,11 +34,11 @@ class SystemView(discord.ui.View):
 
     def getEmbed(self):
         title = self.system.name.title()
-        description = f"{BotConfig.emotesN.systemInformation.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
-        description += f"{BotConfig.emotesN.systemInformation.population} Population: **{self.system.getStrSystemPopulation()}**\n"
-        description += f"{BotConfig.emotesN.systemInformation.security} Security Level: **{self.system.security.title()}**\n"
+        description = f"{BotConfig.emotesN.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
+        description += f"{BotConfig.emotesN.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
+        description += f"{BotConfig.emotesN.system.information.security} Security Level: **{self.system.security.title()}**\n"
         if self.system.architect != "":
-            description += f"{BotConfig.emotesN.systemInformation.architect} Architect: **{self.system.architect.title()}**\n"
+            description += f"{BotConfig.emotesN.system.information.architect} Architect: **{self.system.architect.title()}**\n"
         description += "."
 
         embed = discord.Embed(title=title, description=description)

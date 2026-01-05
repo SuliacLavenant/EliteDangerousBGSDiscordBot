@@ -9,10 +9,6 @@
             "warningLevel3": ":red_circle:",
             "warningExpansion": ":blue_circle:",
             "warningImportantState": ":no_entry:",
-            "numberOfFaction": {
-                "maximumFaction": ":lock:",
-                "minimumFaction": ":shield:"
-            },
             "positionInSystem": {
                 "leader": ":crown:",
                 "other": ":bust_in_silhouette:"
@@ -31,11 +27,20 @@
         }
     },
     "emotes": {
-        "systemInformation": {
-            "economy": ":coin:",
-            "population": ":family_mwgb:",
-            "security": ":police_officer:",
-            "architect": ":construction_site:"
+        "system": {
+            "information": {
+                "economy": ":coin:",
+                "population": ":family_mwgb:",
+                "security": ":police_officer:",
+                "architect": ":construction_site:"
+            },
+            "numberOfMinorFaction": {
+                "minimum": ":shield:",
+                "4": ":number_4:",
+                "5": ":number_5:",
+                "6": ":number_6:",
+                "maximum": ":lock:"
+            }
         },
         "minorFaction": {
             "state": {

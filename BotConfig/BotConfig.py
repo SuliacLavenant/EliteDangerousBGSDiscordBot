@@ -30,5 +30,4 @@ class BotConfig:
         cls.emotesN = Emotes(data["emotes"])
 
         cls.emotes = data["systemRecap"]["emotes"]
-        cls.numberOfFactionEmotes = data["systemRecap"]["emotes"]["numberOfFaction"]
         cls.positionInSystemEmotes = data["systemRecap"]["emotes"]["positionInSystem"]

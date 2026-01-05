@@ -1,6 +1,6 @@
 import json
 
-class SystemInformation:
+class Information:
     economy: str
     population: str
     security: str
