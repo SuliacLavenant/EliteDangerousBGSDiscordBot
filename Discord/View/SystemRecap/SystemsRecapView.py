@@ -20,7 +20,7 @@ class SystemsRecapView(discord.ui.View):
             description += self.getSystemRecapOneLine(systemRecap)
             description += "\n"
             i+=1
-            if i>20:
+            if i>15:
                 break
         
         if self.color!=None:
@@ -32,10 +32,12 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
-        systemLine = ""
+        systemLine = f"{self.getWarningLevelEmote(systemRecap)} {self.getImportantStatusEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} **{round(systemRecap.influence*100,1)}**%"
+        
+        if systemRecap.marginWarning and systemRecap.importantState!= "war" and systemRecap.importantState!= "election":
+            systemLine += f" {self.getInfluenceDiffLevelStr(systemRecap)}"
 
-        #faction name + inara link
-        systemLine += f"{self.getWarningLevelEmote(systemRecap)} {self.getImportantStatusEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} **{round(systemRecap.influence*100,1)}**% {self.getInfluenceDiffLevelStr(systemRecap)}"
+        systemLine +=  f"{self.getLastUpdateWarning(systemRecap)}"
 
         return systemLine
 
@@ -96,3 +98,12 @@ class SystemsRecapView(discord.ui.View):
             return f"(+{round(systemRecap.leaderInfluenceMargin*100,1)}%)"
         else:
             return f"(-{round((systemRecap.leaderInfluence-systemRecap.influence)*100,1)}%)"
+
+
+    def getLastUpdateWarning(self, systemRecap: SystemMinorFactionRecap):
+        if systemRecap.daysSinceLastUpdate<=1:
+            return ""
+        else:
+            return f" | ({BotConfig.emotesN.warning}{systemRecap.daysSinceLastUpdate} days)"
+        
+        

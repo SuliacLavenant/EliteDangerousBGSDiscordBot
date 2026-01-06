@@ -13,7 +13,7 @@ class SystemsRecapViews:
         systems = {}
         for systemName in systemNames:
             systems[systemName] = systemsRecap[systemName]
-            if len(systems)>=20:
+            if len(systems)>=15:
                 if not titleSet:
                     embeds.append(SystemsRecapView(systems, "Raw Systems Recap").getEmbed())
                     titleSet = True

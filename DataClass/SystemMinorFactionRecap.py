@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
+from datetime import datetime, timezone
 
 from BotConfig.BotConfig import BotConfig
 from DataClass.System import System
@@ -22,6 +23,10 @@ class SystemMinorFactionRecap:
     positionInSystem: str = None
     numberOfFactions: int = 0
 
+    marginWarning: bool = False
+
+    daysSinceLastUpdate: int = -1
+
     def __init__(self, system: System, minorFactionName: str):
         self.system = system
         self.minorFactionName = minorFactionName
@@ -41,6 +46,8 @@ class SystemMinorFactionRecap:
         self.checkInfluenceWarning()
         self.numberOfFactions = len(system.factions)
 
+        self.calculateDaysSinceLastUpdate()
+
 
     #Calculate influence warning
     def checkInfluenceWarning(self):
@@ -55,10 +62,13 @@ class SystemMinorFactionRecap:
 
     def calculateLeaderInfluenceMarginWarning(self):
         if self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level3"]:
+            self.marginWarning = True
             return "marginLvl3"
         elif self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level2"]:
+            self.marginWarning = True
             return "marginLvl2"
         elif self.leaderInfluenceMargin < BotConfig.leaderInfluenceWarning["level1"]:
+            self.marginWarning = True
             return "marginLvl1"
         else:
             return "marginLvl0"
@@ -83,6 +93,13 @@ class SystemMinorFactionRecap:
             self.positionInSystem = "leader"
         else:
             self.positionInSystem = "other"
+
+
+    def calculateDaysSinceLastUpdate(self):
+        currentTime = datetime.now(timezone.utc)
+        lastInfluenceUpdate = datetime.fromtimestamp(self.system.lastInfluenceUpdate, tz=timezone.utc)
+        delta = currentTime - lastInfluenceUpdate
+        self.daysSinceLastUpdate = delta.days
 
 
     def __str__(self):

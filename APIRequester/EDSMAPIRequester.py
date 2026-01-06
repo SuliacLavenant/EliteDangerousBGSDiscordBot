@@ -73,11 +73,13 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
 
     def requestMinorFactionSystemData(system: System):
-        url = f"https://www.edsm.net/api-system-v1/factions?systemName={urllib.parse.quote(system.name)}"
+        url = f"https://www.edsm.net/api-system-v1/factions?systemName={urllib.parse.quote(system.name)}&showHistory=1"
 
         try:
             response = requests.get(url, timeout=10) #timeout 10 sec
             response.raise_for_status() #detect request error
+
+            timeStampSaved = False
 
             jsonData = response.json()
 
@@ -96,6 +98,10 @@ class EDSMAPIRequester(AbstractAPIRequester):
                         recoveringStates.append(state["state"].lower())
 
                     system.addFaction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], pendingStates, activeStates, recoveringStates)
+
+                    if not timeStampSaved:
+                        system.lastInfluenceUpdate = max(int(ts) for ts in faction["influenceHistory"].keys())
+                        timeStampSaved = True
 
             return system
 

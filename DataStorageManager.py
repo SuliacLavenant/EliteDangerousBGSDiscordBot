@@ -103,6 +103,7 @@ class DataStorageManager:
         systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
         systemsData[system.name]["factions"] = system.factions
         systemsData[system.name]["architect"] = system.architect
+        systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
 
         DataStorageManager.atomicWriteFileContent(filePath,systemsData)
         return True
@@ -151,6 +152,7 @@ class DataStorageManager:
             systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
             systemsData[system.name]["factions"] = system.factions
             systemsData[system.name]["architect"] = system.architect
+            systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
 
             DataStorageManager.atomicWriteFileContent(filePath,systemsData)
             return True
@@ -172,6 +174,7 @@ class DataStorageManager:
                 systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
                 systemsData[system.name]["factions"] = system.factions
                 systemsData[system.name]["architect"] = system.architect
+                systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
             else:
                 print(f"{system.name} do not exist in storage")
 

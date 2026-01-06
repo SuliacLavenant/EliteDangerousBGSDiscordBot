@@ -27,6 +27,7 @@
         }
     },
     "emotes": {
+        "warning": ":warning:",
         "system": {
             "information": {
                 "economy": ":coin:",

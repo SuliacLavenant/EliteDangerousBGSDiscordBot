@@ -15,6 +15,8 @@ class System:
 
     architect: str = ""
 
+    lastInfluenceUpdate: int = 0 #unix time
+
     def __post_init__(self):
         self.name = self.name.lower()
         self.security = self.security.lower()
@@ -26,7 +28,7 @@ class System:
 
     @classmethod
     def initFromStoredData(cls, systemData: dict):
-        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"], architect=systemData["architect"])
+        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"], architect=systemData["architect"], lastInfluenceUpdate=systemData["lastInfluenceUpdate"])
 
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
@@ -38,6 +40,8 @@ class System:
         self.secondEconomy = systemNew.secondEconomy
         self.controllingFactionName = systemNew.controllingFactionName
         self.factions = systemNew.factions
+
+        self.lastInfluenceUpdate = systemNew.lastInfluenceUpdate
 
 
 
