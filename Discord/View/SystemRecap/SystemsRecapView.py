@@ -32,8 +32,8 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
-        systemLine = f"{self.getWarningLevelEmote(systemRecap)} {self.getImportantStatusEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} **{round(systemRecap.influence*100,1)}**%"
-        
+        systemLine = f"{self.getWarningLevelEmote(systemRecap)} {self.getImportantStatusEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} {self.getSpecialSystemEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} **{round(systemRecap.influence*100,1)}**%"
+
         if systemRecap.marginWarning and systemRecap.importantState!= "war" and systemRecap.importantState!= "election":
             systemLine += f" {self.getInfluenceDiffLevelStr(systemRecap)}"
 
@@ -73,6 +73,14 @@ class SystemsRecapView(discord.ui.View):
             return BotConfig.emotesN.system.numberOfMinorFaction[7]
         else:
             return BotConfig.emotesN.system.numberOfMinorFaction[systemRecap.numberOfFactions]
+        
+    def getSpecialSystemEmote(self, systemRecap: SystemMinorFactionRecap):
+        if systemRecap.isOrigin:
+            return BotConfig.emotesN.system.information.origin
+        elif systemRecap.isArchitect:
+            return BotConfig.emotesN.system.information.architect
+        else:
+            return BotConfig.emotesN.nothing
 
 
     def getWarningLevelEmote(self, systemRecap: SystemMinorFactionRecap):

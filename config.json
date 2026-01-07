@@ -28,12 +28,14 @@
     },
     "emotes": {
         "warning": ":warning:",
+        "nothing": ":white_small_square:",
         "system": {
             "information": {
                 "economy": ":coin:",
                 "population": ":family_mwgb:",
                 "security": ":police_officer:",
-                "architect": ":construction_site:"
+                "architect": ":construction_site:",
+                "origin": ":european_castle:"
             },
             "numberOfMinorFaction": {
                 "minimum": ":shield:",

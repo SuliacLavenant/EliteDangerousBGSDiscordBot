@@ -7,7 +7,7 @@ from DataClass.System import System
 
 @dataclass
 class SystemMinorFactionRecap:
-    name: str = ""
+    system: System
     influence: int = -1
     isLeader: bool = None
     leaderInfluenceMargin: int = None
@@ -26,6 +26,9 @@ class SystemMinorFactionRecap:
     marginWarning: bool = False
 
     daysSinceLastUpdate: int = -1
+
+    isOrigin: bool = False
+    isArchitect: bool = False
 
     def __init__(self, system: System, minorFactionName: str):
         self.system = system
