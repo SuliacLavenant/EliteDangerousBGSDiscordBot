@@ -4,7 +4,7 @@ import discord
 from BotConfig.BotConfig import BotConfig
 from DataManager import DataManager
 from Discord.Modal.CreateSystemGroupModal import CreateSystemGroupModal
-from Discord.View.SystemGroup.Edit.SelectSystemGroupToEditView import SelectSystemGroupToEditView
+from Discord.View.SystemGroup.Edit.EditSystemGroupView import EditSystemGroupView
 
 from DataClass.SystemGroup import SystemGroup
 
@@ -12,7 +12,20 @@ class ManageSystemGroupsView(discord.ui.View):
     def __init__(self, systemGroups):
         super().__init__()
         self.systemGroups = systemGroups
-        print(systemGroups)
+
+        selectOptions = []
+        for systemGroup in self.systemGroups:
+            selectOption = discord.SelectOption(label=systemGroup.name)
+            selectOptions.append(selectOption)
+        
+        self.select = discord.ui.Select(
+            placeholder = f"Select a System Group",
+            min_values = 1,
+            max_values = 1,
+            options = selectOptions
+        )
+        self.select.callback = self.selectSystemGroup_callback
+        self.add_item(self.select)
 
 
     @discord.ui.button(label="Create New Group", style=discord.ButtonStyle.success)
@@ -30,13 +43,6 @@ class ManageSystemGroupsView(discord.ui.View):
         else:
             self.clear_items()
             await interaction.edit_original_response(embed=self.getGroupAlreadyExistEmbed(groupName), view=self)
-
-
-    @discord.ui.button(label="Edit System Group", style=discord.ButtonStyle.secondary)
-    async def editSystemGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
-        selectSystemGroupToEditView = SelectSystemGroupToEditView(self.systemGroups)
-
-        await interaction.response.edit_message(embed=selectSystemGroupToEditView.getEmbed(),view=selectSystemGroupToEditView)
 
 
     def getEmbed(self):
@@ -63,3 +69,8 @@ class ManageSystemGroupsView(discord.ui.View):
         embed = discord.Embed(title=title, description=description)
         return embed
 
+
+    async def selectSystemGroup_callback(self, interaction: discord.Interaction):
+        selected = self.select.values[0]
+        editSystemGroupView = EditSystemGroupView(DataManager.getSystemGroup(interaction.guild_id,selected))
+        await interaction.response.edit_message(embed=editSystemGroupView.getEmbed(),view=editSystemGroupView)

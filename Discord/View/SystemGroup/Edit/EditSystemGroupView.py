@@ -12,7 +12,7 @@ class EditSystemGroupView(discord.ui.View):
         super().__init__()
         self.systemGroup = systemGroup
 
-    @discord.ui.button(label="Add Systems to SystemGroup", style=discord.ButtonStyle.success)
+    @discord.ui.button(label="Add Systems to SystemGroup", style=discord.ButtonStyle.secondary, row=0)
     async def addSystemsToSystemGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
         systemNameList = DataManager.getSystemNamesWithNoGroupList(interaction.guild_id)
         systemNameList.sort()
@@ -23,7 +23,7 @@ class EditSystemGroupView(discord.ui.View):
             editSystemGroupView = EditSystemGroupView(self.systemGroup)
             await interaction.response.edit_message(embed=editSystemGroupView.getEmbed(),view=editSystemGroupView)
 
-    @discord.ui.button(label="Delete System Group", style=discord.ButtonStyle.danger)
+    @discord.ui.button(label="Delete System Group", style=discord.ButtonStyle.danger, row=1)
     async def deleteSystemGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
         deleteSystemGroupConfirmationModal = DeleteSystemGroupConfirmationModal(self.systemGroup.name)
         await interaction.response.send_modal(deleteSystemGroupConfirmationModal)
