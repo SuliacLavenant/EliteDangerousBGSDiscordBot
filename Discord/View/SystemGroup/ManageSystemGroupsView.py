@@ -1,6 +1,7 @@
 import discord
 
 #custom
+from BotConfig.BotConfig import BotConfig
 from DataManager import DataManager
 from Discord.Modal.CreateSystemGroupModal import CreateSystemGroupModal
 from Discord.View.SystemGroup.Edit.SelectSystemGroupToEditView import SelectSystemGroupToEditView
@@ -44,7 +45,7 @@ class ManageSystemGroupsView(discord.ui.View):
         embed = discord.Embed(title=title, description=description)
 
         for systemGroup in self.systemGroups:
-            embed.add_field(name=systemGroup.name, value="system list TODO", inline=False)
+            embed.add_field(name=systemGroup.name, value=f"{BotConfig.emotesN.systems} {len(systemGroup.systems)} systems", inline=False)
 
         return embed
 

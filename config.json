@@ -29,6 +29,7 @@
     "emotes": {
         "warning": ":warning:",
         "nothing": ":white_small_square:",
+        "systems": ":sparkles:",
         "system": {
             "information": {
                 "economy": ":coin:",
