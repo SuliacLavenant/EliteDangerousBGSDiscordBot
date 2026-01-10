@@ -4,11 +4,11 @@ import discord
 from BotConfig.BotConfig import BotConfig
 from DataManager import DataManager
 from Discord.Modal.CreateSystemGroupModal import CreateSystemGroupModal
-from Discord.View.SystemGroup.Edit.EditSystemGroupView import EditSystemGroupView
+from Discord.View.SystemGroup.Edit.SystemGroupView import SystemGroupView
 
 from DataClass.SystemGroup import SystemGroup
 
-class ManageSystemGroupsView(discord.ui.View):
+class SystemGroupsView(discord.ui.View):
     def __init__(self, systemGroups):
         super().__init__()
         self.systemGroups = systemGroups
@@ -72,5 +72,5 @@ class ManageSystemGroupsView(discord.ui.View):
 
     async def selectSystemGroup_callback(self, interaction: discord.Interaction):
         selected = self.select.values[0]
-        editSystemGroupView = EditSystemGroupView(DataManager.getSystemGroup(interaction.guild_id,selected))
-        await interaction.response.edit_message(embed=editSystemGroupView.getEmbed(),view=editSystemGroupView)
+        systemGroupView = SystemGroupView(DataManager.getSystemGroup(interaction.guild_id,selected))
+        await interaction.response.edit_message(embed=systemGroupView.getEmbed(),view=systemGroupView)

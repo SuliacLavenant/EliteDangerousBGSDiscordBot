@@ -15,7 +15,7 @@ from Discord.View.ErrorMessageView import ErrorMessageView
 from Discord.View.MinorFactionView import MinorFactionView
 from Discord.View.SystemView import SystemView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
-from Discord.View.SystemGroup.ManageSystemGroupsView import ManageSystemGroupsView
+from Discord.View.SystemGroup.SystemGroupsView import SystemGroupsView
 from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
 
 from Discord.View.APIMonitorView import APIMonitorView
@@ -97,13 +97,13 @@ async def apimonitor(ctx: discord.ApplicationContext):
 
 
 #manage system group
-@bot.slash_command(name="managesystemgroup", description="manage system group (create, add system to group)", guild_ids=guildIDs)
+@bot.slash_command(name="systemgroup", description="manage system group (create, add system to group)", guild_ids=guildIDs)
 async def managesystemgroup(ctx: discord.ApplicationContext):
     await ctx.defer()
 
-    manageSystemGroupsView = ManageSystemGroupsView(DataManager.getSystemGroups(ctx.guild_id))
+    systemGroupsView = SystemGroupsView(DataManager.getSystemGroups(ctx.guild_id))
 
-    await ctx.edit(embed=manageSystemGroupsView.getEmbed(), view=manageSystemGroupsView)
+    await ctx.edit(embed=systemGroupsView.getEmbed(), view=systemGroupsView)
 
 
 

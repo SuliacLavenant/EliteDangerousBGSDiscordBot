@@ -44,7 +44,7 @@ class DataManager:
         DataStorageManager.storeSystemGroup(guild_id, systemGroup)
 
     def removeSystemGroup(guild_id: str, systemGroupName: str):
-        DataStorageManager.removeSystemGroup(guild_id, systemGroupName)
+        return DataStorageManager.removeSystemGroup(guild_id, systemGroupName)
 
     ############################
     ############################ API Request
