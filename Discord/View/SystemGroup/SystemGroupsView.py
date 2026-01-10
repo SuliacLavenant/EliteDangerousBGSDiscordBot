@@ -33,16 +33,6 @@ class SystemGroupsView(discord.ui.View):
         createSystemGroupModal = CreateSystemGroupModal()
         await interaction.response.send_modal(createSystemGroupModal)
         await createSystemGroupModal.wait()
-        groupName = str(createSystemGroupModal.systemGroupName.value)
-        if DataManager.getSystemGroup(interaction.guild_id, groupName) == None:
-            systemGroup = SystemGroup(name=groupName)
-            DataManager.saveSystemGroup(interaction.guild_id, systemGroup)
-            
-            self.clear_items()
-            await interaction.edit_original_response(embed=self.getGroupCreatedEmbed(systemGroup), view=self)
-        else:
-            self.clear_items()
-            await interaction.edit_original_response(embed=self.getGroupAlreadyExistEmbed(groupName), view=self)
 
 
     def getEmbed(self):

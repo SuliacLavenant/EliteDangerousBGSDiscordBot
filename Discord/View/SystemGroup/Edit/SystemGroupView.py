@@ -7,7 +7,7 @@ from Discord.View.SystemGroup.Edit.SelectSystemsToAddToGroupView import SelectSy
 from Discord.Modal.SystemGroup.Edit.DeleteSystemGroupConfirmationModal import DeleteSystemGroupConfirmationModal
 
 class SystemGroupView(discord.ui.View):
-    def __init__(self, systemGroup: str):
+    def __init__(self, systemGroup: SystemGroup):
         super().__init__()
         self.systemGroup = systemGroup
 
