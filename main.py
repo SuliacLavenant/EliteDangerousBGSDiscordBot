@@ -7,6 +7,8 @@ import os
 import asyncio
 
 #custom files
+from DataClass.GuildSettings import GuildSettings
+
 from DataManager import DataManager
 from DataProcessor import DataProcessor
 from APIRequester.APIManager import APIManager
@@ -45,6 +47,12 @@ async def on_ready():
 
 
 ####################################################################
+####################################################################
+def isBotMessage(message) -> bool:
+    return message.author == bot.user
+
+####################################################################
+#################################################################### slash command
 
 @bot.slash_command(name="init", description="init", guild_ids=guildIDs)
 async def init(ctx: discord.ApplicationContext):
@@ -62,30 +70,6 @@ async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await asyncio.to_thread(DataManager.updateSystemsList, ctx.guild_id)
     await asyncio.to_thread(DataManager.updateStoredSystemsBGSData, ctx.guild_id)
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
-
-
-@bot.slash_command(name="bgsrecap", description="show recap of bgs (minor faction and system)", guild_ids=guildIDs)
-async def bgsrecap(ctx: discord.ApplicationContext):
-    await ctx.defer(ephemeral=True)
-
-    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id)
-    minorFactionView = MinorFactionView(minorFaction)
-
-    if minorFaction!=None:
-        systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
-
-        systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, ctx.guild_id)
-        systemGroups = await asyncio.to_thread(DataManager.getSystemGroups, ctx.guild_id)
-        systemsWithNoGroups = await asyncio.to_thread(DataManager.getSystemNamesWithNoGroupList, ctx.guild_id)
-        embeds = SystemsRecapViews.getSystemsMinorFactionRecapEmbeds(systemsRecap,systemGroups,systemsWithNoGroups)
-    
-    #Send Messages
-    await ctx.edit(content="Done")
-    await ctx.channel.send(embed=minorFactionView.getEmbed(), view=minorFactionView)
-    if minorFaction!=None:
-        await ctx.channel.send(embed=systemsRecapLegendView.getEmbed())
-        for i in range(len(embeds)):
-            await ctx.channel.send(embed=embeds[i])
 
 
 @bot.slash_command(name="apimonitor", description="show status of each used apis", guild_ids=guildIDs)
@@ -121,11 +105,40 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
     await ctx.edit(embed=view.getEmbed(), view=view)
 
 
+@bot.slash_command(name="bgsrecap", description="send recap of bgs (minor faction and system) in set channel", guild_ids=guildIDs)
+async def test(ctx: discord.ApplicationContext):
+    guildSettings = DataManager.getGuildSettings(ctx.guild_id)
+    channel = bot.get_channel(guildSettings.bgsRecapChanelID)
+
+    #purge du chanel
+    await channel.purge(check=isBotMessage)
+
+    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id)
+    minorFactionView = MinorFactionView(minorFaction)
+
+    if minorFaction!=None:
+        systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
+
+        systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, ctx.guild_id)
+        systemGroups = await asyncio.to_thread(DataManager.getSystemGroups, ctx.guild_id)
+        systemsWithNoGroups = await asyncio.to_thread(DataManager.getSystemNamesWithNoGroupList, ctx.guild_id)
+        embeds = SystemsRecapViews.getSystemsMinorFactionRecapEmbeds(systemsRecap,systemGroups,systemsWithNoGroups)
+    
+    #Send Messages
+    await channel.send(embed=minorFactionView.getEmbed(), view=minorFactionView)
+    if minorFaction!=None:
+        await channel.send(embed=systemsRecapLegendView.getEmbed())
+        for i in range(len(embeds)):
+            await channel.send(embed=embeds[i])
 
 
+@bot.slash_command(name="setbgsrecapchanel", description="test", guild_ids=guildIDs)
+async def setbgsrecapchanel(ctx: discord.ApplicationContext):
+    guildSettings = DataManager.getGuildSettings(ctx.guild_id)
+    guildSettings.bgsRecapChanelID = ctx.channel_id
+    DataManager.saveGuildSettings(ctx.guild_id, guildSettings)
 
-
-
+    await ctx.send_response("BGS recap chanel succesfully set!", ephemeral=True)
 
 
 ####################################################################

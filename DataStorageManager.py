@@ -7,6 +7,7 @@ from BotConfig.BotConfig import BotConfig
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
+from DataClass.GuildSettings import GuildSettings
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
@@ -237,6 +238,25 @@ class DataStorageManager:
             return True
         else:
             return False
+
+
+##################################################
+################################################## Guild Settings
+
+    def getGuildSettings(guild_id: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
+        guildSettingsData = DataStorageManager.readFileContent(filePath)
+
+        return GuildSettings.initFromDict(guildSettingsData)
+
+
+    def storeGuildSettings(guild_id: str, guildSettings: GuildSettings):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
+        guildSettingsData = DataStorageManager.readFileContent(filePath)
+
+        guildSettingsData["bgsRecapChanelID"] = guildSettings.bgsRecapChanelID
+        DataStorageManager.atomicWriteFileContent(filePath,guildSettingsData)
+        return True
 
 
 ##################################################

@@ -5,6 +5,7 @@ from DataStorageManager import DataStorageManager
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
+from DataClass.GuildSettings import GuildSettings
 
 
 class DataManager:
@@ -168,3 +169,13 @@ class DataManager:
         system = DataManager.getSystem(guild_id, systemName)
         system.architect = architectName.lower()
         return DataStorageManager.updateSystem(guild_id, system)
+    
+
+##################################################
+################################################## Guild Settings
+
+    def getGuildSettings(guild_id: str):
+        return DataStorageManager.getGuildSettings(guild_id)
+
+    def saveGuildSettings(guild_id: str, guildSettings: GuildSettings):
+        DataStorageManager.storeGuildSettings(guild_id, guildSettings)
