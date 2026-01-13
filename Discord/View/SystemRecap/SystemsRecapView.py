@@ -49,9 +49,9 @@ class SystemsRecapView(discord.ui.View):
     def getPositionEmote(self, systemRecap: SystemMinorFactionRecap):
         match systemRecap.positionInSystem:
             case "leader":
-                return BotConfig.positionInSystemEmotes["leader"]
+                return BotConfig.emotesN.minorFaction.positionInSystem.leader
             case "other":
-                return BotConfig.positionInSystemEmotes["other"]
+                return BotConfig.emotesN.minorFaction.positionInSystem.other
 
 
     def getImportantStatusEmote(self, systemRecap: SystemMinorFactionRecap):

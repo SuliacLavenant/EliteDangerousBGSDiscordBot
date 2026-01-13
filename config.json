@@ -8,11 +8,7 @@
             "warningLevel2": ":orange_circle:",
             "warningLevel3": ":red_circle:",
             "warningExpansion": ":blue_circle:",
-            "warningImportantState": ":no_entry:",
-            "positionInSystem": {
-                "leader": ":crown:",
-                "other": ":bust_in_silhouette:"
-            }
+            "warningImportantState": ":no_entry:"
         },
         "influenceWarning": {
             "leader": {
@@ -53,6 +49,11 @@
                 "election": ":incoming_envelope:",
                 "expansion": ":diamond_shape_with_a_dot_inside:",
                 "retreat": ":skull_crossbones:"
+            },
+            "positionInSystem": {
+                "leader": ":crown:",
+                "diplomatic": ":judge:",
+                "other": ":bust_in_silhouette:"
             }
         }
     }
