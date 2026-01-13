@@ -4,6 +4,7 @@ import json
 
 from BotConfig.BotConfig import BotConfig
 
+from DataClass.DiplomaticSystem import DiplomaticSystem
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
@@ -352,7 +353,61 @@ class DataStorageManager:
     ############################################# GET
 
 
+######################## Diplomatic System
+
+    def storeDiplomaticSystem(guild_id: str, diplomaticSystem: DiplomaticSystem):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        diplomaticSystemsData = DataStorageManager.readFileContent(filePath)
+
+        #data update
+        diplomaticSystemsData[diplomaticSystem.systemName] = {}
+        diplomaticSystemsData[diplomaticSystem.systemName]["systemName"] = diplomaticSystem.systemName
+        diplomaticSystemsData[diplomaticSystem.systemName]["diplomaticPositions"] = diplomaticSystem.diplomaticPositions
+        diplomaticSystemsData[diplomaticSystem.systemName]["description"] = diplomaticSystem.description
+
+        DataStorageManager.atomicWriteFileContent(filePath,diplomaticSystemsData)
+        return True
+
+
+    def getDiplomaticSystemNames(guild_id: str):############
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        diplomaticSystemsData = DataStorageManager.readFileContent(filePath)
+
+        return list(diplomaticSystemsData.keys())
+
+
+    def getDiplomaticSystems(guild_id: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        diplomaticSystemsData = DataStorageManager.readFileContent(filePath)
+
+        diplomaticSystems = []
+        for diplomaticSystemDict in diplomaticSystemsData.values():
+            diplomaticSystems.append(DiplomaticSystem.initFromStoredData(diplomaticSystemDict))
+
+        return diplomaticSystems
+
+
+    def getDiplomaticSystem(guild_id: str, diplomaticSystemName: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        diplomaticSystemsData = DataStorageManager.readFileContent(filePath)
+
+        if diplomaticSystemName in diplomaticSystemsData.keys():
+            return DiplomaticSystem.initFromStoredData(diplomaticSystemsData[diplomaticSystemName])
+        else:
+            return None
+
+
+    def removeSystemGroup(guild_id: str, diplomaticSystemName: str):
+        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        diplomaticSystemsData = DataStorageManager.readFileContent(filePath)
+        
+        if diplomaticSystemName in diplomaticSystemsData.keys():
+            diplomaticSystemsData.pop(diplomaticSystemName)
+            DataStorageManager.atomicWriteFileContent(filePath,diplomaticSystemsData)
+            return True
+        else:
+            return False
 
         
-######################### Group
+######################### Diplomatic System
 
