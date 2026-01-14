@@ -13,7 +13,10 @@ class System:
     controllingFactionName: str = ""
     factions: dict[str, dict] = field(default_factory=dict)
 
+    isOrigin: bool = False
+    isArchitected: bool = False
     architect: str = ""
+    isDiplomatic: bool = False
 
     lastInfluenceUpdate: int = 0 #unix time
 
@@ -28,7 +31,7 @@ class System:
 
     @classmethod
     def initFromStoredData(cls, systemData: dict):
-        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"], architect=systemData["architect"], lastInfluenceUpdate=systemData["lastInfluenceUpdate"])
+        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"], isOrigin=systemData["isOrigin"], isArchitected=systemData["isArchitected"], architect=systemData["architect"], isDiplomatic=systemData["isDiplomatic"], lastInfluenceUpdate=systemData["lastInfluenceUpdate"])
 
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
@@ -60,6 +63,22 @@ class System:
                 safe = safe and ((leaderInfluence-factionInfluence)>safePercentDifference)
 
         return safe
+
+
+    def getMinorFactionPosition(self, minorFactionName: str) -> int:
+        if minorFactionName not in self.factions.keys():
+            return -1
+        elif self.isControlledBy(minorFactionName):
+            return 1
+        else:
+            position = 1
+            influence = self.factions[minorFactionName]["influence"]
+            for faction in self.factions:
+                if faction!=minorFactionName:
+                    if influence < self.factions[faction]["influence"]:
+                        position+=1
+            return position
+
 
 
     # Return influence difference between leader and second 

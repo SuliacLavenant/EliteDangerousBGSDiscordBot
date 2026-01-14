@@ -1,4 +1,5 @@
 from DataManager import DataManager
+from DataStorageManager import DataStorageManager
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 class DataProcessor:
@@ -12,8 +13,11 @@ class DataProcessor:
             minorFactionSystemsRecap[systemName] = DataProcessor.getMinorFactionSystemRecap(guild_id, systemName, minorFactionName)
 
         return minorFactionSystemsRecap
-        
+
 
     def getMinorFactionSystemRecap(guild_id: str, systemName: str, minorFactionName: str):
-        system = DataManager.getSystem(guild_id, systemName)
-        return SystemMinorFactionRecap(system, minorFactionName)
+        system = DataStorageManager.getSystem(guild_id, systemName)
+        diplomaticSystem = None
+        if system.isDiplomatic:
+            diplomaticSystem = DataStorageManager.getDiplomaticSystem(guild_id,systemName)
+        return SystemMinorFactionRecap(system,minorFactionName,diplomaticSystem)

@@ -104,7 +104,10 @@ class DataStorageManager:
         systemsData[system.name]["reserve"] = system.reserve
         systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
         systemsData[system.name]["factions"] = system.factions
+        systemsData[system.name]["isOrigin"] = system.isOrigin
+        systemsData[system.name]["isArchitected"] = system.isArchitected
         systemsData[system.name]["architect"] = system.architect
+        systemsData[system.name]["isDiplomatic"] = system.isDiplomatic
         systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
 
         DataStorageManager.atomicWriteFileContent(filePath,systemsData)
@@ -153,7 +156,10 @@ class DataStorageManager:
             systemsData[system.name]["reserve"] = system.reserve
             systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
             systemsData[system.name]["factions"] = system.factions
+            systemsData[system.name]["isOrigin"] = system.isOrigin
+            systemsData[system.name]["isArchitected"] = system.isArchitected
             systemsData[system.name]["architect"] = system.architect
+            systemsData[system.name]["isDiplomatic"] = system.isDiplomatic
             systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
 
             DataStorageManager.atomicWriteFileContent(filePath,systemsData)
@@ -175,7 +181,10 @@ class DataStorageManager:
                 systemsData[system.name]["reserve"] = system.reserve
                 systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
                 systemsData[system.name]["factions"] = system.factions
+                systemsData[system.name]["isOrigin"] = system.isOrigin
+                systemsData[system.name]["isArchitected"] = system.isArchitected
                 systemsData[system.name]["architect"] = system.architect
+                systemsData[system.name]["isDiplomatic"] = system.isDiplomatic
                 systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
             else:
                 print(f"{system.name} do not exist in storage")
@@ -366,6 +375,13 @@ class DataStorageManager:
         diplomaticSystemsData[diplomaticSystem.systemName]["description"] = diplomaticSystem.description
 
         DataStorageManager.atomicWriteFileContent(filePath,diplomaticSystemsData)
+
+        #notify the system that it have diplomatic
+        system = DataStorageManager.getSystem(guild_id,diplomaticSystem.systemName)
+        if system != None:
+            system.isDiplomatic = True
+            DataStorageManager.updateSystem(guild_id,system)
+
         return True
 
 
@@ -397,13 +413,20 @@ class DataStorageManager:
             return None
 
 
-    def removeSystemGroup(guild_id: str, diplomaticSystemName: str):
+    def removeDiplomaticSystem(guild_id: str, diplomaticSystemName: str):
         filePath = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
         diplomaticSystemsData = DataStorageManager.readFileContent(filePath)
         
         if diplomaticSystemName in diplomaticSystemsData.keys():
             diplomaticSystemsData.pop(diplomaticSystemName)
             DataStorageManager.atomicWriteFileContent(filePath,diplomaticSystemsData)
+
+            #notify the system that it is no more diplomatic
+            system = DataStorageManager.getSystem(guild_id,diplomaticSystemName)
+            if system != None:
+                system.isDiplomatic = False
+                DataStorageManager.updateSystem(guild_id,system)
+
             return True
         else:
             return False

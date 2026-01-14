@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 from BotConfig.BotConfig import BotConfig
 from DataClass.System import System
+from DataClass.DiplomaticSystem import DiplomaticSystem
 
 @dataclass
 class SystemMinorFactionRecap:
@@ -30,9 +31,14 @@ class SystemMinorFactionRecap:
     isOrigin: bool = False
     isArchitect: bool = False
 
-    def __init__(self, system: System, minorFactionName: str):
+    isDiplomatic: bool = False
+    diplomaticWarning: str = None
+
+    def __init__(self, system: System, minorFactionName: str, diplomaticSystem: DiplomaticSystem = None):
         self.system = system
         self.minorFactionName = minorFactionName
+        self.isDiplomatic = self.system.isDiplomatic
+        self.diplomaticSystem = diplomaticSystem
 
         self.influence = system.getMinorFactionInfluence(self.minorFactionName)
         self.leaderInfluence = system.getLeaderInfluence()
@@ -47,6 +53,8 @@ class SystemMinorFactionRecap:
         self.checkImportantState()
         self.checkPositionInSystem()
         self.checkInfluenceWarning()
+        self.checkDiplomaticPosition()
+
         self.numberOfFactions = len(system.factions)
 
         self.calculateDaysSinceLastUpdate()
@@ -94,8 +102,34 @@ class SystemMinorFactionRecap:
     def checkPositionInSystem(self):
         if self.isLeader:
             self.positionInSystem = "leader"
+        elif self.isDiplomatic:
+            self.positionInSystem = "diplomatic"
         else:
             self.positionInSystem = "other"
+
+
+    def checkDiplomaticPosition(self):
+        if self.system.isDiplomatic:
+            if self.minorFactionName in self.diplomaticSystem.diplomaticPositions.keys():
+                minorFactionPosition = self.system.getMinorFactionPosition(self.minorFactionName)
+                match self.diplomaticSystem.diplomaticPositions[self.minorFactionName]:
+                    case 1:
+                        if minorFactionPosition != 1:
+                            self.diplomaticWarning = "shouldBeLeader"
+                    case 2:
+                        if minorFactionPosition == 1:
+                            self.diplomaticWarning = "shouldNotBeLeader"
+                        elif minorFactionPosition == 2:
+                            self.diplomaticWarning = "notLeaderGood"
+                        else:
+                            self.diplomaticWarning = "shouldtBeSecond"
+                    case _:
+                        for otherMinoFactionName in self.diplomaticSystem.diplomaticPositions.keys():
+                            if self.diplomaticSystem.diplomaticPositions[otherMinoFactionName] == 1:
+                                if self.system.getMinorFactionPosition(otherMinoFactionName) != 1 and minorFactionPosition == 1:
+                                    self.diplomaticWarning = "shouldNotBeLeader"
+                                else:
+                                    self.diplomaticWarning = "notLeaderGood"
 
 
     def calculateDaysSinceLastUpdate(self):

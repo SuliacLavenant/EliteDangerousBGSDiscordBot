@@ -50,6 +50,8 @@ class SystemsRecapView(discord.ui.View):
         match systemRecap.positionInSystem:
             case "leader":
                 return BotConfig.emotesN.minorFaction.positionInSystem.leader
+            case "diplomatic":
+                return BotConfig.emotesN.minorFaction.positionInSystem.diplomatic
             case "other":
                 return BotConfig.emotesN.minorFaction.positionInSystem.other
 
@@ -84,21 +86,36 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getWarningLevelEmote(self, systemRecap: SystemMinorFactionRecap):
+        emote = ""
         match systemRecap.warning:
             case "expansion":
-                return BotConfig.emotes["warningExpansion"]
+                emote = BotConfig.emotes["warningExpansion"]
             case None:
-                return BotConfig.emotes["warningLevelOther"]
+                emote = BotConfig.emotes["warningLevelOther"]
             case "marginLvl0":
-                return BotConfig.emotes["warningLevel0"]
+                emote = BotConfig.emotes["warningLevel0"]
             case "marginLvl1":
-                return BotConfig.emotes["warningLevel1"]
+                emote = BotConfig.emotes["warningLevel1"]
             case "marginLvl2":
-                return BotConfig.emotes["warningLevel2"]
+                emote = BotConfig.emotes["warningLevel2"]
             case "marginLvl3":
-                return BotConfig.emotes["warningLevel3"]
+                emote = BotConfig.emotes["warningLevel3"]
             case "state":
-                return BotConfig.emotes["warningImportantState"]
+                emote = BotConfig.emotes["warningImportantState"]
+        
+        #diplomatic
+        if systemRecap.isDiplomatic:
+            match systemRecap.diplomaticWarning:
+                case "shouldBeLeader":
+                    emote = BotConfig.emotes["warningLevel3"]
+                case "shouldNotBeLeader":
+                    emote = BotConfig.emotes["warningLevel3"]
+                case "shouldtBeSecond":
+                    emote = BotConfig.emotes["warningLevel3"]
+                case "notLeaderGood":
+                    emote = BotConfig.emotes["warningLevel0"]
+
+        return emote
 
 
     def getInfluenceDiffLevelStr(self, systemRecap: SystemMinorFactionRecap):
