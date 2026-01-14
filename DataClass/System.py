@@ -80,6 +80,12 @@ class System:
             return position
 
 
+    def getMinorFactionsRanking(self):
+        ranking = {}
+        for minorFactionName in self.factions:
+            ranking[self.getMinorFactionPosition(minorFactionName)] = minorFactionName
+        return ranking
+
 
     # Return influence difference between leader and second 
     def getLeaderInfluence(self):

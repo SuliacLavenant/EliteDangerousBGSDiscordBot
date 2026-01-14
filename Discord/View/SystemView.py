@@ -43,11 +43,19 @@ class SystemView(discord.ui.View):
 
         embed = discord.Embed(title=title, description=description)
 
-        controllingFactionDict = self.system.factions[self.system.controllingFactionName]
-        controllingFactionDescription = f"Name: **{controllingFactionDict["name"].title()}**\n"
-        controllingFactionDescription += f"Allegiance: **{controllingFactionDict["allegiance"].title()}**\n"
-        controllingFactionDescription += f"Government: **{controllingFactionDict["government"].title()}**\n"
+        ranking = self.system.getMinorFactionsRanking()
+        current = 1
+        while current<=len(ranking):
+            emote = ""
+            if current == 1:
+                emote = BotConfig.emotesN.minorFaction.positionInSystem.leader
+            else:
+                emote = BotConfig.emotesN.minorFaction.positionInSystem.other
+            minorFactionDict = self.system.factions[ranking[current]]
+            minorFactionDescription = f"Allegiance: **{minorFactionDict["allegiance"].title()}**\n"
+            minorFactionDescription += f"Government: **{minorFactionDict["government"].title()}**\n"
+            embed.add_field(name=f"{emote} {minorFactionDict["name"].title()} {emote} - < {round(minorFactionDict["influence"]*100,1)}% >", value=minorFactionDescription, inline=False)
 
-        embed.add_field(name=f"{BotConfig.positionInSystemEmotes["leader"]} Controlling Faction {BotConfig.positionInSystemEmotes["leader"]}", value=controllingFactionDescription, inline=False)
+            current+=1
 
         return embed
