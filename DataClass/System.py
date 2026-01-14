@@ -83,7 +83,11 @@ class System:
     def getMinorFactionsRanking(self):
         ranking = {}
         for minorFactionName in self.factions:
-            ranking[self.getMinorFactionPosition(minorFactionName)] = minorFactionName
+            rank = self.getMinorFactionPosition(minorFactionName)
+            if rank in ranking.keys():
+                ranking[rank+1] = minorFactionName
+            else:
+                ranking[rank] = minorFactionName
         return ranking
 
 
