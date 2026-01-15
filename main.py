@@ -113,7 +113,8 @@ async def test(ctx: discord.ApplicationContext):
     #purge du chanel
     await channel.purge(check=isBotMessage)
 
-    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id)
+    minorFactionName = DataManager.getGuildMinorFactionName(ctx.guild_id)
+    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id, minorFactionName)
     minorFactionView = MinorFactionView(minorFaction)
 
     if minorFaction!=None:

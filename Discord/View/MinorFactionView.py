@@ -57,7 +57,7 @@ class MinorFactionView(discord.ui.View):
         title = self.minorFaction.name.title()
         description = f"Allegiance: **{self.minorFaction.allegiance.title()}**\n"
         description += f"Government: **{self.minorFaction.government.title()}**\n"
-        description += f"Capital: [**{self.minorFaction.capital.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.minorFaction.capital)})"
+        description += f"Origin System: [**{self.minorFaction.originSystemName.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.minorFaction.originSystemName)})"
         
         embed = discord.Embed(title=title, description=description)
 

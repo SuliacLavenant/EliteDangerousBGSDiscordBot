@@ -12,7 +12,7 @@ from DataClass.GuildSettings import GuildSettings
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
-    filesName: list = ["minorFaction.json","systems.json","systemGroups.json"]
+    filesName: list = ["guildSettings.json","minorFactions.json","systems.json","systemGroups.json","diplomaticSystems.json"]
 
     def readFileContent(filePath: str):
         try:
@@ -66,23 +66,24 @@ class DataStorageManager:
     #set minor faction to the data file
     def storeMinorFaction(guild_id: str, minorFaction: MinorFaction):
         filePath = DataStorageManager.getGuildFolderPath(guild_id)+"minorFaction.json"
-        minorFactionData = DataStorageManager.readFileContent(filePath)
+        minorFactionsData = DataStorageManager.readFileContent(filePath)
 
         #data update
-        minorFactionData["name"] = minorFaction.name
-        minorFactionData["allegiance"] = minorFaction.allegiance
-        minorFactionData["government"] = minorFaction.government
-        minorFactionData["capital"] = minorFaction.capital
-        DataStorageManager.atomicWriteFileContent(filePath,minorFactionData)
+        minorFactionsData[minorFaction.name] = {}
+        minorFactionsData[minorFaction.name]["name"] = minorFaction.name
+        minorFactionsData[minorFaction.name]["allegiance"] = minorFaction.allegiance
+        minorFactionsData[minorFaction.name]["government"] = minorFaction.government
+        minorFactionsData[minorFaction.name]["originSystemName"] = minorFaction.originSystemName
+        DataStorageManager.atomicWriteFileContent(filePath,minorFactionsData)
         return True
 
 
-    def getMinorFaction(guild_id: str):
+    def getMinorFaction(guild_id: str, minorFactionName: str):
         filePath = DataStorageManager.getGuildFolderPath(guild_id)+"minorFaction.json"
-        minorFactionData = DataStorageManager.readFileContent(filePath)
+        minorFactionsData = DataStorageManager.readFileContent(filePath)
 
-        if minorFactionData!=None and minorFactionData["name"]!= "":
-            minorFaction = MinorFaction.initFromStoredData(minorFactionData)
+        if minorFactionName in minorFactionsData.keys():
+            minorFaction = MinorFaction.initFromStoredData(minorFactionsData[minorFactionName])
             return minorFaction
         else:
             return None

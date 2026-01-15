@@ -19,18 +19,17 @@ class DataManager:
 
     #Set tracked minor faction
     def setPlayerMinorFaction(guild_id: str, minorFactionName: str):
-        if DataStorageManager.isGuildFilesExist(guild_id):
-            DataStorageManager.resetDataFile(guild_id)
-        else:
-            DataStorageManager.createDataFile(guild_id)
-        
         minorFaction = APIManager.requestMinorFactionBaseInformation(minorFactionName)
-        
         if minorFaction == None:
             print("no minor faction found")
             return False
         else:
             DataStorageManager.storeMinorFaction(guild_id,minorFaction)
+
+            guildSettings = DataStorageManager.getGuildSettings(guild_id)
+            guildSettings.minorFactionName = minorFaction.name
+            DataStorageManager.saveGuildSettings(guild_id,guildSettings)
+
             return True
 
 
@@ -87,15 +86,12 @@ class DataManager:
     ############################ GET
     ############################
 
-    def getMinorFaction(guild_id: str):
-        return DataStorageManager.getMinorFaction(guild_id)
+    def getMinorFaction(guild_id: str, minorFactionName: str):
+        return DataStorageManager.getMinorFaction(guild_id, minorFactionName)
 
-    def getMinorFactionName(guild_id: str):
-        minorFaction = DataStorageManager.getMinorFaction(guild_id)
-        if minorFaction!=None:
-            return minorFaction.name
-        else:
-            return ""
+    def getGuildMinorFactionName(guild_id: str):
+        guildSettings = DataStorageManager.getGuildSettings(guild_id)
+        return guildSettings.minorFactionName
 
     #get the systems list from storage
     def getSystemNamesList(guild_id: str):
@@ -126,7 +122,7 @@ class DataManager:
 
     #TODO test when possible (elitebgsapi was down when writed)
     def updateSystemsList(guild_id: str):
-        minorFactionName = DataManager.getMinorFactionName(guild_id)
+        minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
         storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
         apiSystemNamesList = DataManager.requestSystemNamesList(minorFactionName)
 
