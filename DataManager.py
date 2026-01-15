@@ -168,6 +168,7 @@ class DataManager:
     def setSystemArchitect(guild_id: str, systemName: str, architectName: str):
         system = DataManager.getSystem(guild_id, systemName)
         system.architect = architectName.lower()
+        system.isArchitected = True
         return DataStorageManager.updateSystem(guild_id, system)
     
 
