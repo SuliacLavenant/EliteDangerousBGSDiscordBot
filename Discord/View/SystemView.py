@@ -19,9 +19,19 @@ class SystemView(discord.ui.View):
             row=0
         ))
 
+        if self.system.isStored:
+            if self.system.isArchitected == None:
+                setArchitectButton = discord.ui.Button(
+                    label="Set Architect",
+                    style=discord.ButtonStyle.secondary,
+                    emoji="🏗️",
+                    row=1
+                )
+                setArchitectButton.callback = self.setArchitectButtonCallback
+                self.add_item(setArchitectButton)
 
-    @discord.ui.button(label="Set Architect", style=discord.ButtonStyle.secondary, emoji="🏗️", row=1)
-    async def setMinorFaction(self, button: discord.ui.Button, interaction: discord.Interaction):
+
+    async def setArchitectButtonCallback(self, interaction: discord.Interaction):
         setSystemArchitectModal = SetSystemArchitectModal(self.system)
         await interaction.response.send_modal(setSystemArchitectModal)
         await setSystemArchitectModal.wait()
@@ -42,7 +52,7 @@ class SystemView(discord.ui.View):
         description = f"{BotConfig.emotesN.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
         description += f"{BotConfig.emotesN.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
         description += f"{BotConfig.emotesN.system.information.security} Security Level: **{self.system.security.title()}**\n"
-        if self.system.architect != "":
+        if self.system.isArchitected:
             description += f"{BotConfig.emotesN.system.information.architect} Architect: **{self.system.architect.title()}**\n"
         description += "."
 
