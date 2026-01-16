@@ -20,6 +20,8 @@ class System:
 
     lastInfluenceUpdate: int = 0 #unix time
 
+    isStored: int = False #stored system
+
     def __post_init__(self):
         self.name = self.name.lower()
         self.security = self.security.lower()
@@ -31,7 +33,7 @@ class System:
 
     @classmethod
     def initFromStoredData(cls, systemData: dict):
-        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"], isOrigin=systemData["isOrigin"], isArchitected=systemData["isArchitected"], architect=systemData["architect"], isDiplomatic=systemData["isDiplomatic"], lastInfluenceUpdate=systemData["lastInfluenceUpdate"])
+        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"], isOrigin=systemData["isOrigin"], isArchitected=systemData["isArchitected"], architect=systemData["architect"], isDiplomatic=systemData["isDiplomatic"], lastInfluenceUpdate=systemData["lastInfluenceUpdate"], isStored=True)
 
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}

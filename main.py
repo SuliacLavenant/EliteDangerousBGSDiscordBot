@@ -99,7 +99,11 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
     if system != None:
         view = SystemView(system)
     else:
-        view = ErrorMessageView("System not found in Minor Faction systems")
+        system = DataManager.requestSystemData(system_name.lower())
+        if system != None:
+            view = SystemView(system)
+        else:
+            view = ErrorMessageView("System not found")
 
 
     await ctx.edit(embed=view.getEmbed(), view=view)

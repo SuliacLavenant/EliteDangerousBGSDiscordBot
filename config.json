@@ -25,6 +25,11 @@
     "emotes": {
         "warning": ":warning:",
         "nothing": ":white_small_square:",
+        "data": {
+            "online": ":globe_with_meridians:",
+            "saved": ":package:",
+            "save": "inbox_tray:" 
+        },
         "systems": ":sparkles:",
         "system": {
             "information": {

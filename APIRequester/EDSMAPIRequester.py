@@ -55,6 +55,9 @@ class EDSMAPIRequester(AbstractAPIRequester):
             response.raise_for_status() #detect request error
 
             jsonData = response.json()
+            
+            if len(jsonData)==0:
+                return None
 
             secondEconomy = "none"
             if "secondEconomy" in jsonData["information"]:

@@ -34,6 +34,11 @@ class SystemView(discord.ui.View):
 
     def getEmbed(self):
         title = self.system.name.title()
+        if self.system.isStored:
+            title += f" {BotConfig.emotesN.data.saved}"
+        else:
+            title += f" {BotConfig.emotesN.data.online}"
+
         description = f"{BotConfig.emotesN.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
         description += f"{BotConfig.emotesN.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
         description += f"{BotConfig.emotesN.system.information.security} Security Level: **{self.system.security.title()}**\n"

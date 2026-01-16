@@ -72,7 +72,8 @@ class DataManager:
     #request system data from API
     def requestSystemData(systemName: str):
         system = APIManager.requestSystemData(systemName)
-        system = APIManager.requestMinorFactionSystemData(system)
+        if system!=None:
+            system = APIManager.requestMinorFactionSystemData(system)
         return system
 
     #request system data from API
