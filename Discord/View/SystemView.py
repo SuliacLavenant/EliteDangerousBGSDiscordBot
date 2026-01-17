@@ -3,6 +3,7 @@ import urllib.parse
 
 from BotConfig.BotConfig import BotConfig
 from DataManager import DataManager
+from DataStorageManager import DataStorageManager
 from DataClass.System import System
 from Discord.Modal.System.SetSystemArchitectModal import SetSystemArchitectModal
 
@@ -30,6 +31,15 @@ class SystemView(discord.ui.View):
                 setArchitectButton.callback = self.setArchitectButtonCallback
                 self.add_item(setArchitectButton)
 
+                setNativeSystemtButton = discord.ui.Button(
+                    label="Native System",
+                    style=discord.ButtonStyle.secondary,
+                    emoji="🏛️",
+                    row=1
+                )
+                setNativeSystemtButton.callback = self.setNativeSystemtButtonCallback
+                self.add_item(setNativeSystemtButton)
+
 
     async def setArchitectButtonCallback(self, interaction: discord.Interaction):
         setSystemArchitectModal = SetSystemArchitectModal(self.system)
@@ -39,6 +49,16 @@ class SystemView(discord.ui.View):
         system = DataManager.getSystem(interaction.guild_id,self.system.name)
         systemView = SystemView(system)
         await interaction.edit_original_response(view=systemView,embed=systemView.getEmbed())
+
+
+    async def setNativeSystemtButtonCallback(self, interaction: discord.Interaction):
+        system = DataManager.getSystem(interaction.guild_id,self.system.name)
+        system.isArchitected = False
+
+        DataStorageManager.updateSystem(interaction.guild_id,system)
+
+        systemView = SystemView(system)
+        await interaction.response.edit_message(view=systemView,embed=systemView.getEmbed())
 
 
 

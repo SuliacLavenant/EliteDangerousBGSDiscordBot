@@ -14,7 +14,7 @@ class System:
     factions: dict[str, dict] = field(default_factory=dict)
 
     isOrigin: bool = False
-    isArchitected: bool = False
+    isArchitected: bool = None
     architect: str = ""
     isDiplomatic: bool = False
 
