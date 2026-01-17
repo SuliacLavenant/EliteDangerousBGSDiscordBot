@@ -56,7 +56,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
             jsonData = response.json()
             
-            if len(jsonData)==0:
+            if len(jsonData)==0 or len(jsonData["information"])==0:
                 return None
 
             secondEconomy = "none"
