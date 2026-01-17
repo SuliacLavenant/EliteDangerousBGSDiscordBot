@@ -75,6 +75,7 @@ class SystemView(discord.ui.View):
         description = f"{BotConfig.emotesN.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
         description += f"{BotConfig.emotesN.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
         description += f"{BotConfig.emotesN.system.information.security} Security Level: **{self.system.security.title()}**\n"
+        description += f"{self.getNumberMinorFactionEmote(self.system)} Number of Minor Factions: **{len(self.system.factions)}**\n"
         if self.system.isArchitected:
             description += f"{BotConfig.emotesN.system.information.architect} Architect: **{self.system.architect.title()}**\n"
         description += "."
@@ -103,3 +104,12 @@ class SystemView(discord.ui.View):
             current+=1
 
         return embed
+    
+
+    def getNumberMinorFactionEmote(self, system: System):
+        if len(system.factions)<=3:
+            return BotConfig.emotesN.system.numberOfMinorFaction[3]
+        elif len(system.factions)>=7:
+            return BotConfig.emotesN.system.numberOfMinorFaction[7]
+        else:
+            return BotConfig.emotesN.system.numberOfMinorFaction[len(system.factions)]
