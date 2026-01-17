@@ -10,6 +10,7 @@ import asyncio
 from DataClass.GuildSettings import GuildSettings
 
 from DataManager import DataManager
+from DataStorageManager import DataStorageManager
 from DataProcessor import DataProcessor
 from APIRequester.APIManager import APIManager
 
@@ -95,12 +96,16 @@ async def managesystemgroup(ctx: discord.ApplicationContext):
 async def system(ctx: discord.ApplicationContext, system_name: str):
     await ctx.defer()
 
+    guildSettings = DataManager.getGuildSettings(ctx.guild_id)
     system = DataManager.getSystem(ctx.guild_id, system_name.lower())
     if system != None:
         view = SystemView(system)
     else:
         system = DataManager.requestSystemData(system_name.lower())
         if system != None:
+            if system.haveFaction(guildSettings.minorFactionName):
+                DataStorageManager.addSystemToIgnoreListToDataFile(ctx.guild_id, system)
+                print("Untracked System Added")
             view = SystemView(system)
         else:
             view = ErrorMessageView("System not found")

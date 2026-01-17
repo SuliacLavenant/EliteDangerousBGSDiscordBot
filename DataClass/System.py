@@ -49,10 +49,14 @@ class System:
         self.lastInfluenceUpdate = systemNew.lastInfluenceUpdate
 
 
-
     ### Method
     def isControlledBy(self, minorFactionName: str):
         return self.controllingFactionName == minorFactionName
+
+
+    def haveFaction(self, minorFactionName: str):
+        return minorFactionName in self.factions
+
 
     # Check if leader influence difference is safe
     def isLeaderSafe(self, safePercentDifference: int):
