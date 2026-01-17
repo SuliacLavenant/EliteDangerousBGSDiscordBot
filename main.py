@@ -99,16 +99,16 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
     guildSettings = DataManager.getGuildSettings(ctx.guild_id)
     system = DataManager.getSystem(ctx.guild_id, system_name.lower())
     if system != None:
-        view = SystemView(system)
+        view = SystemView(system,guildSettings)
     else:
         system = DataManager.requestSystemData(system_name.lower())
         if system != None:
             if system.haveFaction(guildSettings.minorFactionName):
                 DataStorageManager.addSystemToIgnoreListToDataFile(ctx.guild_id, system)
                 print("Untracked System Added")
-            view = SystemView(system)
+            view = SystemView(system,guildSettings)
         else:
-            view = ErrorMessageView("System not found")
+            view = ErrorMessageView(f"System \"{system_name}\" not found.")
 
 
     await ctx.edit(embed=view.getEmbed(), view=view)

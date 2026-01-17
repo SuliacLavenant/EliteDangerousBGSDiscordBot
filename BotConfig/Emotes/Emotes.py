@@ -6,6 +6,7 @@ class Emotes:
     data: Data
     warning: str
     nothing: str
+    pin: str
     systems: str
     system: System
     minorFaction: MinorFaction
@@ -14,6 +15,7 @@ class Emotes:
         self.data = Data(emotesDict["data"])
         self.warning = emotesDict["warning"]
         self.nothing = emotesDict["nothing"]
+        self.pin = emotesDict["pin"]
         self.systems = emotesDict["systems"]
         self.system = System(emotesDict["system"])
         self.minorFaction = MinorFaction(emotesDict["minorFaction"])

@@ -5,12 +5,15 @@ from BotConfig.BotConfig import BotConfig
 from DataManager import DataManager
 from DataStorageManager import DataStorageManager
 from DataClass.System import System
+from DataClass.GuildSettings import GuildSettings
+
 from Discord.Modal.System.SetSystemArchitectModal import SetSystemArchitectModal
 
 class SystemView(discord.ui.View):
-    def __init__(self, system: System, isInStorage: bool = False):
+    def __init__(self, system: System, guildSettings: GuildSettings):
         super().__init__()
         self.system = system
+        self.guildSettings = guildSettings
 
         
         self.add_item(discord.ui.Button(
@@ -47,7 +50,7 @@ class SystemView(discord.ui.View):
         await setSystemArchitectModal.wait()
 
         system = DataManager.getSystem(interaction.guild_id,self.system.name)
-        systemView = SystemView(system)
+        systemView = SystemView(system, self.guildSettings)
         await interaction.edit_original_response(view=systemView,embed=systemView.getEmbed())
 
 
@@ -57,7 +60,7 @@ class SystemView(discord.ui.View):
 
         DataStorageManager.updateSystem(interaction.guild_id,system)
 
-        systemView = SystemView(system)
+        systemView = SystemView(system, self.guildSettings)
         await interaction.response.edit_message(view=systemView,embed=systemView.getEmbed())
 
 
@@ -81,15 +84,21 @@ class SystemView(discord.ui.View):
         ranking = self.system.getMinorFactionsRanking()
         current = 1
         while current<=len(ranking):
+            minorFactionDict = self.system.factions[ranking[current]]
+            minorFactionDescription = f"Allegiance: **{minorFactionDict["allegiance"].title()}**\n"
+            minorFactionDescription += f"Government: **{minorFactionDict["government"].title()}**\n"
+
             emote = ""
             if current == 1:
                 emote = BotConfig.emotesN.minorFaction.positionInSystem.leader
             else:
                 emote = BotConfig.emotesN.minorFaction.positionInSystem.other
-            minorFactionDict = self.system.factions[ranking[current]]
-            minorFactionDescription = f"Allegiance: **{minorFactionDict["allegiance"].title()}**\n"
-            minorFactionDescription += f"Government: **{minorFactionDict["government"].title()}**\n"
-            embed.add_field(name=f"{emote} {minorFactionDict["name"].title()} {emote} - < {round(minorFactionDict["influence"]*100,1)}% >", value=minorFactionDescription, inline=False)
+
+            title = f"{emote} {minorFactionDict["name"].title()} {emote} - < {round(minorFactionDict["influence"]*100,1)}% >"
+            if minorFactionDict["name"] == self.guildSettings.minorFactionName:
+                title += f" {BotConfig.emotesN.pin}"
+
+            embed.add_field(name=title, value=minorFactionDescription, inline=False)
 
             current+=1
 
