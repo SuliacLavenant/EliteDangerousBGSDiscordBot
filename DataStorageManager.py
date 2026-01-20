@@ -263,10 +263,7 @@ class DataStorageManager:
 
     def storeGuildSettings(guild_id: str, guildSettings: GuildSettings):
         filePath = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
-        guildSettingsData = DataStorageManager.readFileContent(filePath)
-
-        guildSettingsData["bgsRecapChanelID"] = guildSettings.bgsRecapChanelID
-        DataStorageManager.atomicWriteFileContent(filePath,guildSettingsData)
+        DataStorageManager.atomicWriteFileContent(filePath,guildSettings.getAsDict())
         return True
 
 

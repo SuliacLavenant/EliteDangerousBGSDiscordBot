@@ -1,4 +1,5 @@
 {
-    "bgsRecapChanelID": "none",
-    "minorFaction": "none"
+    "bgsRecapChanelID": null,
+    "bgsWarningRecapChanelID": null,
+    "minorFaction": null
 }

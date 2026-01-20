@@ -20,6 +20,7 @@ from Discord.View.SystemView import SystemView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
 from Discord.View.SystemGroup.SystemGroupsView import SystemGroupsView
 from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
+from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
 
 from Discord.View.APIMonitorView import APIMonitorView
 
@@ -141,8 +142,23 @@ async def test(ctx: discord.ApplicationContext):
         for i in range(len(embeds)):
             await channel.send(embed=embeds[i])
 
+    #######################
+    systemsInExpansionWarning = {}
+    for systemRecapName in systemsRecap:
+        if systemsRecap[systemRecapName].expansionWarning:
+            systemsInExpansionWarning[str(systemsRecap[systemRecapName].influence)] = systemsRecap[systemRecapName]
 
-@bot.slash_command(name="setbgsrecapchanel", description="test", guild_ids=guildIDs)
+    
+    expView = ExpansionWarningSystemsRecapView(systemsInExpansionWarning, True)
+
+    channel = bot.get_channel(guildSettings.bgsWarningRecapChanelID)
+    await channel.purge(check=isBotMessage)
+    await channel.send(embed=expView.getEmbed(), view=expView)
+
+
+
+
+@bot.slash_command(name="setbgsrecapchanel", description="", guild_ids=guildIDs)
 async def setbgsrecapchanel(ctx: discord.ApplicationContext):
     guildSettings = DataManager.getGuildSettings(ctx.guild_id)
     guildSettings.bgsRecapChanelID = ctx.channel_id
@@ -150,6 +166,13 @@ async def setbgsrecapchanel(ctx: discord.ApplicationContext):
 
     await ctx.send_response("BGS recap chanel succesfully set!", ephemeral=True)
 
+@bot.slash_command(name="setbgswarningrecapchanel", description="", guild_ids=guildIDs)
+async def setbgswarningrecapchanel(ctx: discord.ApplicationContext):
+    guildSettings = DataManager.getGuildSettings(ctx.guild_id)
+    guildSettings.bgsWarningRecapChanelID = ctx.channel_id
+    DataManager.saveGuildSettings(ctx.guild_id, guildSettings)
+
+    await ctx.send_response("BGS warning recap chanel succesfully set!", ephemeral=True)
 
 ####################################################################
 
