@@ -6,17 +6,19 @@ from BotConfig.BotConfig import BotConfig
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 class SystemsRecapView(discord.ui.View):
-    def __init__(self, systemsRecap: dict, color: int = None, title: str = None):
+    color: discord.Color = ""
+    title: str = ""
+    systemsRecapDict: dict
+
+    def __init__(self, systemsRecapDict: dict):
         super().__init__()
-        self.systemsRecap = systemsRecap
-        self.color = color
-        self.title = title
+        self.systemsRecapDict = systemsRecapDict
 
 
     def getEmbed(self):
         description=""
         i=0
-        for systemRecap in self.systemsRecap.values():
+        for systemRecap in self.systemsRecapDict.values():
             description += self.getSystemRecapOneLine(systemRecap)
             description += "\n"
             i+=1
@@ -24,7 +26,7 @@ class SystemsRecapView(discord.ui.View):
                 break
         
         if self.color!=None:
-            embed = discord.Embed(title=self.title, description=description, color=discord.Color(self.color))
+            embed = discord.Embed(title=self.title, description=description, color=self.color)
         else:
             embed = discord.Embed(title=self.title, description=description)
 
@@ -32,12 +34,7 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
-        systemLine = f"{self.getWarningLevelEmote(systemRecap)} {self.getImportantStatusEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} {self.getSpecialSystemEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} **{round(systemRecap.influence*100,1)}**%"
-
-        if systemRecap.marginWarning and systemRecap.importantState!= "war" and systemRecap.importantState!= "election":
-            systemLine += f" {self.getInfluenceDiffLevelStr(systemRecap)}"
-
-        systemLine +=  f"{self.getLastUpdateWarning(systemRecap)}"
+        systemLine = f"{self.getSystemNameWithInaraLink(systemRecap)}"
 
         return systemLine
 
@@ -66,7 +63,7 @@ class SystemsRecapView(discord.ui.View):
                 return BotConfig.emotesN.minorFaction.state.election
             case "retreat":
                 return BotConfig.emotesN.minorFaction.state.retreat
-    
+
 
     def getNumberFactionEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.numberOfFactions<=3:
@@ -75,7 +72,8 @@ class SystemsRecapView(discord.ui.View):
             return BotConfig.emotesN.system.numberOfMinorFaction[7]
         else:
             return BotConfig.emotesN.system.numberOfMinorFaction[systemRecap.numberOfFactions]
-        
+
+
     def getSpecialSystemEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isOrigin:
             return BotConfig.emotesN.system.information.origin
@@ -117,6 +115,11 @@ class SystemsRecapView(discord.ui.View):
 
         return emote
 
+    
+    def getInfluenceString(self, systemRecap: SystemMinorFactionRecap):
+        influence = round(systemRecap.influence*100,1)
+        return f"< **{influence}**% >"
+
 
     def getInfluenceDiffLevelStr(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isLeader:
@@ -130,5 +133,3 @@ class SystemsRecapView(discord.ui.View):
             return ""
         else:
             return f" | ({BotConfig.emotesN.warning}{systemRecap.daysSinceLastUpdate} days)"
-        
-        
