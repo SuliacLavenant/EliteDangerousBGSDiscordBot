@@ -118,42 +118,37 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
 @bot.slash_command(name="bgsrecap", description="send recap of bgs (minor faction and system) in set channel", guild_ids=guildIDs)
 async def test(ctx: discord.ApplicationContext):
     guildSettings = DataManager.getGuildSettings(ctx.guild_id)
-    channel = bot.get_channel(guildSettings.bgsRecapChanelID)
-
-    #purge du chanel
-    await channel.purge(check=isBotMessage)
-
-    minorFactionName = DataManager.getGuildMinorFactionName(ctx.guild_id)
-    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id, minorFactionName)
-    minorFactionView = MinorFactionView(minorFaction)
-
-    if minorFaction!=None:
-        systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
-
-        systemsRecap = await asyncio.to_thread(DataProcessor.getMinorFactionSystemsRecap, ctx.guild_id)
-        systemGroups = await asyncio.to_thread(DataManager.getSystemGroups, ctx.guild_id)
-        systemsWithNoGroups = await asyncio.to_thread(DataManager.getSystemNamesWithNoGroupList, ctx.guild_id)
-        embeds = SystemsRecapViews.getSystemsMinorFactionRecapEmbeds(systemsRecap,systemGroups,systemsWithNoGroups)
+    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id, guildSettings.minorFactionName)
     
-    #Send Messages
-    await channel.send(embed=minorFactionView.getEmbed(), view=minorFactionView)
     if minorFaction!=None:
-        await channel.send(embed=systemsRecapLegendView.getEmbed())
-        for i in range(len(embeds)):
-            await channel.send(embed=embeds[i])
+        systemsRecap = DataProcessor.getMinorFactionSystemsRecap(ctx.guild_id)
+        systemGroups = DataManager.getSystemGroups(ctx.guild_id)
+        systemsWithNoGroups = DataManager.getSystemNamesWithNoGroupList(ctx.guild_id)
+        systemsRecapViews = SystemsRecapViews(systemsRecap,systemGroups,systemsWithNoGroups)
 
-    #######################
-    systemsInExpansionWarning = {}
-    for systemRecapName in systemsRecap:
-        if systemsRecap[systemRecapName].expansionWarning:
-            systemsInExpansionWarning[str(systemsRecap[systemRecapName].influence)] = systemsRecap[systemRecapName]
+        ##### BGS Recap
+        if guildSettings.bgsRecapChanelID!=None:
+            channel = bot.get_channel(guildSettings.bgsRecapChanelID)
+            await channel.purge(check=isBotMessage)
+            #minor faction
+            minorFactionView = MinorFactionView(minorFaction)
+            await channel.send(embed=minorFactionView.getEmbed(), view=minorFactionView)
+            #systems legend
+            systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
+            await channel.send(embed=systemsRecapLegendView.getEmbed())
+            #systems
+            embeds = systemsRecapViews.getSystemsMinorFactionRecapEmbeds()
+            for i in range(len(embeds)):
+                await channel.send(embed=embeds[i])
 
-    
-    expView = ExpansionWarningSystemsRecapView(systemsInExpansionWarning, True)
-
-    channel = bot.get_channel(guildSettings.bgsWarningRecapChanelID)
-    await channel.purge(check=isBotMessage)
-    await channel.send(embed=expView.getEmbed(), view=expView)
+        ##### warning Recap
+        if guildSettings.bgsWarningRecapChanelID!=None:
+            channel = bot.get_channel(guildSettings.bgsWarningRecapChanelID)
+            await channel.purge(check=isBotMessage)
+            #expansion
+            expEmbeds = systemsRecapViews.getExpansionWarningSystemRecapEmbeds()
+            for i in range(len(expEmbeds)):
+                await channel.send(embed=expEmbeds[i])
 
 
 
