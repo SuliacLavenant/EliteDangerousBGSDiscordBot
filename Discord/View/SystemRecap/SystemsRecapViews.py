@@ -3,6 +3,7 @@ import discord
 #custom
 from Discord.View.SystemRecap.GeneralSystemsRecapView import GeneralSystemsRecapView
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
+from Discord.View.SystemRecap.Warning.InfluenceMarginWarningSystemsRecapView import InfluenceMarginWarningSystemsRecapView
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 from DataClass.SystemGroup import SystemGroup
 
@@ -86,5 +87,41 @@ class SystemsRecapViews:
         if len(systems)>0:
             if not titleSet:
                 embeds.append(ExpansionWarningSystemsRecapView(systems, not titleSet).getEmbed())
+
+        return embeds
+    
+    def getInfluenceMarginWarningSystemRecapEmbeds(self):
+        warningLvl = {}
+        warningLvl[3] = []
+        warningLvl[2] = []
+        warningLvl[1] = []
+        for systemRecapName in self.systemRecapsDict:
+            systemRecap = self.systemRecapsDict[systemRecapName]
+            if systemRecap.marginWarning:
+                match systemRecap.influenceWarningLevel:
+                    case 3:
+                        warningLvl[3].append(systemRecapName)
+                    case 2:
+                        warningLvl[2].append(systemRecapName)
+                    case 1:
+                        warningLvl[1].append(systemRecapName)
+
+        embeds = {}
+        embeds[3] = []
+        embeds[2] = []
+        embeds[1] = []
+        
+        for lvl in warningLvl.keys():
+            titleSet = False
+            systems = {}
+            for systemRecapName in warningLvl[lvl]:
+                systems[systemRecapName] = self.systemRecapsDict[systemRecapName]
+                if len(systems)>=15:
+                    embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(systems, lvl, not titleSet).getEmbed())
+                    titleSet = True
+                    systems = {}
+            if len(systems)>0:
+                if not titleSet:
+                    embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(systems, lvl, not titleSet).getEmbed())
 
         return embeds

@@ -149,6 +149,11 @@ async def test(ctx: discord.ApplicationContext):
             expEmbeds = systemsRecapViews.getExpansionWarningSystemRecapEmbeds()
             for i in range(len(expEmbeds)):
                 await channel.send(embed=expEmbeds[i])
+            #influence margin warning
+            influenceMarginWarningEmbedsAll = systemsRecapViews.getInfluenceMarginWarningSystemRecapEmbeds()
+            for influenceMarginWarningEmbeds in influenceMarginWarningEmbedsAll.values():
+                for i in range(len(influenceMarginWarningEmbeds)):
+                    await channel.send(embed=influenceMarginWarningEmbeds[i])
 
 
 

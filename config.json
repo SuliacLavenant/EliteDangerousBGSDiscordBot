@@ -48,6 +48,10 @@
             }
         },
         "minorFaction": {
+            "influence": {
+                "down": ":chart_with_downwards_trend:",
+                "up": ":chart_with_upwards_trend:"
+            },
             "state": {
                 "none": ":white_small_square:",
                 "war": ":crossed_swords:",
