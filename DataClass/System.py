@@ -39,14 +39,15 @@ class System:
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
 
     def update(self, systemNew):
-        self.population = systemNew.population
-        self.security = systemNew.security
-        self.economy = systemNew.economy
-        self.secondEconomy = systemNew.secondEconomy
-        self.controllingFactionName = systemNew.controllingFactionName
-        self.factions = systemNew.factions
+        if systemNew!=None:
+            self.population = systemNew.population
+            self.security = systemNew.security
+            self.economy = systemNew.economy
+            self.secondEconomy = systemNew.secondEconomy
+            self.controllingFactionName = systemNew.controllingFactionName
+            self.factions = systemNew.factions
 
-        self.lastInfluenceUpdate = systemNew.lastInfluenceUpdate
+            self.lastInfluenceUpdate = systemNew.lastInfluenceUpdate
 
 
     ### Method
