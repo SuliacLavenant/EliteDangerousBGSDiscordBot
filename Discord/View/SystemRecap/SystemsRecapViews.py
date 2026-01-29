@@ -77,16 +77,17 @@ class SystemsRecapViews:
         return embeds
 
     def getExpansionWarningSystemRecapEmbeds(self):
-        systemRecapsInExpansionWarning = {}
-        for systemRecapName in self.systemRecapsDict:
-            if self.systemRecapsDict[systemRecapName].expansionWarning:
-                systemRecapsInExpansionWarning[str(self.systemRecapsDict[systemRecapName].influence)] = self.systemRecapsDict[systemRecapName]
+        systemNamesInExpansionWarning = []
+        for systemName in self.systemRecapsDict:
+            if self.systemRecapsDict[systemName].expansionWarning:
+                systemNamesInExpansionWarning.append(systemName)
+        systemNamesInExpansionWarning = self.sortListByInfluence(systemNamesInExpansionWarning)
 
         embeds = []
         titleSet = False
         systems = {}
-        for systemRecap in systemRecapsInExpansionWarning.values():
-            systems[systemRecap.system.name] = systemRecap
+        for systemName in systemNamesInExpansionWarning:
+            systems[systemName] = self.systemRecapsDict[systemName]
             if len(systems)>=15:
                 embeds.append(ExpansionWarningSystemsRecapView(systems, not titleSet).getEmbed())
                 titleSet = True
@@ -112,6 +113,10 @@ class SystemsRecapViews:
                         warningLvl[2].append(systemRecapName)
                     case 1:
                         warningLvl[1].append(systemRecapName)
+        
+        warningLvl[3] = self.sortListByInfluenceMargin(warningLvl[3])
+        warningLvl[2] = self.sortListByInfluenceMargin(warningLvl[2])
+        warningLvl[1] = self.sortListByInfluenceMargin(warningLvl[1])
 
         embeds = {}
         embeds[3] = []
@@ -132,3 +137,28 @@ class SystemsRecapViews:
                     embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(systems, lvl, not titleSet).getEmbed())
 
         return embeds
+
+    ## SORT ALGOS
+
+    def sortListByInfluence(self, systemNameList: list) -> list:
+        for i in range(1,len(systemNameList)):
+            tmp = systemNameList[i]
+            j = i-1
+            while j>=0 and self.systemRecapsDict[systemNameList[j]].influence < self.systemRecapsDict[tmp].influence:
+                systemNameList[j+1] = systemNameList[j]
+                j-=1
+            systemNameList[j+1] = tmp
+        
+        return systemNameList
+
+
+    def sortListByInfluenceMargin(self, systemNameList: list) -> list:
+        for i in range(1,len(systemNameList)):
+            tmp = systemNameList[i]
+            j = i-1
+            while j>=0 and self.systemRecapsDict[systemNameList[j]].leaderInfluenceMargin > self.systemRecapsDict[tmp].leaderInfluenceMargin:
+                systemNameList[j+1] = systemNameList[j]
+                j-=1
+            systemNameList[j+1] = tmp
+        
+        return systemNameList
