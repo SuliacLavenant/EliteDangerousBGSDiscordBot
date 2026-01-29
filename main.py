@@ -132,8 +132,8 @@ async def test(ctx: discord.ApplicationContext):
             channel = bot.get_channel(guildSettings.bgsSystemRecapChannelID)
             await channel.purge(check=isBotMessage)
             #minor faction
-            minorFactionView = MinorFactionView(minorFaction)
-            await channel.send(embed=minorFactionView.getEmbed(), view=minorFactionView)
+            # minorFactionView = MinorFactionView(minorFaction)
+            # await channel.send(embed=minorFactionView.getEmbed(), view=minorFactionView)
             #systems legend
             systemsRecapLegendView = SystemsRecapLegendView(minorFaction.name)
             await channel.send(embed=systemsRecapLegendView.getEmbed())
