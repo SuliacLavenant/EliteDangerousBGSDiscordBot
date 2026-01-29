@@ -128,11 +128,6 @@ class DataManager:
         apiSystemNamesList = DataManager.requestSystemNamesList(minorFactionName)
 
         if apiSystemNamesList != None:
-            # remove lost systems
-            for systemName in (set(storedSystemNamesList)-set(apiSystemNamesList)):
-                print(f"Retreated From System \"{systemName}\"")
-                DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
-
             # add aquiered systems
             for systemName in (set(apiSystemNamesList)-set(storedSystemNamesList)):
                 print(f"Aquiered System \"{systemName}\"")
@@ -143,6 +138,7 @@ class DataManager:
 
 
     def updateStoredSystemsBGSData(guild_id: str):
+        minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
         storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
         systems = []
         print(f"Updating {len(storedSystemNamesList)} systems")
@@ -153,6 +149,15 @@ class DataManager:
         
         DataStorageManager.updateSystems(guild_id, systems)
         print("updateStoredSystemsBGSData: DONE")
+
+        # remove lost systems
+        for system in systems:
+            if not system.haveFaction(minorFactionName):
+                print(f"Retreated From System \"{systemName}\"")
+                DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
+        print("retreat check: DONE")
+
+
         return True
 
 
