@@ -21,6 +21,7 @@ from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
 from Discord.View.SystemGroup.SystemGroupsView import SystemGroupsView
 from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
+from Discord.View.GuildSettingsView import GuildSettingsView
 
 from Discord.View.APIMonitorView import APIMonitorView
 
@@ -127,8 +128,8 @@ async def test(ctx: discord.ApplicationContext):
         systemsRecapViews = SystemsRecapViews(systemsRecap,systemGroups,systemsWithNoGroups)
 
         ##### BGS Recap
-        if guildSettings.bgsRecapChanelID!=None:
-            channel = bot.get_channel(guildSettings.bgsRecapChanelID)
+        if guildSettings.bgsSystemRecapChannelID!=None:
+            channel = bot.get_channel(guildSettings.bgsSystemRecapChannelID)
             await channel.purge(check=isBotMessage)
             #minor faction
             minorFactionView = MinorFactionView(minorFaction)
@@ -142,8 +143,8 @@ async def test(ctx: discord.ApplicationContext):
                 await channel.send(embed=embeds[i])
 
         ##### warning Recap
-        if guildSettings.bgsWarningRecapChanelID!=None:
-            channel = bot.get_channel(guildSettings.bgsWarningRecapChanelID)
+        if guildSettings.bgsWarningRecapChannelID!=None:
+            channel = bot.get_channel(guildSettings.bgsWarningRecapChannelID)
             await channel.purge(check=isBotMessage)
             #expansion
             expEmbeds = systemsRecapViews.getExpansionWarningSystemRecapEmbeds()
@@ -157,22 +158,13 @@ async def test(ctx: discord.ApplicationContext):
 
 
 
+@bot.slash_command(name="guildsettings", description="", guild_ids=guildIDs)
+async def guildsettings(ctx: discord.ApplicationContext):
+    guildSettings = DataStorageManager.getGuildSettings(ctx.guild_id)
+    guildSettingsView = GuildSettingsView(guildSettings)
 
-@bot.slash_command(name="setbgsrecapchanel", description="", guild_ids=guildIDs)
-async def setbgsrecapchanel(ctx: discord.ApplicationContext):
-    guildSettings = DataManager.getGuildSettings(ctx.guild_id)
-    guildSettings.bgsRecapChanelID = ctx.channel_id
-    DataManager.saveGuildSettings(ctx.guild_id, guildSettings)
+    await ctx.send_response(embed=guildSettingsView.getEmbed(), view=guildSettingsView)
 
-    await ctx.send_response("BGS recap chanel succesfully set!", ephemeral=True)
-
-@bot.slash_command(name="setbgswarningrecapchanel", description="", guild_ids=guildIDs)
-async def setbgswarningrecapchanel(ctx: discord.ApplicationContext):
-    guildSettings = DataManager.getGuildSettings(ctx.guild_id)
-    guildSettings.bgsWarningRecapChanelID = ctx.channel_id
-    DataManager.saveGuildSettings(ctx.guild_id, guildSettings)
-
-    await ctx.send_response("BGS warning recap chanel succesfully set!", ephemeral=True)
 
 ####################################################################
 

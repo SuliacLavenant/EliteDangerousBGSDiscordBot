@@ -4,16 +4,16 @@ from dataclasses import dataclass, field
 class GuildSettings:
     minorFactionName: str = None
 
-    bgsRecapChanelID: int = None
-    bgsWarningRecapChanelID: int = None
+    bgsSystemRecapChannelID: int = None
+    bgsWarningRecapChannelID: int = None
 
     #init from Dict
     @classmethod
     def initFromDict(cls, guildSettingsDict: dict):
         guildSettings = cls(
             minorFactionName=guildSettingsDict["minorFactionName"],
-            bgsRecapChanelID=guildSettingsDict["bgsRecapChanelID"],
-            bgsWarningRecapChanelID=guildSettingsDict["bgsWarningRecapChanelID"]
+            bgsSystemRecapChannelID=guildSettingsDict["bgsSystemRecapChannelID"],
+            bgsWarningRecapChannelID=guildSettingsDict["bgsWarningRecapChannelID"]
             )
         return guildSettings
 
@@ -22,7 +22,7 @@ class GuildSettings:
 
         guildSettingsDict["minorFactionName"] = self.minorFactionName
 
-        guildSettingsDict["bgsRecapChanelID"] = self.bgsRecapChanelID
-        guildSettingsDict["bgsWarningRecapChanelID"] = self.bgsWarningRecapChanelID
+        guildSettingsDict["bgsSystemRecapChannelID"] = self.bgsSystemRecapChannelID
+        guildSettingsDict["bgsWarningRecapChannelID"] = self.bgsWarningRecapChannelID
 
         return guildSettingsDict
