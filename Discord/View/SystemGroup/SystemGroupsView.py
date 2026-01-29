@@ -41,7 +41,11 @@ class SystemGroupsView(discord.ui.View):
         embed = discord.Embed(title=title, description=description)
 
         for systemGroup in self.systemGroups:
-            embed.add_field(name=systemGroup.name, value=f"{BotConfig.emotesN.systems} {len(systemGroup.systems)} systems", inline=False)
+            name = systemGroup.name
+            if systemGroup.emote!=None:
+                name = f"{systemGroup.emote} {systemGroup.name} {systemGroup.emote}"
+
+            embed.add_field(name=name, value=f"{BotConfig.emotesN.systems} {len(systemGroup.systems)} systems", inline=False)
 
         return embed
 
