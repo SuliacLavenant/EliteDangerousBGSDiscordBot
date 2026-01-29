@@ -4,12 +4,13 @@ from dataclasses import dataclass, field
 class SystemGroup:
     name: str = ""
     color: int = 9936031
+    emote: str = None
     systems: list = field(default_factory=list)
 
     #init from Dict
     @classmethod
     def initFromDict(cls, systemGroupDict: dict):
-        return cls(name=systemGroupDict["name"],color=systemGroupDict["color"],systems=systemGroupDict["systems"])
+        return cls(name=systemGroupDict["name"],color=systemGroupDict["color"],emote=systemGroupDict["emote"],systems=systemGroupDict["systems"])
 
     def rename(self, name: str):
         self.name = name
@@ -31,4 +32,4 @@ class SystemGroup:
             return False
 
     def __str__(self):
-        return f"System Group Name: {self.name} | color: {self.color} | Systems: {self.systems}"
+        return f"System Group Name: {self.name} | color: {self.color} | emote: {self.emote} | Systems: {self.systems}"

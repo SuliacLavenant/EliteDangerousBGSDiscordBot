@@ -205,6 +205,7 @@ class DataStorageManager:
         systemGroupsData[systemGroup.name] = {}
         systemGroupsData[systemGroup.name]["name"] = systemGroup.name
         systemGroupsData[systemGroup.name]["color"] = systemGroup.color
+        systemGroupsData[systemGroup.name]["emote"] = systemGroup.emote
         systemGroupsData[systemGroup.name]["systems"] = systemGroup.systems
 
         DataStorageManager.atomicWriteFileContent(filePath,systemGroupsData)
