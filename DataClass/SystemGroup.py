@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 @dataclass
 class SystemGroup:
     name: str = ""
-    color: int = 9936031
+    color: int = None
     emote: str = None
     systems: list = field(default_factory=list)
 

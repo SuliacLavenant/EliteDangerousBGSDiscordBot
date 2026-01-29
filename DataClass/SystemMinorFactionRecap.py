@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from BotConfig.BotConfig import BotConfig
 from DataClass.System import System
 from DataClass.DiplomaticSystem import DiplomaticSystem
+from DataClass.SystemGroup import SystemGroup
 
 @dataclass
 class SystemMinorFactionRecap:
@@ -33,6 +34,9 @@ class SystemMinorFactionRecap:
 
     isDiplomatic: bool = False
     diplomaticWarning: str = None
+
+
+    systemGroup: SystemGroup = None
 
     def __init__(self, system: System, minorFactionName: str, diplomaticSystem: DiplomaticSystem = None):
         self.system = system

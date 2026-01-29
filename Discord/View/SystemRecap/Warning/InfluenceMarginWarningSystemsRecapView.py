@@ -24,7 +24,7 @@ class InfluenceMarginWarningSystemsRecapView(SystemsRecapView):
             self.title = f"{BotConfig.emotesN.minorFaction.influence.down} Influence Margin Warning Level {warningLvl} {BotConfig.emotesN.minorFaction.influence.down} (Inf Margin < {round((BotConfig.leaderInfluenceWarning[f"level{warningLvl}"])*100,1)}%)"
 
     def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
-        systemLine = f"{self.getWarningLevelEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} {self.getSpecialSystemEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} | {self.getInfluenceString(systemRecap)}"
+        systemLine = f"{self.getSystemGroupEmote(systemRecap)} | {self.getNumberFactionEmote(systemRecap)} {self.getSpecialSystemEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} | {self.getInfluenceString(systemRecap)}"
 
         if systemRecap.marginWarning and systemRecap.importantState!= "war" and systemRecap.importantState!= "election":
             systemLine += f" {self.getInfluenceDiffLevelStr(systemRecap)}"

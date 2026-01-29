@@ -13,6 +13,10 @@ class SystemsRecapViews:
         self.systemGroups = systemGroups
         self.systemsWithNoGroups = systemsWithNoGroups
 
+        for systemGroup in self.systemGroups:
+            for systemName in systemGroup.systems:
+                self.systemRecapsDict[systemName].systemGroup = systemGroup
+
 
     def getRawSystemsMinorFactionRecapEmbeds(self):
         systemNames = list(self.systemRecapsDict.keys())
@@ -41,31 +45,34 @@ class SystemsRecapViews:
             systemNames = systemGroup.systems
             if systemNames!=None and len(systemNames)>0:
                 systemNames.sort()
-                embeds += self.getSystemGroupRecapEmbeds(systemNames,systemGroup.name,discord.Color(systemGroup.color))
+                embeds += self.getSystemGroupRecapEmbeds(systemNames,systemGroup)
 
         if len(self.systemsWithNoGroups)>0:
             self.systemsWithNoGroups.sort()
-            embeds += self.getSystemGroupRecapEmbeds(self.systemsWithNoGroups)
+            embeds += self.getSystemGroupRecapEmbeds(self.systemsWithNoGroups, None)
         return embeds
 
-    def getSystemGroupRecapEmbeds(self, systemNames: list, groupName: str = "Other", color: discord.Color = None):
-        titleSet = False
+    def getSystemGroupRecapEmbeds(self, systemNames: list, systemGroup: SystemGroup):
+        title = None
+        color = None
+        if systemGroup!=None:
+            title = systemGroup.name
+            color = discord.Color(systemGroup.color)
+            if systemGroup.emote != None:
+                title = f"{systemGroup.emote} {title} {systemGroup.emote}"
+        else:
+            title = "Other"
+
         embeds=[]
         systems = {}
         for systemName in systemNames:
             systems[systemName] = self.systemRecapsDict[systemName]
             if len(systems)>=15:
-                if not titleSet:
-                    embeds.append(GeneralSystemsRecapView(systems, color, groupName).getEmbed())
-                    titleSet = True
-                else:
-                    embeds.append(GeneralSystemsRecapView(systems, color).getEmbed())
+                embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
+                title = None
                 systems = {}
         if len(systems)>0:
-            if not titleSet:
-                embeds.append(GeneralSystemsRecapView(systems, color, groupName).getEmbed())
-            else:
-                embeds.append(GeneralSystemsRecapView(systems, color).getEmbed())
+            embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
 
         return embeds
 

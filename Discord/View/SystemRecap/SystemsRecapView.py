@@ -83,6 +83,13 @@ class SystemsRecapView(discord.ui.View):
             return BotConfig.emotesN.nothing
 
 
+    def getSystemGroupEmote(self, systemRecap: SystemMinorFactionRecap):
+        emote = BotConfig.emotesN.nothing
+        if systemRecap.systemGroup != None and systemRecap.systemGroup.emote != None:
+            emote = systemRecap.systemGroup.emote
+        return emote
+
+
     def getWarningLevelEmote(self, systemRecap: SystemMinorFactionRecap):
         emote = ""
         match systemRecap.warning:
