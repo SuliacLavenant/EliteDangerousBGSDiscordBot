@@ -155,6 +155,10 @@ async def test(ctx: discord.ApplicationContext):
             for influenceMarginWarningEmbeds in influenceMarginWarningEmbedsAll.values():
                 for i in range(len(influenceMarginWarningEmbeds)):
                     await channel.send(embed=influenceMarginWarningEmbeds[i])
+            #conflicts
+            conflictEmbeds = systemsRecapViews.getConflictSystemRecapEmbeds()
+            for i in range(len(conflictEmbeds)):
+                await channel.send(embed=conflictEmbeds[i])
 
 
 

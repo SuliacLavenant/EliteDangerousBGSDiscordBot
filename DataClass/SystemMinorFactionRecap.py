@@ -35,6 +35,8 @@ class SystemMinorFactionRecap:
     isDiplomatic: bool = False
     diplomaticWarning: str = None
 
+    inConflict: bool = False
+
 
     systemGroup: SystemGroup = None
 
@@ -104,6 +106,7 @@ class SystemMinorFactionRecap:
             self.importantState = "retreat"
         conflictState = self.system.getMinorFactionConflictState(self.minorFactionName)
         if conflictState!=None:
+            self.inConflict = True
             self.importantState = conflictState
 
 

@@ -2,6 +2,7 @@ import discord
 
 #custom
 from Discord.View.SystemRecap.GeneralSystemsRecapView import GeneralSystemsRecapView
+from Discord.View.SystemRecap.Warning.ConflictSystemsRecapView import ConflictSystemsRecapView
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
 from Discord.View.SystemRecap.Warning.InfluenceMarginWarningSystemsRecapView import InfluenceMarginWarningSystemsRecapView
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
@@ -38,7 +39,9 @@ class SystemsRecapViews:
             embeds.append(GeneralSystemsRecapView(systems).getEmbed())
 
         return embeds
-    
+
+
+    ############## systems recap
     def getSystemsMinorFactionRecapEmbeds(self):
         embeds=[]
         for systemGroup in self.systemGroups:
@@ -75,7 +78,33 @@ class SystemsRecapViews:
             embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
 
         return embeds
+    ##############
 
+
+    ############## Conflict
+    def getConflictSystemRecapEmbeds(self):
+        systemNamesInConflict = []
+        for systemName in self.systemRecapsDict:
+            if self.systemRecapsDict[systemName].inConflict:
+                systemNamesInConflict.append(systemName)
+
+        embeds = []
+        titleSet = False
+        systems = {}
+        for systemName in systemNamesInConflict:
+            systems[systemName] = self.systemRecapsDict[systemName]
+            if len(systems)>=15:
+                embeds.append(ConflictSystemsRecapView(systems, not titleSet).getEmbed())
+                titleSet = True
+                systems = {}
+        if len(systems)>0:
+            if not titleSet:
+                embeds.append(ConflictSystemsRecapView(systems, not titleSet).getEmbed())
+
+        return embeds
+
+
+    ############## Expansion Warning
     def getExpansionWarningSystemRecapEmbeds(self):
         systemNamesInExpansionWarning = []
         for systemName in self.systemRecapsDict:
@@ -98,6 +127,8 @@ class SystemsRecapViews:
 
         return embeds
     
+
+    ############## Influence Margin Warning
     def getInfluenceMarginWarningSystemRecapEmbeds(self):
         warningLvl = {}
         warningLvl[3] = []
@@ -119,9 +150,9 @@ class SystemsRecapViews:
         warningLvl[1] = self.sortListByInfluenceMargin(warningLvl[1])
 
         embeds = {}
-        embeds[3] = []
-        embeds[2] = []
         embeds[1] = []
+        embeds[2] = []
+        embeds[3] = []
         
         for lvl in warningLvl.keys():
             titleSet = False
@@ -138,7 +169,8 @@ class SystemsRecapViews:
 
         return embeds
 
-    ## SORT ALGOS
+
+    ############## SORT ALGOS ##############
 
     def sortListByInfluence(self, systemNameList: list) -> list:
         for i in range(1,len(systemNameList)):
