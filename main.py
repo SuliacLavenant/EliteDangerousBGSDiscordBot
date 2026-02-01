@@ -11,7 +11,6 @@ from DataClass.GuildSettings import GuildSettings
 
 from DataManager import DataManager
 from DataStorageManager import DataStorageManager
-from DataProcessor import DataProcessor
 from APIRequester.APIManager import APIManager
 
 from Discord.View.ErrorMessageView import ErrorMessageView
@@ -122,7 +121,7 @@ async def test(ctx: discord.ApplicationContext):
     minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id, guildSettings.minorFactionName)
     
     if minorFaction!=None:
-        systemsRecap = DataProcessor.getMinorFactionSystemsRecap(ctx.guild_id)
+        systemsRecap = DataManager.getMinorFactionSystemsRecap(ctx.guild_id)
         systemGroups = DataManager.getSystemGroups(ctx.guild_id)
         systemsWithNoGroups = DataManager.getSystemNamesWithNoGroupList(ctx.guild_id)
         systemsRecapViews = SystemsRecapViews(systemsRecap,systemGroups,systemsWithNoGroups)

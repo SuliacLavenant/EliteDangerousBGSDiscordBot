@@ -6,6 +6,7 @@ from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
 from DataClass.GuildSettings import GuildSettings
+from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 
 class DataManager:
@@ -172,7 +173,29 @@ class DataManager:
         system.architect = architectName.lower()
         system.isArchitected = True
         return DataStorageManager.updateSystem(guild_id, system)
-    
+
+
+##################################################
+################################################## Recap
+
+    def getMinorFactionSystemsRecap(guild_id: str):
+        systemNames = DataManager.getSystemNamesList(guild_id)
+        minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
+        minorFactionSystemsRecap = {}
+
+        for systemName in systemNames:
+            minorFactionSystemsRecap[systemName] = DataManager.getMinorFactionSystemRecap(guild_id, systemName, minorFactionName)
+
+        return minorFactionSystemsRecap
+
+
+    def getMinorFactionSystemRecap(guild_id: str, systemName: str, minorFactionName: str):
+        system = DataStorageManager.getSystem(guild_id, systemName)
+        diplomaticSystem = None
+        if system.isDiplomatic:
+            diplomaticSystem = DataStorageManager.getDiplomaticSystem(guild_id,systemName)
+        return SystemMinorFactionRecap(system,minorFactionName,diplomaticSystem)
+
 
 ##################################################
 ################################################## Guild Settings
