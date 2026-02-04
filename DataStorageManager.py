@@ -12,7 +12,7 @@ from DataClass.GuildSettings import GuildSettings
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
-    filesName: list = ["guildSettings.json","minorFactions.json","systems.json","systemGroups.json","diplomaticSystems.json"]
+    filesName: list = ["guildSettings.json","minorFactions.json","systems.json","systemGroups.json","diplomaticSystems.json","players.json","squadrons.json"]
 
     def readFileContent(filePath: str):
         try:
