@@ -46,7 +46,7 @@ class SelectSystemsToAddToGroupView(discord.ui.View):
             await interaction.response.send_message(f"systems added", ephemeral=True)
             self.systemGroup = DataManager.getSystemGroup(interaction.guild_id,self.systemGroup.name)
 
-            from Discord.View.SystemGroup.Edit.SystemGroupView import SystemGroupView
+            from Discord.View.SystemGroup.SystemGroupView import SystemGroupView
             systemGroupView = SystemGroupView(self.systemGroup)
             await interaction.message.edit(embed=systemGroupView.getEmbed(),view=systemGroupView)
 
@@ -70,6 +70,6 @@ class SelectSystemsToAddToGroupView(discord.ui.View):
             await interaction.response.send_message(f"systems added", ephemeral=True)
             self.systemGroup = DataManager.getSystemGroup(interaction.guild_id,self.systemGroup.name)
 
-            from Discord.View.SystemGroup.Edit.SystemGroupView import SystemGroupView
+            from Discord.View.SystemGroup.SystemGroupView import SystemGroupView
             systemGroupView = SystemGroupView(self.systemGroup)
             await interaction.message.edit(embed=systemGroupView.getEmbed(),view=systemGroupView)

@@ -1,78 +1,69 @@
 import discord
 
-#custom
 from BotConfig.BotConfig import BotConfig
-from DataManager import DataManager
-from Discord.Modal.CreateSystemGroupModal import CreateSystemGroupModal
-from Discord.View.SystemGroup.Edit.SystemGroupView import SystemGroupView
-
 from DataClass.SystemGroup import SystemGroup
+from DataManager import DataManager
+from DataStorageManager import DataStorageManager
+from Discord.Modal.SystemGroup.CreateSystemGroupModal import CreateSystemGroupModal
+from Discord.View.SystemGroup.SystemGroupView import SystemGroupView
 from PermissionManager.PermissionManager import PermissionManager
 
 class SystemGroupsView(discord.ui.View):
-    def __init__(self, systemGroups):
+    def __init__(self, system_groups):
         super().__init__()
-        self.systemGroups = systemGroups
+        self.system_groups = system_groups
 
-        selectOptions = []
-        for systemGroup in self.systemGroups:
-            selectOption = discord.SelectOption(label=systemGroup.name)
-            selectOptions.append(selectOption)
+        select_options = []
+        for systemGroup in self.system_groups:
+            select_option = discord.SelectOption(label=systemGroup.name)
+            select_options.append(select_option)
         
         self.select = discord.ui.Select(
             placeholder = f"Select a System Group",
             min_values = 1,
             max_values = 1,
-            options = selectOptions,
+            options = select_options,
             row = 1
         )
-        self.select.callback = self.selectSystemGroup_callback
+        self.select.callback = self.select_system_group_callback
         self.add_item(self.select)
 
 
     @discord.ui.button(label="Create New Group", style=discord.ButtonStyle.success,row=2)
-    async def CreateNewGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def create_new_group(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.system_group_permissions.create(interaction.user.id):
-            createSystemGroupModal = CreateSystemGroupModal()
-            await interaction.response.send_modal(createSystemGroupModal)
-            await createSystemGroupModal.wait()
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+            create_system_group_modal = CreateSystemGroupModal()
+            await interaction.response.send_modal(create_system_group_modal)
+            await create_system_group_modal.wait()
+
+            if create_system_group_modal.new_system_group:
+                system_group_name = str(create_system_group_modal.system_group_name_input.value)
+                system_group = SystemGroup(name=system_group_name)
+                DataStorageManager.storeSystemGroup(interaction.guild_id, system_group)
+
+                system_group_view = SystemGroupView(system_group)
+                await interaction.message.edit(embed=system_group_view.get_embed(), view=system_group_view)
 
 
-    def getEmbed(self):
+    def get_embed(self):
         title = "Manage System Groups"
-        description = f"Number of Groups: {len(self.systemGroups)}"
+        description = f"Number of Groups: {len(self.system_groups)}"
         embed = discord.Embed(title=title, description=description)
 
-        for systemGroup in self.systemGroups:
-            name = systemGroup.name
-            if systemGroup.emote!=None:
-                name = f"{systemGroup.emote} {systemGroup.name} {systemGroup.emote}"
+        for system_group in self.system_groups:
+            name = system_group.name
+            if system_group.emote!=None:
+                name = f"{system_group.emote} {system_group.name} {system_group.emote}"
 
-            embed.add_field(name=name, value=f"{BotConfig.emotesN.systems} {len(systemGroup.systems)} systems", inline=False)
+            embed.add_field(name=name, value=f"{BotConfig.emotesN.systems} {len(system_group.systems)} systems", inline=False)
 
         return embed
 
 
-    def getGroupCreatedEmbed(self, systemGroup: SystemGroup):
-        title = f"Create System Group \"{systemGroup.name}\""
-        description = "Group Created!"
-        embed = discord.Embed(title=title, description=description)
-        return embed
-
-
-    def getGroupAlreadyExistEmbed(self, systemGroupName: str):
-        title = f"Create System Group \"{systemGroupName}\""
-        description = "Group already exist"
-        embed = discord.Embed(title=title, description=description)
-        return embed
-
-
-    async def selectSystemGroup_callback(self, interaction: discord.Interaction):
+    async def select_system_group_callback(self, interaction: discord.Interaction):
         if PermissionManager.system_group_permissions.see(interaction.user.id):
             selected = self.select.values[0]
-            systemGroupView = SystemGroupView(DataManager.getSystemGroup(interaction.guild_id,selected))
-            await interaction.response.edit_message(embed=systemGroupView.getEmbed(),view=systemGroupView)
+            system_group_view = SystemGroupView(DataManager.getSystemGroup(interaction.guild_id,selected))
+            await interaction.response.edit_message(embed=system_group_view.get_embed(),view=system_group_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)

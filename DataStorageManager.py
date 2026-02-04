@@ -216,7 +216,7 @@ class DataStorageManager:
         filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
         systemGroupsData = DataStorageManager.readFileContent(filePath)
 
-        return list(systemGroupsData["systemGroups"].keys())
+        return list(systemGroupsData.keys())
 
 
     def getSystemGroups(guild_id: str):

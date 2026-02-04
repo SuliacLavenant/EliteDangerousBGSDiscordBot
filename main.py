@@ -74,7 +74,7 @@ async def init(ctx: discord.ApplicationContext):
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.defer()
     #print("!!! shortened for tests")
-    await asyncio.to_thread(DataManager.updateSystemsList, ctx.guild_id)
+    #await asyncio.to_thread(DataManager.updateSystemsList, ctx.guild_id)
     await asyncio.to_thread(DataManager.updateStoredSystemsBGSData, ctx.guild_id)
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
 
@@ -95,7 +95,7 @@ async def managesystemgroup(ctx: discord.ApplicationContext):
 
     systemGroupsView = SystemGroupsView(DataManager.getSystemGroups(ctx.guild_id))
 
-    await ctx.edit(embed=systemGroupsView.getEmbed(), view=systemGroupsView)
+    await ctx.edit(embed=systemGroupsView.get_embed(), view=systemGroupsView)
 
 
 
