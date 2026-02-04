@@ -7,6 +7,7 @@ from Discord.View.SystemGroup.Edit.SelectSystemsToAddToGroupView import SelectSy
 from Discord.Modal.SystemGroup.Edit.DeleteSystemGroupConfirmationModal import DeleteSystemGroupConfirmationModal
 from Discord.Modal.SystemGroup.SetEmoteForSystemGroupModal import SetEmoteForSystemGroupModal
 from DataStorageManager import DataStorageManager
+from PermissionManager.PermissionManager import PermissionManager
 
 class SystemGroupView(discord.ui.View):
     def __init__(self, systemGroup: SystemGroup):
@@ -15,31 +16,40 @@ class SystemGroupView(discord.ui.View):
 
     @discord.ui.button(label="Set Emote For System Group", style=discord.ButtonStyle.secondary, emoji="🙂", row=0)
     async def setEmoteForSystemGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
-        setEmoteForSystemGroupModal = SetEmoteForSystemGroupModal(self.systemGroup)
-        await interaction.response.send_modal(setEmoteForSystemGroupModal)
-        await setEmoteForSystemGroupModal.wait()
+        if PermissionManager.system_group_permissions.set_emote(interaction.user.id):
+            setEmoteForSystemGroupModal = SetEmoteForSystemGroupModal(self.systemGroup)
+            await interaction.response.send_modal(setEmoteForSystemGroupModal)
+            await setEmoteForSystemGroupModal.wait()
 
-        systemGroupView = SystemGroupView(DataStorageManager.getSystemGroup(interaction.guild_id,self.systemGroup.name))
-        await interaction.message.edit(embed=systemGroupView.getEmbed(),view=systemGroupView)
+            systemGroupView = SystemGroupView(DataStorageManager.getSystemGroup(interaction.guild_id,self.systemGroup.name))
+            await interaction.message.edit(embed=systemGroupView.getEmbed(),view=systemGroupView)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
     
 
     @discord.ui.button(label="Add Systems to SystemGroup", style=discord.ButtonStyle.secondary, row=1)
     async def addSystemsToSystemGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
-        systemNameList = DataManager.getSystemNamesWithNoGroupList(interaction.guild_id)
-        systemNameList.sort()
-        if systemNameList!=None and len(systemNameList)>0:
-            selectSystemsToAddToGroupView = SelectSystemsToAddToGroupView(self.systemGroup,systemNameList)
-            await interaction.response.edit_message(embed=selectSystemsToAddToGroupView.getEmbed(),view=selectSystemsToAddToGroupView)
+        if PermissionManager.system_group_permissions.add_systems(interaction.user.id):
+            systemNameList = DataManager.getSystemNamesWithNoGroupList(interaction.guild_id)
+            systemNameList.sort()
+            if systemNameList!=None and len(systemNameList)>0:
+                selectSystemsToAddToGroupView = SelectSystemsToAddToGroupView(self.systemGroup,systemNameList)
+                await interaction.response.edit_message(embed=selectSystemsToAddToGroupView.getEmbed(),view=selectSystemsToAddToGroupView)
+            else:
+                systemGroupView = SystemGroupView(self.systemGroup)
+                await interaction.response.edit_message(embed=systemGroupView.getEmbed(),view=systemGroupView)
         else:
-            systemGroupView = SystemGroupView(self.systemGroup)
-            await interaction.response.edit_message(embed=systemGroupView.getEmbed(),view=systemGroupView)
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
-    @discord.ui.button(label="Delete System Group", style=discord.ButtonStyle.danger, row=2)
+    @discord.ui.button(label="Delete SystemGroup", style=discord.ButtonStyle.danger, row=2)
     async def deleteSystemGroup(self, button: discord.ui.Button, interaction: discord.Interaction):
-        deleteSystemGroupConfirmationModal = DeleteSystemGroupConfirmationModal(self.systemGroup.name)
-        await interaction.response.send_modal(deleteSystemGroupConfirmationModal)
-        await deleteSystemGroupConfirmationModal.wait()
+        if PermissionManager.system_group_permissions.delete(interaction.user.id):
+            deleteSystemGroupConfirmationModal = DeleteSystemGroupConfirmationModal(self.systemGroup.name)
+            await interaction.response.send_modal(deleteSystemGroupConfirmationModal)
+            await deleteSystemGroupConfirmationModal.wait()
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
     def getEmbed(self):

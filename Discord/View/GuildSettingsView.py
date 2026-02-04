@@ -4,6 +4,7 @@ import urllib.parse
 from BotConfig.BotConfig import BotConfig
 from DataStorageManager import DataStorageManager
 from DataClass.GuildSettings import GuildSettings
+from PermissionManager.PermissionManager import PermissionManager
 
 class GuildSettingsView(discord.ui.View):
     def __init__(self, guildSettings: GuildSettings):
@@ -13,24 +14,32 @@ class GuildSettingsView(discord.ui.View):
 
     @discord.ui.button(label="Set System Recap Channel", style=discord.ButtonStyle.secondary, row=1)
     async def setSystemRecapChannel(self, button: discord.ui.Button, interaction: discord.Interaction):
-        self.guildSettings.bgsSystemRecapChannelID = interaction.channel_id
-        DataStorageManager.storeGuildSettings(interaction.guild_id, self.guildSettings)
+        if PermissionManager.guild_settings_permissions.set_channel(interaction.user.id):
+            #update settings
+            guildSettings = DataStorageManager.getGuildSettings(interaction.guild_id)
+            guildSettings.bgsSystemRecapChannelID = interaction.channel_id
+            DataStorageManager.storeGuildSettings(interaction.guild_id, guildSettings)
 
-        guildSettings = DataStorageManager.getGuildSettings(interaction.guild_id)
-        guildSettingsView = GuildSettingsView(guildSettings)
-        await interaction.response.send_message(f"BGS System Recap Channel <#{guildSettings.bgsSystemRecapChannelID}> succesfully set!", ephemeral=True)
-        await interaction.message.edit(embed=guildSettingsView.getEmbed(),view=guildSettingsView)
+            guildSettingsView = GuildSettingsView(guildSettings)
+            await interaction.response.send_message(f"BGS System Recap Channel <#{guildSettings.bgsSystemRecapChannelID}> succesfully set!", ephemeral=True)
+            await interaction.message.edit(embed=guildSettingsView.getEmbed(),view=guildSettingsView)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
     @discord.ui.button(label="Set Warning Recap Channel", style=discord.ButtonStyle.secondary, row=1)
     async def setWarningRecapChannel(self, button: discord.ui.Button, interaction: discord.Interaction):
-        self.guildSettings.bgsWarningRecapChannelID = interaction.channel_id
-        DataStorageManager.storeGuildSettings(interaction.guild_id, self.guildSettings)
+        if PermissionManager.guild_settings_permissions.set_channel(interaction.user.id):
+            #update settings
+            guildSettings = DataStorageManager.getGuildSettings(interaction.guild_id)
+            guildSettings.bgsWarningRecapChannelID = interaction.channel_id
+            DataStorageManager.storeGuildSettings(interaction.guild_id, guildSettings)
 
-        guildSettings = DataStorageManager.getGuildSettings(interaction.guild_id)
-        guildSettingsView = GuildSettingsView(guildSettings)
-        await interaction.response.send_message(f"BGS Warning Recap Channel <#{guildSettings.bgsWarningRecapChannelID}> succesfully set!", ephemeral=True)
-        await interaction.message.edit(embed=guildSettingsView.getEmbed(),view=guildSettingsView)
+            guildSettingsView = GuildSettingsView(guildSettings)
+            await interaction.response.send_message(f"BGS Warning Recap Channel <#{guildSettings.bgsWarningRecapChannelID}> succesfully set!", ephemeral=True)
+            await interaction.message.edit(embed=guildSettingsView.getEmbed(),view=guildSettingsView)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
     def getEmbed(self):

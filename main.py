@@ -9,6 +9,7 @@ import asyncio
 #custom files
 from DataClass.GuildSettings import GuildSettings
 
+from PermissionManager.PermissionManager import PermissionManager
 from DataManager import DataManager
 from DataStorageManager import DataStorageManager
 from APIRequester.APIManager import APIManager
@@ -35,6 +36,10 @@ token = os.getenv("DISCORD_TOKEN")
 guildIDs_raw = os.getenv("DISCORD_GUILDS")
 guildIDs = [int(guildID) for guildID in guildIDs_raw.split(",") if guildID]
 print(guildIDs)
+
+#Permission manager
+PermissionManager.set_super_admin_id(int(os.getenv("SUPER_ADMIN")))
+
 #Intents for discord
 intents = discord.Intents.default()
 intents.message_content = True
@@ -84,6 +89,7 @@ async def apimonitor(ctx: discord.ApplicationContext):
 
 #manage system group
 @bot.slash_command(name="systemgroup", description="manage system group (create, add system to group)", guild_ids=guildIDs)
+@PermissionManager.system_group_permissions.see_list_predicate()
 async def managesystemgroup(ctx: discord.ApplicationContext):
     await ctx.defer()
 
@@ -161,13 +167,24 @@ async def test(ctx: discord.ApplicationContext):
 
 
 
-@bot.slash_command(name="guildsettings", description="", guild_ids=guildIDs)
-async def guildsettings(ctx: discord.ApplicationContext):
+@bot.slash_command(name="guild_settings", description="show guild settings", guild_ids=guildIDs)
+@PermissionManager.guild_settings_permissions.see_predicate()
+async def guild_settings(ctx: discord.ApplicationContext):
     guildSettings = DataStorageManager.getGuildSettings(ctx.guild_id)
     guildSettingsView = GuildSettingsView(guildSettings)
 
     await ctx.send_response(embed=guildSettingsView.getEmbed(), view=guildSettingsView)
 
+
+## error handler
+@bot.event
+async def on_application_command_error(ctx: discord.ApplicationContext, error: Exception):
+    if isinstance(error, commands.CheckFailure):
+        await ctx.respond("You don't have the permission to do this.",ephemeral=True)
+    elif isinstance(error, discord.errors.CheckFailure):
+        await ctx.respond("You don't have the permission to do this.",ephemeral=True)
+    else:
+        raise error
 
 ####################################################################
 

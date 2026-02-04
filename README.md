@@ -14,6 +14,7 @@ Python extra packages:
 Create a .env file with:
 - DISCORD_TOKEN=DISCORDAPPTOKEN
 - DISCORD_GUILDS=IDOFYOURDISCORDSERVER,...
+- SUPER_ADMIN=IDOFUSER
 
 
 # Data 
