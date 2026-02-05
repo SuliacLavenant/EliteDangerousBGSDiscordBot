@@ -87,15 +87,13 @@ async def apimonitor(ctx: discord.ApplicationContext):
     await ctx.edit(embed=aPIMonitorView.getEmbed(), view=aPIMonitorView)
 
 
-#manage system group
-@bot.slash_command(name="systemgroup", description="manage system group (create, add system to group)", guild_ids=guildIDs)
+
+@bot.slash_command(name="manage_system_groups", description="manage system groups: create group, edit group and delete group", guild_ids=guildIDs)
 @PermissionManager.system_group_permissions.see_list_predicate()
-async def managesystemgroup(ctx: discord.ApplicationContext):
+async def manage_system_groups(ctx: discord.ApplicationContext):
     await ctx.defer()
-
-    systemGroupsView = SystemGroupsView(DataManager.getSystemGroups(ctx.guild_id))
-
-    await ctx.edit(embed=systemGroupsView.get_embed(), view=systemGroupsView)
+    system_groups_view = SystemGroupsView(DataManager.getSystemGroups(ctx.guild_id))
+    await ctx.edit(embed=system_groups_view.get_embed(), view=system_groups_view)
 
 
 
