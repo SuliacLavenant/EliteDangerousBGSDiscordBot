@@ -60,7 +60,8 @@ class SystemsRecapViews:
         color = None
         if systemGroup!=None:
             title = systemGroup.name
-            color = discord.Color(systemGroup.color)
+            if systemGroup.rgb_color != None:
+                color = discord.Color.from_rgb(systemGroup.rgb_color[0],systemGroup.rgb_color[1],systemGroup.rgb_color[2])
             if systemGroup.emote != None:
                 title = f"{systemGroup.emote} {title} {systemGroup.emote}"
         else:

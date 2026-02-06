@@ -36,13 +36,17 @@ class SystemGroupsView(discord.ui.View):
             await interaction.response.send_modal(create_system_group_modal)
             await create_system_group_modal.wait()
 
-            if create_system_group_modal.new_system_group:
-                system_group_name = str(create_system_group_modal.system_group_name_input.value)
+            system_group_name = str(create_system_group_modal.name_input.item.value)
+
+            if system_group_name not in DataStorageManager.getSystemGroupNames(interaction.guild_id):
                 system_group = SystemGroup(name=system_group_name)
                 DataStorageManager.storeSystemGroup(interaction.guild_id, system_group)
 
                 system_group_view = SystemGroupView(system_group)
-                await interaction.message.edit(embed=system_group_view.get_embed(), view=system_group_view)
+                await interaction.edit_original_response(embed=system_group_view.get_embed(), view=system_group_view)
+
+            else:
+                await interaction.followup.send(f"System Group \"{system_group_name}\" already exist!", ephemeral=True)
 
 
     def get_embed(self):
@@ -54,8 +58,8 @@ class SystemGroupsView(discord.ui.View):
             name = system_group.name
             if system_group.emote!=None:
                 name = f"{system_group.emote} {system_group.name} {system_group.emote}"
-
-            embed.add_field(name=name, value=f"{BotConfig.emotesN.systems} {len(system_group.systems)} systems", inline=False)
+            text = f"{BotConfig.emotesN.systems} Systems: {len(system_group.systems)}"
+            embed.add_field(name=name, value=text, inline=False)
 
         return embed
 

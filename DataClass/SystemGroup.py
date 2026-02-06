@@ -3,33 +3,54 @@ from dataclasses import dataclass, field
 @dataclass
 class SystemGroup:
     name: str = ""
-    color: int = None
+    rgb_color: tuple = None
     emote: str = None
     systems: list = field(default_factory=list)
 
-    #init from Dict
+
     @classmethod
-    def initFromDict(cls, systemGroupDict: dict):
-        return cls(name=systemGroupDict["name"],color=systemGroupDict["color"],emote=systemGroupDict["emote"],systems=systemGroupDict["systems"])
+    def init_from_dict(cls, system_group_dict: dict):
+        return cls(
+            name = system_group_dict["name"],
+            rgb_color = system_group_dict["rgb_color"],
+            emote = system_group_dict["emote"],
+            systems = system_group_dict["systems"]
+        )
+
 
     def rename(self, name: str):
         self.name = name
-    
-    def setColor(self, color: int):
-        self.color = color
-    
-    def haveSystem(self, systemName: str):
-        return systemName.lower() in self.systems
 
-    def addSystem(self, systemName: str):
-        self.systems.append(systemName.lower())
 
-    def removeSystem(self, systemName: str):
-        if systemName in self.systems:
-            self.systems.remove(systemName)
+    def set_rgb_color(self, rgb_color: tuple):
+        self.rgb_color = rgb_color
+
+
+    def haveSystem(self, system_name: str):
+        return system_name.lower() in self.systems
+
+
+    def addSystem(self, system_name: str):
+        self.systems.append(system_name.lower())
+
+
+    def removeSystem(self, system_name: str):
+        if system_name in self.systems:
+            self.systems.remove(system_name)
             return True
         else:
             return False
 
+
+    def get_as_dict(self) -> dict:
+        system_group_dict = {}
+        system_group_dict["name"] = self.name
+        system_group_dict["rgb_color"] = self.rgb_color
+        system_group_dict["emote"] = self.emote
+        system_group_dict["systems"] = self.systems
+
+        return system_group_dict
+
+
     def __str__(self):
-        return f"System Group Name: {self.name} | color: {self.color} | emote: {self.emote} | Systems: {self.systems}"
+        return f"System Group Name: {self.name} | color: {self.rgb_color} | emote: {self.emote} | Systems: {self.systems}"

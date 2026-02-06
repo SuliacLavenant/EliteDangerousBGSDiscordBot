@@ -3,9 +3,10 @@ import discord
 from DataClass.SystemGroup import SystemGroup
 from DataManager import DataManager
 from DataStorageManager import DataStorageManager
-from Discord.View.SystemGroup.SelectSystemsToAddToGroupView import SelectSystemsToAddToGroupView
 from Discord.Modal.ConfirmationModal import ConfirmationModal
+from Discord.Modal.SystemGroup.SetColorForSystemGroupModal import SetColorForSystemGroupModal
 from Discord.Modal.SystemGroup.SetEmoteForSystemGroupModal import SetEmoteForSystemGroupModal
+from Discord.View.SystemGroup.SelectSystemsToAddToGroupView import SelectSystemsToAddToGroupView
 from PermissionManager.PermissionManager import PermissionManager
 
 class SystemGroupView(discord.ui.View):
@@ -14,7 +15,27 @@ class SystemGroupView(discord.ui.View):
         self.system_group = system_group
 
 
-    @discord.ui.button(label="Set emote", style=discord.ButtonStyle.secondary, emoji="🙂", row=0)
+    @discord.ui.button(label="Set Color", style=discord.ButtonStyle.secondary, emoji="🖌️", row=0)
+    async def set_color(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.system_group_permissions.set_color(interaction.user.id):
+            set_color_for_system_group_modal = SetColorForSystemGroupModal()
+            await interaction.response.send_modal(set_color_for_system_group_modal)
+            await set_color_for_system_group_modal.wait()
+
+            self.system_group = DataStorageManager.getSystemGroup(interaction.guild_id,self.system_group.name)
+
+            if set_color_for_system_group_modal.color != None:
+                self.system_group.set_rgb_color(set_color_for_system_group_modal.color.to_rgb())
+
+            DataStorageManager.storeSystemGroup(interaction.guild_id,self.system_group)
+
+            system_group_view = SystemGroupView(self.system_group)
+            await interaction.edit_original_response(embed=system_group_view.get_embed(),view=system_group_view)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+    @discord.ui.button(label="Set Emote", style=discord.ButtonStyle.secondary, emoji="🙂", row=0)
     async def set_emote(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.system_group_permissions.set_emote(interaction.user.id):
             set_emote_for_system_group_modal = SetEmoteForSystemGroupModal()
@@ -29,7 +50,7 @@ class SystemGroupView(discord.ui.View):
             await interaction.edit_original_response(embed=system_group_view.get_embed(),view=system_group_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
-    
+
 
     @discord.ui.button(label="Add systems to group", style=discord.ButtonStyle.secondary, emoji="➕", row=1)
     async def add_systems_to_system_group(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -63,7 +84,7 @@ class SystemGroupView(discord.ui.View):
 
 
     def get_embed(self):
-        title = "System Group: "
+        title = ""
         if self.system_group.emote!=None:
             title += f"{self.system_group.emote} {self.system_group.name} {self.system_group.emote}"
         else:
@@ -72,6 +93,10 @@ class SystemGroupView(discord.ui.View):
         description="Systems:"
         for systemName in self.system_group.systems:
                 description += f"\n{systemName}"
+        
+        if self.system_group.rgb_color!=None:
+            embed = discord.Embed(title=title, description=description, color=discord.Color.from_rgb(self.system_group.rgb_color[0],self.system_group.rgb_color[1],self.system_group.rgb_color[2]))
+        else:
+            embed = discord.Embed(title=title, description=description)
 
-        embed = discord.Embed(title=title, description=description)
         return embed

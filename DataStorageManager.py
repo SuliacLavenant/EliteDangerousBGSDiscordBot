@@ -197,45 +197,40 @@ class DataStorageManager:
 ##################################################
 ################################################## System Groups
 
-    def storeSystemGroup(guild_id: str, systemGroup: SystemGroup):
-        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
-        systemGroupsData = DataStorageManager.readFileContent(filePath)
+    def storeSystemGroup(guild_id: str, system_group: SystemGroup):
+        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        system_groups_dict = DataStorageManager.readFileContent(file_path)
 
-        #data update
-        systemGroupsData[systemGroup.name] = {}
-        systemGroupsData[systemGroup.name]["name"] = systemGroup.name
-        systemGroupsData[systemGroup.name]["color"] = systemGroup.color
-        systemGroupsData[systemGroup.name]["emote"] = systemGroup.emote
-        systemGroupsData[systemGroup.name]["systems"] = systemGroup.systems
+        system_groups_dict[system_group.name] = system_group.get_as_dict()
 
-        DataStorageManager.atomicWriteFileContent(filePath,systemGroupsData)
+        DataStorageManager.atomicWriteFileContent(file_path,system_groups_dict)
         return True
-    
+
     
     def getSystemGroupNames(guild_id: str):
-        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
-        systemGroupsData = DataStorageManager.readFileContent(filePath)
+        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        system_groups_dict = DataStorageManager.readFileContent(file_path)
 
-        return list(systemGroupsData.keys())
+        return list(system_groups_dict.keys())
 
 
     def getSystemGroups(guild_id: str):
-        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
-        systemGroupsData = DataStorageManager.readFileContent(filePath)
+        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        system_groups_dict = DataStorageManager.readFileContent(file_path)
 
-        systemGroups = []
-        for systemGroupDict in systemGroupsData.values():
-            systemGroups.append(SystemGroup.initFromDict(systemGroupDict))
+        system_groups = []
+        for system_group_dict in system_groups_dict.values():
+            system_groups.append(SystemGroup.init_from_dict(system_group_dict))
 
-        return systemGroups
+        return system_groups
 
 
-    def getSystemGroup(guild_id: str, systemGroupName: str):
-        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
-        systemGroupsData = DataStorageManager.readFileContent(filePath)
+    def getSystemGroup(guild_id: str, system_group_name: str):
+        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        system_groups_dict = DataStorageManager.readFileContent(file_path)
 
-        if systemGroupName in systemGroupsData.keys():
-            return SystemGroup.initFromDict(systemGroupsData[systemGroupName])
+        if system_group_name in system_groups_dict.keys():
+            return SystemGroup.init_from_dict(system_groups_dict[system_group_name])
         else:
             return None
 

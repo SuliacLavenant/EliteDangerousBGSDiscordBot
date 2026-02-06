@@ -26,6 +26,10 @@ class SystemGroupPermissions(AbstractPermissions):
         return cls.is_user_super_admin(user_id)
 
     @classmethod
+    def set_color(cls, user_id) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+    @classmethod
     def set_emote(cls, user_id) -> bool:
         return cls.is_user_super_admin(user_id)
 
@@ -61,6 +65,12 @@ class SystemGroupPermissions(AbstractPermissions):
     def see_list_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.see_list(ctx.author.id)
+        return commands.check(predicate)
+
+    @classmethod
+    def set_color_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.set_color(ctx.author.id)
         return commands.check(predicate)
 
     @classmethod
