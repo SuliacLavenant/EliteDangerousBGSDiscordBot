@@ -189,7 +189,7 @@ class SystemsRecapViews:
         for i in range(1,len(systemNameList)):
             tmp = systemNameList[i]
             j = i-1
-            while j>=0 and self.systemRecapsDict[systemNameList[j]].leaderInfluenceMargin > self.systemRecapsDict[tmp].leaderInfluenceMargin:
+            while j>=0 and self.systemRecapsDict[systemNameList[j]].leaderInfluenceMargin < self.systemRecapsDict[tmp].leaderInfluenceMargin:
                 systemNameList[j+1] = systemNameList[j]
                 j-=1
             systemNameList[j+1] = tmp
