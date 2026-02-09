@@ -78,11 +78,11 @@ class SystemMinorFactionRecap:
             self.warning = "state"
 
     def calculateLeaderInfluenceMarginWarning(self):
-        if self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level3"]:
+        if self.leaderInfluenceMargin < BotConfig.leaderInfluenceWarning["level3"]:
             self.marginWarning = True
             self.influenceWarningLevel = 3
             return "marginLvl3"
-        elif self.leaderInfluenceMargin <= BotConfig.leaderInfluenceWarning["level2"]:
+        elif self.leaderInfluenceMargin < BotConfig.leaderInfluenceWarning["level2"]:
             self.marginWarning = True
             self.influenceWarningLevel = 2
             return "marginLvl2"
