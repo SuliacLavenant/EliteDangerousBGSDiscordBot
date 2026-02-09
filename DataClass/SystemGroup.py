@@ -7,7 +7,6 @@ class SystemGroup:
     emote: str = None
     systems: list = field(default_factory=list)
 
-
     @classmethod
     def init_from_dict(cls, system_group_dict: dict):
         return cls(
@@ -34,12 +33,24 @@ class SystemGroup:
         self.systems.append(system_name.lower())
 
 
+    def add_systems(self, system_name_list: list):
+        for system_name in system_name_list:
+            self.addSystem(system_name)
+
+
     def removeSystem(self, system_name: str):
         if system_name in self.systems:
             self.systems.remove(system_name)
             return True
         else:
             return False
+
+
+    def remove_systems(self, system_name_list: str):
+        removed = True
+        for system_name in system_name_list:
+            removed = removed and self.removeSystem(system_name)
+        return removed
 
 
     def get_as_dict(self) -> dict:

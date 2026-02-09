@@ -9,25 +9,36 @@ class SystemGroupPermissions(AbstractPermissions):
     def add_systems(cls, user_id) -> bool:
         return cls.is_user_super_admin(user_id)
 
+
     @classmethod
     def create(cls, user_id) -> bool:
         return cls.is_user_super_admin(user_id)
+
 
     @classmethod
     def delete(cls, user_id) -> bool:
         return cls.is_user_super_admin(user_id)
 
+
+    @classmethod
+    def remove_systems(cls, user_id) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
     @classmethod
     def see(cls, user_id) -> bool:
         return cls.is_user_super_admin(user_id)
+
 
     @classmethod
     def see_list(cls, user_id) -> bool:
         return cls.is_user_super_admin(user_id)
 
+
     @classmethod
     def set_color(cls, user_id) -> bool:
         return cls.is_user_super_admin(user_id)
+
 
     @classmethod
     def set_emote(cls, user_id) -> bool:
@@ -43,11 +54,13 @@ class SystemGroupPermissions(AbstractPermissions):
             return cls.add_systems(ctx.author.id)
         return commands.check(predicate)
 
+
     @classmethod
     def create_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.create(ctx.author.id)
         return commands.check(predicate)
+
 
     @classmethod
     def delete_predicate(cls):
@@ -55,11 +68,20 @@ class SystemGroupPermissions(AbstractPermissions):
             return cls.delete(ctx.author.id)
         return commands.check(predicate)
 
+
+    @classmethod
+    def remove_systems_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.remove_systems(ctx.author.id)
+        return commands.check(predicate)
+
+
     @classmethod
     def see_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.see(ctx.author.id)
         return commands.check(predicate)
+
 
     @classmethod
     def see_list_predicate(cls):
@@ -67,11 +89,13 @@ class SystemGroupPermissions(AbstractPermissions):
             return cls.see_list(ctx.author.id)
         return commands.check(predicate)
 
+
     @classmethod
     def set_color_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.set_color(ctx.author.id)
         return commands.check(predicate)
+
 
     @classmethod
     def set_emote_predicate(cls):

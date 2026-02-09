@@ -7,5 +7,6 @@ class SetEmoteForSystemGroupModal(discord.ui.Modal):
         self.emote_input = discord.ui.InputText(label="Emote")
         self.add_item(self.emote_input)
 
+
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()

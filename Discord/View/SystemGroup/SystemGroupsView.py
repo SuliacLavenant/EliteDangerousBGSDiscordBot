@@ -19,7 +19,7 @@ class SystemGroupsView(discord.ui.View):
             select_options.append(select_option)
         
         self.select = discord.ui.Select(
-            placeholder = f"Select a System Group",
+            placeholder = f"Select a Group",
             min_values = 1,
             max_values = 1,
             options = select_options,

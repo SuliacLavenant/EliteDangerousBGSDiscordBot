@@ -1,7 +1,6 @@
 import discord
 
 class CreateSystemGroupModal(discord.ui.DesignerModal):
-    
     def __init__(self):
         super().__init__(title="Create System Group")
 
