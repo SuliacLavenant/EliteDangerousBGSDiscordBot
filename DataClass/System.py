@@ -51,12 +51,12 @@ class System:
 
 
     ### Method
-    def isControlledBy(self, minorFactionName: str):
-        return self.controllingFactionName == minorFactionName
+    def isControlledBy(self, minor_faction_name: str):
+        return self.controllingFactionName == minor_faction_name
 
 
-    def haveFaction(self, minorFactionName: str):
-        return minorFactionName in self.factions
+    def haveFaction(self, minor_faction_name: str):
+        return minor_faction_name in self.factions
 
 
     # Check if leader influence difference is safe
@@ -72,16 +72,16 @@ class System:
         return safe
 
 
-    def getMinorFactionPosition(self, minorFactionName: str) -> int:
-        if minorFactionName not in self.factions.keys():
+    def getMinorFactionPosition(self, minor_faction_name: str) -> int:
+        if minor_faction_name not in self.factions.keys():
             return -1
-        elif self.isControlledBy(minorFactionName):
+        elif self.isControlledBy(minor_faction_name):
             return 1
         else:
             position = 1
-            influence = self.factions[minorFactionName]["influence"]
+            influence = self.factions[minor_faction_name]["influence"]
             for faction in self.factions:
-                if faction!=minorFactionName:
+                if faction!=minor_faction_name:
                     if influence < self.factions[faction]["influence"]:
                         position+=1
             return position
@@ -89,12 +89,12 @@ class System:
 
     def getMinorFactionsRanking(self):
         ranking = {}
-        for minorFactionName in self.factions:
-            rank = self.getMinorFactionPosition(minorFactionName)
+        for minor_faction_name in self.factions:
+            rank = self.getMinorFactionPosition(minor_faction_name)
             if rank in ranking.keys():
-                ranking[rank+1] = minorFactionName
+                ranking[rank+1] = minor_faction_name
             else:
-                ranking[rank] = minorFactionName
+                ranking[rank] = minor_faction_name
         return ranking
 
 
@@ -133,39 +133,39 @@ class System:
 
     
     # Return influence of the minor faction
-    def getMinorFactionInfluence(self, minorFactionName: str):
-        if minorFactionName in self.factions:
-            return self.factions[minorFactionName]["influence"]
+    def getMinorFactionInfluence(self, minor_faction_name: str):
+        if minor_faction_name in self.factions:
+            return self.factions[minor_faction_name]["influence"]
         else:
             return 0
 
-    def doMinorFactionHaveState(self, minorFactionName: str, state: str):
-        if state in self.factions[minorFactionName]["pendingStates"]:
+    def doMinorFactionHaveState(self, minor_faction_name: str, state: str):
+        if state in self.factions[minor_faction_name]["pendingStates"]:
             return "pending"
-        elif state in self.factions[minorFactionName]["activeStates"]:
+        elif state in self.factions[minor_faction_name]["activeStates"]:
             return "active"
-        elif state in self.factions[minorFactionName]["recoveringStates"]:
+        elif state in self.factions[minor_faction_name]["recoveringStates"]:
             return "recovering"
         else:
             return None
         
-    def getMinorFactionConflictState(self, minorFactionName: str):
-        if self.doMinorFactionHaveTheSameInfluenceAsAnother(minorFactionName):
-            war = self.doMinorFactionHaveState(minorFactionName, "war")
+    def getMinorFactionConflictState(self, minor_faction_name: str):
+        if self.doMinorFactionHaveTheSameInfluenceAsAnother(minor_faction_name):
+            war = self.doMinorFactionHaveState(minor_faction_name, "war")
             if war == "pending" or war == "active":
                 return "war"
-            civilWar = self.doMinorFactionHaveState(minorFactionName, "civil war")
+            civilWar = self.doMinorFactionHaveState(minor_faction_name, "civil war")
             if civilWar == "pending" or civilWar == "active":
                 return "civil war"
-            election = self.doMinorFactionHaveState(minorFactionName, "election")
+            election = self.doMinorFactionHaveState(minor_faction_name, "election")
             if election == "pending" or election == "active":
                 return "election"
         return None
     
-    def doMinorFactionHaveTheSameInfluenceAsAnother(self, minorFactionName: str):
-        minorFactionInfluence = self.factions[minorFactionName]["influence"]
+    def doMinorFactionHaveTheSameInfluenceAsAnother(self, minor_faction_name: str):
+        minorFactionInfluence = self.factions[minor_faction_name]["influence"]
         for factionName in self.factions:
-            if factionName != minorFactionName:
+            if factionName != minor_faction_name:
                 factionInfluence = self.factions[factionName]["influence"]
                 if factionInfluence == minorFactionInfluence:
                     return True

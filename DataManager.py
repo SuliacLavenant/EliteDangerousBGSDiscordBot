@@ -27,9 +27,9 @@ class DataManager:
         else:
             DataStorageManager.storeMinorFaction(guild_id,minorFaction)
 
-            guildSettings = DataStorageManager.getGuildSettings(guild_id)
-            guildSettings.minorFactionName = minorFaction.name
-            DataStorageManager.saveGuildSettings(guild_id,guildSettings)
+            guildSettings = DataStorageManager.get_guild_settings(guild_id)
+            guildSettings.minor_faction_name = minorFaction.name
+            DataStorageManager.store_guild_settings(guild_id,guildSettings)
 
             return True
 
@@ -92,8 +92,8 @@ class DataManager:
         return DataStorageManager.getMinorFaction(guild_id, minorFactionName)
 
     def getGuildMinorFactionName(guild_id: str):
-        guildSettings = DataStorageManager.getGuildSettings(guild_id)
-        return guildSettings.minorFactionName
+        guildSettings = DataStorageManager.get_guild_settings(guild_id)
+        return guildSettings.minor_faction_name
 
     #get the systems list from storage
     def getSystemNamesList(guild_id: str):
@@ -199,9 +199,6 @@ class DataManager:
 
 ##################################################
 ################################################## Guild Settings
-
-    def getGuildSettings(guild_id: str):
-        return DataStorageManager.getGuildSettings(guild_id)
 
     def saveGuildSettings(guild_id: str, guildSettings: GuildSettings):
         DataStorageManager.storeGuildSettings(guild_id, guildSettings)

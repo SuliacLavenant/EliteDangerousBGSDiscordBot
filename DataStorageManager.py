@@ -78,12 +78,12 @@ class DataStorageManager:
         return True
 
 
-    def getMinorFaction(guild_id: str, minorFactionName: str):
+    def getMinorFaction(guild_id: str, minor_faction_name: str):
         filePath = DataStorageManager.getGuildFolderPath(guild_id)+"minorFaction.json"
         minorFactionsData = DataStorageManager.readFileContent(filePath)
 
-        if minorFactionName in minorFactionsData.keys():
-            minorFaction = MinorFaction.initFromStoredData(minorFactionsData[minorFactionName])
+        if minor_faction_name in minorFactionsData.keys():
+            minorFaction = MinorFaction.initFromStoredData(minorFactionsData[minor_faction_name])
             return minorFaction
         else:
             return None
@@ -250,16 +250,15 @@ class DataStorageManager:
 ##################################################
 ################################################## Guild Settings
 
-    def getGuildSettings(guild_id: str):
-        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
-        guildSettingsData = DataStorageManager.readFileContent(filePath)
+    def get_guild_settings(guild_id: str):
+        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
+        guild_settings_dict = DataStorageManager.readFileContent(file_path)
+        return GuildSettings.init_from_dict(guild_settings_dict)
 
-        return GuildSettings.initFromDict(guildSettingsData)
 
-
-    def storeGuildSettings(guild_id: str, guildSettings: GuildSettings):
-        filePath = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
-        DataStorageManager.atomicWriteFileContent(filePath,guildSettings.getAsDict())
+    def store_guild_settings(guild_id: str, guild_settings: GuildSettings):
+        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
+        DataStorageManager.atomicWriteFileContent(file_path,guild_settings.get_as_dict())
         return True
 
 

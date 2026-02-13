@@ -1,5 +1,6 @@
 {
-    "bgsSystemRecapChannelID": null,
-    "bgsWarningRecapChannelID": null,
-    "minorFaction": null
+    "bgs_change_log_channel_id": null,
+    "bgs_system_recap_channel_id": null,
+    "bgs_warning_recap_channel_id": null,
+    "minor_faction_name": null
 }

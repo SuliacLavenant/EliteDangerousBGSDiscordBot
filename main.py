@@ -101,14 +101,14 @@ async def manage_system_groups(ctx: discord.ApplicationContext):
 async def system(ctx: discord.ApplicationContext, system_name: str):
     await ctx.defer()
 
-    guildSettings = DataManager.getGuildSettings(ctx.guild_id)
+    guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
     system = DataManager.getSystem(ctx.guild_id, system_name.lower())
     if system != None:
         view = SystemView(system,guildSettings)
     else:
         system = DataManager.requestSystemData(system_name.lower())
         if system != None:
-            if system.haveFaction(guildSettings.minorFactionName):
+            if system.haveFaction(guildSettings.minor_faction_name):
                 DataStorageManager.addSystemToDataFile(ctx.guild_id, system)
                 print("Untracked System Added")
             view = SystemView(system,guildSettings)
@@ -121,8 +121,8 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
 
 @bot.slash_command(name="bgsrecap", description="send recap of bgs (minor faction and system) in set channel", guild_ids=guildIDs)
 async def test(ctx: discord.ApplicationContext):
-    guildSettings = DataManager.getGuildSettings(ctx.guild_id)
-    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id, guildSettings.minorFactionName)
+    guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
+    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id, guildSettings.minor_faction_name)
     
     if minorFaction!=None:
         systemsRecap = DataManager.getMinorFactionSystemsRecap(ctx.guild_id)
@@ -131,8 +131,8 @@ async def test(ctx: discord.ApplicationContext):
         systemsRecapViews = SystemsRecapViews(systemsRecap,systemGroups,systemsWithNoGroups)
 
         ##### BGS Recap
-        if guildSettings.bgsSystemRecapChannelID!=None:
-            channel = bot.get_channel(guildSettings.bgsSystemRecapChannelID)
+        if guildSettings.bgs_system_recap_channel_id!=None:
+            channel = bot.get_channel(guildSettings.bgs_system_recap_channel_id)
             await channel.purge(check=isBotMessage)
             #minor faction
             # minorFactionView = MinorFactionView(minorFaction)
@@ -146,8 +146,8 @@ async def test(ctx: discord.ApplicationContext):
                 await channel.send(embed=embeds[i])
 
         ##### warning Recap
-        if guildSettings.bgsWarningRecapChannelID!=None:
-            channel = bot.get_channel(guildSettings.bgsWarningRecapChannelID)
+        if guildSettings.bgs_warning_recap_channel_id!=None:
+            channel = bot.get_channel(guildSettings.bgs_warning_recap_channel_id)
             await channel.purge(check=isBotMessage)
             #expansion
             expEmbeds = systemsRecapViews.getExpansionWarningSystemRecapEmbeds()
@@ -168,7 +168,7 @@ async def test(ctx: discord.ApplicationContext):
 @bot.slash_command(name="guild_settings", description="show guild settings", guild_ids=guildIDs)
 @PermissionManager.guild_settings_permissions.see_predicate()
 async def guild_settings(ctx: discord.ApplicationContext):
-    guildSettings = DataStorageManager.getGuildSettings(ctx.guild_id)
+    guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
     guildSettingsView = GuildSettingsView(guildSettings)
 
     await ctx.send_response(embed=guildSettingsView.getEmbed(), view=guildSettingsView)

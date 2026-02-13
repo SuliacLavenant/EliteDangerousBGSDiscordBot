@@ -96,7 +96,7 @@ class SystemView(discord.ui.View):
                 emote = BotConfig.emotesN.minorFaction.positionInSystem.other
 
             title = f"{emote} {minorFactionDict["name"].title()} {emote} - < {round(minorFactionDict["influence"]*100,1)}% >"
-            if minorFactionDict["name"] == self.guildSettings.minorFactionName:
+            if minorFactionDict["name"] == self.guildSettings.minor_faction_name:
                 title += f" {BotConfig.emotesN.pin}"
 
             embed.add_field(name=title, value=minorFactionDescription, inline=False)
