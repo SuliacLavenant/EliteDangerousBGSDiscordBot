@@ -49,13 +49,13 @@ class SystemView(discord.ui.View):
         await interaction.response.send_modal(setSystemArchitectModal)
         await setSystemArchitectModal.wait()
 
-        system = DataManager.getSystem(interaction.guild_id,self.system.name)
+        system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
         systemView = SystemView(system, self.guildSettings)
         await interaction.edit_original_response(view=systemView,embed=systemView.getEmbed())
 
 
     async def setNativeSystemtButtonCallback(self, interaction: discord.Interaction):
-        system = DataManager.getSystem(interaction.guild_id,self.system.name)
+        system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
         system.isArchitected = False
 
         DataStorageManager.updateSystem(interaction.guild_id,system)

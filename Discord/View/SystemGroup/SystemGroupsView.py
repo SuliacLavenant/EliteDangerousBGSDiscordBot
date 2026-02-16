@@ -67,7 +67,7 @@ class SystemGroupsView(discord.ui.View):
     async def select_system_group_callback(self, interaction: discord.Interaction):
         if PermissionManager.system_group_permissions.see(interaction.user.id):
             selected = self.select.values[0]
-            system_group_view = SystemGroupView(DataManager.getSystemGroup(interaction.guild_id,selected))
+            system_group_view = SystemGroupView(DataStorageManager.get_system_group(interaction.guild_id,selected))
             await interaction.response.edit_message(embed=system_group_view.get_embed(),view=system_group_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)

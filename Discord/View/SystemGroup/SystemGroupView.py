@@ -23,7 +23,7 @@ class SystemGroupView(discord.ui.View):
             await interaction.response.send_modal(set_color_for_system_group_modal)
             await set_color_for_system_group_modal.wait()
 
-            self.system_group = DataStorageManager.getSystemGroup(interaction.guild_id,self.system_group.name)
+            self.system_group = DataStorageManager.get_system_group(interaction.guild_id,self.system_group.name)
 
             if set_color_for_system_group_modal.color != None:
                 self.system_group.set_rgb_color(set_color_for_system_group_modal.color.to_rgb())
@@ -43,7 +43,7 @@ class SystemGroupView(discord.ui.View):
             await interaction.response.send_modal(set_emote_for_system_group_modal)
             await set_emote_for_system_group_modal.wait()
 
-            self.system_group = DataStorageManager.getSystemGroup(interaction.guild_id,self.system_group.name)
+            self.system_group = DataStorageManager.get_system_group(interaction.guild_id,self.system_group.name)
             self.system_group.emote = str(set_emote_for_system_group_modal.emote_input.value)
             DataStorageManager.storeSystemGroup(interaction.guild_id,self.system_group)
 
@@ -62,7 +62,7 @@ class SystemGroupView(discord.ui.View):
                 await interaction.response.send_modal(select_systems_to_add_to_system_group_modal)
                 await select_systems_to_add_to_system_group_modal.wait()
 
-                self.system_group = DataStorageManager.getSystemGroup(interaction.guild_id,self.system_group.name)
+                self.system_group = DataStorageManager.get_system_group(interaction.guild_id,self.system_group.name)
                 self.system_group.add_systems(select_systems_to_add_to_system_group_modal.system_name_to_add_list)
                 DataStorageManager.storeSystemGroup(interaction.guild_id,self.system_group)
 
@@ -82,7 +82,7 @@ class SystemGroupView(discord.ui.View):
                 await interaction.response.send_modal(select_systems_to_remove_from_system_group_modal)
                 await select_systems_to_remove_from_system_group_modal.wait()
 
-                self.system_group = DataStorageManager.getSystemGroup(interaction.guild_id,self.system_group.name)
+                self.system_group = DataStorageManager.get_system_group(interaction.guild_id,self.system_group.name)
                 self.system_group.remove_systems(select_systems_to_remove_from_system_group_modal.system_name_to_remove_list)
                 DataStorageManager.storeSystemGroup(interaction.guild_id,self.system_group)
 
@@ -105,7 +105,7 @@ class SystemGroupView(discord.ui.View):
                 DataStorageManager.removeSystemGroup(interaction.guild_id,self.system_group.name)
 
                 from Discord.View.SystemGroup.SystemGroupsView import SystemGroupsView
-                system_groups_view = SystemGroupsView(DataManager.getSystemGroups(interaction.guild_id))
+                system_groups_view = SystemGroupsView(DataStorageManager.get_system_groups(interaction.guild_id))
                 await interaction.message.edit(embed=system_groups_view.get_embed(), view=system_groups_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)

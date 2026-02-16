@@ -92,7 +92,7 @@ async def apimonitor(ctx: discord.ApplicationContext):
 @PermissionManager.system_group_permissions.see_list_predicate()
 async def manage_system_groups(ctx: discord.ApplicationContext):
     await ctx.defer()
-    system_groups_view = SystemGroupsView(DataManager.getSystemGroups(ctx.guild_id))
+    system_groups_view = SystemGroupsView(DataStorageManager.get_system_groups(ctx.guild_id))
     await ctx.edit(embed=system_groups_view.get_embed(), view=system_groups_view)
 
 
@@ -102,7 +102,7 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
     await ctx.defer()
 
     guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
-    system = DataManager.getSystem(ctx.guild_id, system_name.lower())
+    system = DataStorageManager.get_system(ctx.guild_id, system_name.lower())
     if system != None:
         view = SystemView(system,guildSettings)
     else:
@@ -122,11 +122,11 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
 @bot.slash_command(name="bgsrecap", description="send recap of bgs (minor faction and system) in set channel", guild_ids=guildIDs)
 async def test(ctx: discord.ApplicationContext):
     guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
-    minorFaction = await asyncio.to_thread(DataManager.getMinorFaction, ctx.guild_id, guildSettings.minor_faction_name)
+    minorFaction = await asyncio.to_thread(DataStorageManager.get_minor_faction, ctx.guild_id, guildSettings.minor_faction_name)
     
     if minorFaction!=None:
         systemsRecap = DataManager.getMinorFactionSystemsRecap(ctx.guild_id)
-        systemGroups = DataManager.getSystemGroups(ctx.guild_id)
+        systemGroups = DataStorageManager.get_system_groups(ctx.guild_id)
         systemsWithNoGroups = DataManager.getSystemNamesWithNoGroupList(ctx.guild_id)
         systemsRecapViews = SystemsRecapViews(systemsRecap,systemGroups,systemsWithNoGroups)
 

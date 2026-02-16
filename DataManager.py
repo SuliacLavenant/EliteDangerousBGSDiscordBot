@@ -87,31 +87,16 @@ class DataManager:
     ############################
     ############################ GET
     ############################
-
     def getMinorFaction(guild_id: str, minorFactionName: str):
-        return DataStorageManager.getMinorFaction(guild_id, minorFactionName)
+        return DataStorageManager.get_minor_faction(guild_id, minorFactionName)
 
     def getGuildMinorFactionName(guild_id: str):
         guildSettings = DataStorageManager.get_guild_settings(guild_id)
         return guildSettings.minor_faction_name
 
-    #get the systems list from storage
-    def getSystemNamesList(guild_id: str):
-        return DataStorageManager.getSystemNamesList(guild_id)
-    
-    #get the system from storage
-    def getSystem(guild_id: str, systemName: str):
-        return DataStorageManager.getSystem(guild_id, systemName)
-
-    def getSystemGroups(guild_id: str):
-        return DataStorageManager.getSystemGroups(guild_id)
-
-    def getSystemGroup(guild_id: str, systemGroupName: str):
-        return DataStorageManager.getSystemGroup(guild_id, systemGroupName)
-
     def getSystemNamesWithNoGroupList(guild_id: str):
-        systemNames = DataManager.getSystemNamesList(guild_id)
-        systemGroups = DataManager.getSystemGroups(guild_id)
+        systemNames = DataStorageManager.get_system_names_list(guild_id)
+        systemGroups = DataStorageManager.get_system_groups(guild_id)
         for systemGroup in systemGroups:
             for systemName in systemNames[:]:
                 if systemGroup.haveSystem(systemName):
@@ -125,7 +110,7 @@ class DataManager:
     #TODO test when possible (elitebgsapi was down when writed)
     def updateSystemsList(guild_id: str):
         minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
-        storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
+        storedSystemNamesList = DataStorageManager.get_system_names_list(guild_id)
         apiSystemNamesList = DataManager.requestSystemNamesList(minorFactionName)
 
         if apiSystemNamesList != None:
@@ -140,11 +125,11 @@ class DataManager:
 
     def updateStoredSystemsBGSData(guild_id: str):
         minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
-        storedSystemNamesList = DataStorageManager.getSystemNamesList(guild_id)
+        storedSystemNamesList = DataStorageManager.get_system_names_list(guild_id)
         systems = []
         print(f"Updating {len(storedSystemNamesList)} systems")
         for systemName in storedSystemNamesList:
-            system = DataManager.getSystem(guild_id, systemName)
+            system = DataStorageManager.get_system(guild_id, systemName)
             system.update(DataManager.requestSystemData(systemName))
             systems.append(system)
         
@@ -169,7 +154,7 @@ class DataManager:
 
     ###
     def setSystemArchitect(guild_id: str, systemName: str, architectName: str):
-        system = DataManager.getSystem(guild_id, systemName)
+        system = DataStorageManager.get_system(guild_id, systemName)
         system.architect = architectName.lower()
         system.isArchitected = True
         return DataStorageManager.updateSystem(guild_id, system)
@@ -179,7 +164,7 @@ class DataManager:
 ################################################## Recap
 
     def getMinorFactionSystemsRecap(guild_id: str):
-        systemNames = DataManager.getSystemNamesList(guild_id)
+        systemNames = DataStorageManager.get_system_names_list(guild_id)
         minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
         minorFactionSystemsRecap = {}
 
@@ -190,15 +175,8 @@ class DataManager:
 
 
     def getMinorFactionSystemRecap(guild_id: str, systemName: str, minorFactionName: str):
-        system = DataStorageManager.getSystem(guild_id, systemName)
+        system = DataStorageManager.get_system(guild_id, systemName)
         diplomaticSystem = None
         if system.isDiplomatic:
             diplomaticSystem = DataStorageManager.getDiplomaticSystem(guild_id,systemName)
         return SystemMinorFactionRecap(system,minorFactionName,diplomaticSystem)
-
-
-##################################################
-################################################## Guild Settings
-
-    def saveGuildSettings(guild_id: str, guildSettings: GuildSettings):
-        DataStorageManager.storeGuildSettings(guild_id, guildSettings)
