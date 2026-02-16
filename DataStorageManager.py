@@ -32,32 +32,18 @@ class DataStorageManager:
         return f"{BotConfig.guildsDataFolder}/{guild_id}/"
 
 
-    def isGuildFilesExist(guild_id: str):
-        guildFolderPath = DataStorageManager.getGuildFolderPath(guild_id)
-
-        if not os.path.exists(guildFolderPath):
-            print("guild folder do not exist")
-            return False
-        
-        for fileName in DataStorageManager.files_name:
-            if not os.path.exists(guildFolderPath+fileName):
-                print(f"file {fileName} do not exist")
-                return False
-
-        return False
-
-
-    def initDataFiles(guild_id: str):
-        guildFolderPath = DataStorageManager.getGuildFolderPath(guild_id)
-        templateFolderPath = DataStorageManager.getGuildFolderPath("template")
+    def create_missing_data_files(guild_id: str):
+        guild_folder_path = DataStorageManager.getGuildFolderPath(guild_id)
+        template_folder_path = DataStorageManager.getGuildFolderPath("template")
 
         #create guild data folder if not exist
-        if not os.path.exists(guildFolderPath):
-            os.makedirs(guildFolderPath)
+        if not os.path.exists(guild_folder_path):
+            os.makedirs(guild_folder_path)
 
         #copy requiered files
-        for fileName in DataStorageManager.files_name:
-            shutil.copy(templateFolderPath+fileName,guildFolderPath+fileName)
+        for file_name in DataStorageManager.files_name:
+            if not os.path.exists(guild_folder_path+file_name):
+                shutil.copy(template_folder_path+file_name,guild_folder_path+file_name)
 
 
 ##################################################

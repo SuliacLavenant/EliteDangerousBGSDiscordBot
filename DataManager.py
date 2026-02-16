@@ -10,13 +10,6 @@ from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 
 class DataManager:
-    def initStorage(guild_id: str):
-        if DataStorageManager.isGuildFilesExist(guild_id):
-            return False
-        else:
-            DataStorageManager.initDataFiles(guild_id)
-            return True
-        
 
     #Set tracked minor faction
     def setPlayerMinorFaction(guild_id: str, minorFactionName: str):

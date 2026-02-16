@@ -47,6 +47,12 @@ intents.message_content = True
 #create bot
 bot = discord.Bot(intents=intents)
 
+
+#update file check
+for guild_id in guildIDs:
+    DataStorageManager.create_missing_data_files(guild_id)
+
+
 @bot.event
 async def on_ready():
     print(f"Bot online as {bot.user}")
@@ -60,15 +66,6 @@ def isBotMessage(message) -> bool:
 
 ####################################################################
 #################################################################### slash command
-
-@bot.slash_command(name="init", description="init", guild_ids=guildIDs)
-async def init(ctx: discord.ApplicationContext):
-    await ctx.defer()
-    if DataManager.initStorage(ctx.guild_id):
-        await ctx.edit(content="Init")
-    else:
-        await ctx.edit(content="Already Init")
-
 
 @bot.slash_command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild_ids=guildIDs)
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
