@@ -120,7 +120,7 @@ class DataStorageManager:
         return list(systems_data.keys())
 
 
-    def get_system(guild_id: str, systemName: str):
+    def get_system(guild_id: str, system_name: str):
         file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)
 
