@@ -51,7 +51,22 @@ class GuildSettingsView(discord.ui.View):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"BGS Warning Recap Channel <#{guild_settings.bgs_change_log_channel_id}> succesfully set!", ephemeral=True)
+            await interaction.response.send_message(f"BGS Change Log Channel <#{guild_settings.bgs_change_log_channel_id}> succesfully set!", ephemeral=True)
+            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+    @discord.ui.button(label="Set Mission Recap Channel", style=discord.ButtonStyle.secondary, row=1)
+    async def set_mission_recap_channel(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.guild_settings_permissions.set_channel(interaction.user.id):
+            #update settings
+            guild_settings = DataStorageManager.get_guild_settings(interaction.guild_id)
+            guild_settings.mission_recap_channel_id = interaction.channel_id
+            DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
+
+            guild_settings_view = GuildSettingsView(guild_settings)
+            await interaction.response.send_message(f"Mission Recap Channel <#{guild_settings.mission_recap_channel_id}> succesfully set!", ephemeral=True)
             await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
@@ -71,16 +86,25 @@ class GuildSettingsView(discord.ui.View):
             channels_description += f"<#{self.guild_settings.bgs_system_recap_channel_id}>\n"
         else:
             channels_description += f"Not set\n"
+
         channels_description += f"Warning Recap Channel: "
         if self.guild_settings.bgs_warning_recap_channel_id != None:
             channels_description += f"<#{self.guild_settings.bgs_warning_recap_channel_id}>\n"
         else:
             channels_description += f"**Not set**\n"
+
         channels_description += f"Change Log Channel: "
         if self.guild_settings.bgs_change_log_channel_id != None:
             channels_description += f"<#{self.guild_settings.bgs_change_log_channel_id}>\n"
         else:
             channels_description += f"**Not set**\n"
+
+        channels_description += f"Mission Recap Channel: "
+        if self.guild_settings.mission_recap_channel_id != None:
+            channels_description += f"<#{self.guild_settings.mission_recap_channel_id}>\n"
+        else:
+            channels_description += f"**Not set**\n"
+
         embed.add_field(name="Channels", value=channels_description, inline=False)
 
         return embed

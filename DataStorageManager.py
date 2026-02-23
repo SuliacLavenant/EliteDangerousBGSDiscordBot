@@ -6,13 +6,15 @@ from BotConfig.BotConfig import BotConfig
 
 from DataClass.DiplomaticSystem import DiplomaticSystem
 from DataClass.MinorFaction import MinorFaction
+from DataClass.Mission.Mission import Mission
+from DataClass.Mission.SystemMission.RetreatMinorFactionFromSystemMission import RetreatMinorFactionFromSystemMission
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
 from DataClass.GuildSettings import GuildSettings
 
 #TODO refaire proprement avec des catch
 class DataStorageManager:
-    files_name: list = ["guildSettings.json","minorFactions.json","systems.json","systemGroups.json","diplomaticSystems.json","players.json","squadrons.json"]
+    files_name: list = ["guildSettings.json","minorFactions.json","missions.json","systems.json","systemGroups.json","diplomaticSystems.json","players.json","squadrons.json"]
 
     def read_file_content(file_path: str):
         try:
@@ -319,3 +321,37 @@ class DataStorageManager:
         
 ######################### Diplomatic System
 
+
+
+##################################################
+################################################## Missions
+
+    #set minor faction to the data file
+    def store_mission(guild_id: str, mission: Mission):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"missions.json"
+        missions_data = DataStorageManager.read_file_content(file_path)
+
+        if mission.mission_id == None:
+            keys = missions_data.keys()
+            if len(keys) == 0:
+                mission.mission_id = 0
+            else:
+                mission.mission_id = int(max(keys))+1
+
+        missions_data[mission.mission_id] = mission.get_as_dict()
+
+        DataStorageManager.atomic_write_file_content(file_path,missions_data)
+        return True
+
+
+    def get_missions(guild_id: str):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"missions.json"
+        missions_data = DataStorageManager.read_file_content(file_path)
+
+        missions = []
+        for key in missions_data.keys():
+            match missions_data[key].mission_type:
+                case "RetreatMinorFactionFromSystemMission":
+                    missions.append(RetreatMinorFactionFromSystemMission.init_from_dict(missions_data[key]))
+
+        return missions

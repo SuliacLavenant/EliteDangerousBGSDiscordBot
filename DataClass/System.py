@@ -171,6 +171,14 @@ class System:
                     return True
         return False
 
+
+    def get_minor_faction_names(self):
+        names = []
+        for faction_name in self.factions:
+            names.append(faction_name)
+        return names
+
+
     def lower(self, string: str):
         return string.lower() if isinstance(string, str) else string
 
