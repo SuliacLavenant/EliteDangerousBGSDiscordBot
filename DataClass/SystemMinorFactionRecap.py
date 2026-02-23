@@ -46,11 +46,11 @@ class SystemMinorFactionRecap:
         self.isDiplomatic = self.system.isDiplomatic
         self.diplomaticSystem = diplomaticSystem
 
-        self.influence = system.getMinorFactionInfluence(self.minorFactionName)
-        self.leaderInfluence = system.getLeaderInfluence()
-        self.isLeader = system.isControlledBy(self.minorFactionName)
+        self.influence = system.get_minor_faction_influence(self.minorFactionName)
+        self.leaderInfluence = system.get_leader_influence()
+        self.isLeader = system.is_controlled_by(self.minorFactionName)
         if self.isLeader:
-            self.leaderInfluenceMargin = self.system.getLeaderInfluenceMargin()
+            self.leaderInfluenceMargin = self.system.get_leader_influence_margin()
             self.calculateLeaderInfluenceMarginWarning()
 
         self.checkRetreatWarning()
@@ -61,7 +61,7 @@ class SystemMinorFactionRecap:
         self.checkInfluenceWarning()
         self.checkDiplomaticPosition()
 
-        self.numberOfFactions = len(system.factions)
+        self.numberOfFactions = len(system.minor_factions_names)
 
         self.calculateDaysSinceLastUpdate()
 
@@ -95,16 +95,16 @@ class SystemMinorFactionRecap:
             return "marginLvl0"
 
     def checkExpansionWarning(self):
-        self.expansionWarning = self.system.getMinorFactionInfluence(self.minorFactionName)>=BotConfig.influenceExpansionWarning
+        self.expansionWarning = self.system.get_minor_faction_influence(self.minorFactionName)>=BotConfig.influenceExpansionWarning
 
     def checkRetreatWarning(self):
-        self.retreatWarning = self.system.getMinorFactionInfluence(self.minorFactionName)<=BotConfig.influenceRetreatWarning or self.system.doMinorFactionHaveState(self.minorFactionName, "retreat") != None
+        self.retreatWarning = self.system.get_minor_faction_influence(self.minorFactionName)<=BotConfig.influenceRetreatWarning or self.system.do_minor_faction_have_state(self.minorFactionName, "retreat") != None
 
 
     def checkImportantState(self):
         if self.retreatWarning:
             self.importantState = "retreat"
-        conflictState = self.system.getMinorFactionConflictState(self.minorFactionName)
+        conflictState = self.system.get_minor_faction_conflict_state(self.minorFactionName)
         if conflictState!=None:
             self.inConflict = True
             self.importantState = conflictState
@@ -122,7 +122,7 @@ class SystemMinorFactionRecap:
     def checkDiplomaticPosition(self):
         if self.system.isDiplomatic:
             if self.minorFactionName in self.diplomaticSystem.diplomaticPositions.keys():
-                minorFactionPosition = self.system.getMinorFactionPosition(self.minorFactionName)
+                minorFactionPosition = self.system.get_minor_faction_position(self.minorFactionName)
                 match self.diplomaticSystem.diplomaticPositions[self.minorFactionName]:
                     case 1:
                         if minorFactionPosition != 1:
@@ -137,7 +137,7 @@ class SystemMinorFactionRecap:
                     case _:
                         for otherMinoFactionName in self.diplomaticSystem.diplomaticPositions.keys():
                             if self.diplomaticSystem.diplomaticPositions[otherMinoFactionName] == 1:
-                                if self.system.getMinorFactionPosition(otherMinoFactionName) != 1 and minorFactionPosition == 1:
+                                if self.system.get_minor_faction_position(otherMinoFactionName) != 1 and minorFactionPosition == 1:
                                     self.diplomaticWarning = "shouldNotBeLeader"
                                 else:
                                     self.diplomaticWarning = "notLeaderGood"

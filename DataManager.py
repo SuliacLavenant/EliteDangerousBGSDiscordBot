@@ -134,7 +134,7 @@ class DataManager:
 
         # remove lost systems
         for system in systems:
-            if not system.haveFaction(minorFactionName):
+            if not system.minor_faction_is_present(minorFactionName):
                 print(f"Retreated From System \"{systemName}\"")
                 DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
         print("retreat check: DONE")

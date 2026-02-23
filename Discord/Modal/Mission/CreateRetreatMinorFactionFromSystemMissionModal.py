@@ -10,7 +10,7 @@ class CreateRetreatMinorFactionFromSystemMissionModal(discord.ui.DesignerModal):
         super().__init__(title=f"Create Retreat Mission On System")
         self.system = system
 
-        minor_faction_names = self.system.get_minor_faction_names()
+        minor_faction_names = self.system.minor_factions_names
 
         options = []
         for minor_faction_name in minor_faction_names:

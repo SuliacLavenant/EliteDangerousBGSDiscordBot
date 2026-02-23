@@ -105,8 +105,8 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
     else:
         system = DataManager.requestSystemData(system_name.lower())
         if system != None:
-            if system.haveFaction(guildSettings.minor_faction_name):
-                DataStorageManager.addSystemToDataFile(ctx.guild_id, system)
+            if system.minor_faction_is_present(guildSettings.minor_faction_name):
+                DataStorageManager.store_system(ctx.guild_id, system)
                 print("Untracked System Added")
             view = SystemView(system,guildSettings)
         else:

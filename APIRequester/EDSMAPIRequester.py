@@ -63,7 +63,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
             if "secondEconomy" in jsonData["information"]:
                 secondEconomy = jsonData["information"]["secondEconomy"]
 
-            system = System(name=jsonData["name"], population=jsonData["information"]["population"], security=jsonData["information"]["security"], economy=jsonData["information"]["economy"], second_economy=secondEconomy, reserve=jsonData["information"]["reserve"], controllingFactionName=jsonData["information"]["faction"])
+            system = System(name=jsonData["name"], population=jsonData["information"]["population"], security=jsonData["information"]["security"], economy=jsonData["information"]["economy"], second_economy=secondEconomy, reserve=jsonData["information"]["reserve"], controlling_faction_name=jsonData["information"]["faction"])
             return system
 
         except requests.exceptions.Timeout:
@@ -100,7 +100,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
                     for state in faction["recoveringStates"]:
                         recoveringStates.append(state["state"].lower())
 
-                    system.addFaction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], pendingStates, activeStates, recoveringStates)
+                    system.add_faction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], pendingStates, activeStates, recoveringStates)
 
                     if not timeStampSaved:
                         system.lastInfluenceUpdate = max(int(ts) for ts in faction["influenceHistory"].keys())

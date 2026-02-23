@@ -95,19 +95,19 @@ class SystemView(discord.ui.View):
         description = f"{BotConfig.emotesN.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
         description += f"{BotConfig.emotesN.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
         description += f"{BotConfig.emotesN.system.information.security} Security Level: **{self.system.security.title()}**\n"
-        description += f"{self.getNumberMinorFactionEmote(self.system)} Number of Minor Factions: **{len(self.system.factions)}**\n"
+        description += f"{self.getNumberMinorFactionEmote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
         if self.system.isArchitected:
             description += f"{BotConfig.emotesN.system.information.architect} Architect: **{self.system.architect.title()}**\n"
         description += "."
 
         embed = discord.Embed(title=title, description=description)
 
-        ranking = self.system.getMinorFactionsRanking()
+        ranking = self.system.get_minor_factions_ranking()
         current = 1
         while current<=len(ranking):
-            minorFactionDict = self.system.factions[ranking[current]]
-            minorFactionDescription = f"Allegiance: **{minorFactionDict["allegiance"].title()}**\n"
-            minorFactionDescription += f"Government: **{minorFactionDict["government"].title()}**\n"
+            minor_faction = self.system.minor_factions[ranking[current]]
+            minorFactionDescription = f"Allegiance: **{minor_faction.allegiance.title()}**\n"
+            minorFactionDescription += f"Government: **{minor_faction.government.title()}**\n"
 
             emote = ""
             if current == 1:
@@ -115,8 +115,8 @@ class SystemView(discord.ui.View):
             else:
                 emote = BotConfig.emotesN.minorFaction.positionInSystem.other
 
-            title = f"{emote} {minorFactionDict["name"].title()} {emote} - < {round(minorFactionDict["influence"]*100,1)}% >"
-            if minorFactionDict["name"] == self.guildSettings.minor_faction_name:
+            title = f"{emote} {minor_faction.name} {emote} - < {round(self.system.minor_factions_influence[minor_faction.name.lower()]*100,1)}% >"
+            if minor_faction.name.lower() == self.guildSettings.minor_faction_name:
                 title += f" {BotConfig.emotesN.pin}"
 
             embed.add_field(name=title, value=minorFactionDescription, inline=False)
@@ -124,12 +124,11 @@ class SystemView(discord.ui.View):
             current+=1
 
         return embed
-    
 
     def getNumberMinorFactionEmote(self, system: System):
-        if len(system.factions)<=3:
+        if len(system.minor_factions_names)<=3:
             return BotConfig.emotesN.system.numberOfMinorFaction[3]
-        elif len(system.factions)>=7:
+        elif len(system.minor_factions_names)>=7:
             return BotConfig.emotesN.system.numberOfMinorFaction[7]
         else:
-            return BotConfig.emotesN.system.numberOfMinorFaction[len(system.factions)]
+            return BotConfig.emotesN.system.numberOfMinorFaction[len(system.minor_factions_names)]

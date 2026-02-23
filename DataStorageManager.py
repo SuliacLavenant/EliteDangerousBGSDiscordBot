@@ -51,11 +51,21 @@ class DataStorageManager:
 ##################################################
 ################################################## Minor Faction
 
-    #set minor faction to the data file
+
     def store_minor_faction(guild_id: str, minor_faction: MinorFaction):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"minorFactions.json"
         minor_factions_data = DataStorageManager.read_file_content(file_path)
-        minor_factions_data[minor_faction.name] = minor_faction.get_as_dict()
+        minor_factions_data[minor_faction.name.lower()] = minor_faction.get_as_dict()
+        
+        DataStorageManager.atomic_write_file_content(file_path,minor_factions_data)
+        return True
+
+
+    def store_minor_factions(guild_id: str, minor_factions: list):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"minorFactions.json"
+        minor_factions_data = DataStorageManager.read_file_content(file_path)
+        for minor_faction in minor_factions:
+            minor_factions_data[minor_faction.name.lower()] = minor_faction.get_as_dict()
         
         DataStorageManager.atomic_write_file_content(file_path,minor_factions_data)
         return True
@@ -79,6 +89,9 @@ class DataStorageManager:
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)
         systems_data[system.name] = system.get_as_dict()
+
+        for minor_faction in system.minor_factions:
+            DataStorageManager.store_minor_faction(guild_id,minor_faction)
 
         DataStorageManager.atomic_write_file_content(file_path,systems_data)
         return True
@@ -109,6 +122,8 @@ class DataStorageManager:
 
         if system_name in systems_data:
             system = System.init_from_dict(systems_data[system_name])
+            for minor_faction_name in system.minor_factions_names:
+                system.minor_factions[minor_faction_name] = DataStorageManager.get_minor_faction(guild_id,minor_faction_name)
             return system
         else:
             return None
@@ -117,14 +132,18 @@ class DataStorageManager:
     def updateSystems(guild_id: str, systems: list):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)
+        minor_factions = []
 
         for system in systems:
             if system.name in systems_data:
                 systems_data[system.name] = system.get_as_dict()
+                for minor_faction_name in system.minor_factions:
+                    minor_factions.append(system.minor_factions[minor_faction_name])
             else:
                 print(f"{system.name} do not exist in storage")
 
         DataStorageManager.atomic_write_file_content(file_path,systems_data)
+        DataStorageManager.store_minor_factions(guild_id,minor_factions)
         return True
 
 
