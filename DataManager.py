@@ -53,7 +53,7 @@ class DataManager:
         minorFactionName = DataManager.getMinorFactionName(guild_id)
         systems = DataManager.requestSystemsData(minorFactionName)
         for system in systems:
-            DataStorageManager.addSystemToDataFile(guild_id,system)
+            DataStorageManager.store_system(guild_id,system)
         return True
 
     #request systems data from APIs
@@ -73,7 +73,7 @@ class DataManager:
     #request system data from API
     def requestAndStoreSystemData(guild_id: str, systemName: str):
         system = DataManager.requestSystemData(systemName)
-        DataStorageManager.addSystemToDataFile(guild_id, system)
+        DataStorageManager.store_system(guild_id, system)
         return True
 
 
@@ -121,10 +121,13 @@ class DataManager:
         storedSystemNamesList = DataStorageManager.get_system_names_list(guild_id)
         systems = []
         print(f"Updating {len(storedSystemNamesList)} systems")
+        i = 0
         for systemName in storedSystemNamesList:
             system = DataStorageManager.get_system(guild_id, systemName)
             system.update(DataManager.requestSystemData(systemName))
             systems.append(system)
+            i+=1
+            print(f"Updated {i}/{len(storedSystemNamesList)} systems")
         
         DataStorageManager.updateSystems(guild_id, systems)
         print("updateStoredSystemsBGSData: DONE")
@@ -142,7 +145,7 @@ class DataManager:
 
     def updateSystemBGSData(guild_id: str, systemName: str):
         system = DataManager.requestSystemData(systemName)
-        return DataStorageManager.updateSystem(guild_id, system)
+        return DataStorageManager.store_system(guild_id, system)
 
 
     ###
@@ -150,7 +153,7 @@ class DataManager:
         system = DataStorageManager.get_system(guild_id, systemName)
         system.architect = architectName.lower()
         system.isArchitected = True
-        return DataStorageManager.updateSystem(guild_id, system)
+        return DataStorageManager.store_system(guild_id, system)
 
 
 ##################################################

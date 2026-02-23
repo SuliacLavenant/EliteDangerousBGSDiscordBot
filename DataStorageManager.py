@@ -75,26 +75,12 @@ class DataStorageManager:
 ##################################################
 ################################################## Systems
 
-    def addSystemToDataFile(guild_id: str, system: System):
+    def store_system(guild_id: str, system: System):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
-        systemsData = DataStorageManager.read_file_content(file_path)
+        systems_data = DataStorageManager.read_file_content(file_path)
+        systems_data[system.name] = system.get_as_dict()
 
-        systemsData[system.name] = {}
-        systemsData[system.name]["name"] = system.name
-        systemsData[system.name]["population"] = system.population
-        systemsData[system.name]["security"] = system.security
-        systemsData[system.name]["economy"] = system.economy
-        systemsData[system.name]["secondEconomy"] = system.secondEconomy
-        systemsData[system.name]["reserve"] = system.reserve
-        systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
-        systemsData[system.name]["factions"] = system.factions
-        systemsData[system.name]["isOrigin"] = system.isOrigin
-        systemsData[system.name]["isArchitected"] = system.isArchitected
-        systemsData[system.name]["architect"] = system.architect
-        systemsData[system.name]["isDiplomatic"] = system.isDiplomatic
-        systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
-
-        DataStorageManager.atomic_write_file_content(file_path,systemsData)
+        DataStorageManager.atomic_write_file_content(file_path,systems_data)
         return True
 
 
@@ -122,58 +108,23 @@ class DataStorageManager:
         systems_data = DataStorageManager.read_file_content(file_path)
 
         if system_name in systems_data:
-            system = System.initFromStoredData(systems_data[system_name])
+            system = System.init_from_dict(systems_data[system_name])
             return system
         else:
             return None
 
 
-    def updateSystem(guild_id: str, system: System):
-        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
-        systemsData = DataStorageManager.read_file_content(file_path)
-
-        if system.name in systemsData:
-            systemsData[system.name]["population"] = system.population
-            systemsData[system.name]["security"] = system.security
-            systemsData[system.name]["economy"] = system.economy
-            systemsData[system.name]["secondEconomy"] = system.secondEconomy
-            systemsData[system.name]["reserve"] = system.reserve
-            systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
-            systemsData[system.name]["factions"] = system.factions
-            systemsData[system.name]["isOrigin"] = system.isOrigin
-            systemsData[system.name]["isArchitected"] = system.isArchitected
-            systemsData[system.name]["architect"] = system.architect
-            systemsData[system.name]["isDiplomatic"] = system.isDiplomatic
-            systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
-
-            DataStorageManager.atomic_write_file_content(file_path,systemsData)
-            return True
-        else:
-            return False
-
-
     def updateSystems(guild_id: str, systems: list):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
-        systemsData = DataStorageManager.read_file_content(file_path)
+        systems_data = DataStorageManager.read_file_content(file_path)
 
         for system in systems:
-            if system.name in systemsData:
-                systemsData[system.name]["population"] = system.population
-                systemsData[system.name]["security"] = system.security
-                systemsData[system.name]["economy"] = system.economy
-                systemsData[system.name]["secondEconomy"] = system.secondEconomy
-                systemsData[system.name]["reserve"] = system.reserve
-                systemsData[system.name]["controllingFactionName"] = system.controllingFactionName
-                systemsData[system.name]["factions"] = system.factions
-                systemsData[system.name]["isOrigin"] = system.isOrigin
-                systemsData[system.name]["isArchitected"] = system.isArchitected
-                systemsData[system.name]["architect"] = system.architect
-                systemsData[system.name]["isDiplomatic"] = system.isDiplomatic
-                systemsData[system.name]["lastInfluenceUpdate"] = system.lastInfluenceUpdate
+            if system.name in systems_data:
+                systems_data[system.name] = system.get_as_dict()
             else:
                 print(f"{system.name} do not exist in storage")
 
-        DataStorageManager.atomic_write_file_content(file_path,systemsData)
+        DataStorageManager.atomic_write_file_content(file_path,systems_data)
         return True
 
 
@@ -267,7 +218,7 @@ class DataStorageManager:
         system = DataStorageManager.get_system(guild_id,diplomaticSystem.systemName)
         if system != None:
             system.isDiplomatic = True
-            DataStorageManager.updateSystem(guild_id,system)
+            DataStorageManager.store_system(guild_id,system)
 
         return True
 
@@ -312,7 +263,7 @@ class DataStorageManager:
             system = DataStorageManager.get_system(guild_id,diplomaticSystemName)
             if system != None:
                 system.isDiplomatic = False
-                DataStorageManager.updateSystem(guild_id,system)
+                DataStorageManager.store_system(guild_id,system)
 
             return True
         else:

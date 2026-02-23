@@ -7,7 +7,7 @@ class System:
     population: int = -1
     security: str = ""
     economy: str = ""
-    secondEconomy: str = ""
+    second_economy: str = ""
     reserve: str = ""
 
     controllingFactionName: str = ""
@@ -22,18 +22,56 @@ class System:
 
     isStored: int = False #stored system
 
+
+    @classmethod
+    def init_from_dict(cls, system_dict: dict):
+        system = cls(
+            name=system_dict["name"],
+            population=system_dict["population"],
+            security=system_dict["security"],
+            economy=system_dict["economy"],
+            second_economy=system_dict["second_economy"],
+            reserve=system_dict["reserve"],
+            controllingFactionName=system_dict["controllingFactionName"],
+            factions=system_dict["factions"],
+            isOrigin=system_dict["isOrigin"],
+            isArchitected=system_dict["isArchitected"],
+            architect=system_dict["architect"],
+            isDiplomatic=system_dict["isDiplomatic"],
+            lastInfluenceUpdate=system_dict["lastInfluenceUpdate"],
+            isStored=True
+            )
+        return system
+
+
     def __post_init__(self):
         self.name = self.name.lower()
         self.security = self.security.lower()
         self.economy = self.economy.lower()
-        self.secondEconomy = self.secondEconomy.lower() if self.secondEconomy!=None else None
+        self.second_economy = self.second_economy.lower() if self.second_economy!=None else None
         self.reserve = self.reserve.lower() if self.reserve!=None else None
         self.controllingFactionName = self.controllingFactionName.lower()
         self.architect = self.architect.lower()
 
-    @classmethod
-    def initFromStoredData(cls, systemData: dict):
-        return cls(name=systemData["name"], population=systemData["population"], security=systemData["security"], economy=systemData["economy"], secondEconomy=systemData["secondEconomy"], reserve=systemData["reserve"], controllingFactionName=systemData["controllingFactionName"], factions=systemData["factions"], isOrigin=systemData["isOrigin"], isArchitected=systemData["isArchitected"], architect=systemData["architect"], isDiplomatic=systemData["isDiplomatic"], lastInfluenceUpdate=systemData["lastInfluenceUpdate"], isStored=True)
+
+    def get_as_dict(self) -> dict:
+        system_dict = {}
+        system_dict["name"] = self.name
+        system_dict["population"] = self.population
+        system_dict["security"] = self.security
+        system_dict["economy"] = self.economy
+        system_dict["second_economy"] = self.second_economy
+        system_dict["reserve"] = self.reserve
+        system_dict["controllingFactionName"] = self.controllingFactionName
+        system_dict["factions"] = self.factions
+        system_dict["isOrigin"] = self.isOrigin
+        system_dict["isArchitected"] = self.isArchitected
+        system_dict["architect"] = self.architect
+        system_dict["isDiplomatic"] = self.isDiplomatic
+        system_dict["lastInfluenceUpdate"] = self.lastInfluenceUpdate
+
+        return system_dict
+
 
     def addFaction(self, name: str, allegiance: str, government: str, influence: int, pendingStates: list, activeStates: list, recoveringStates: list):
         self.factions[self.lower(name)] = {"name": self.lower(name), "allegiance": self.lower(allegiance), "government": self.lower(government), "influence": influence, "pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
@@ -43,7 +81,7 @@ class System:
             self.population = systemNew.population
             self.security = systemNew.security
             self.economy = systemNew.economy
-            self.secondEconomy = systemNew.secondEconomy
+            self.second_economy = systemNew.second_economy
             self.controllingFactionName = systemNew.controllingFactionName
             self.factions = systemNew.factions
 
@@ -190,10 +228,10 @@ class System:
 ##########################################################################################################
 
     def getStrSystemEconomy(self):
-        if self.secondEconomy == None:
+        if self.second_economy == None:
             return self.economy.title()
         else:
-            return f"{self.economy.title()} / {self.secondEconomy.title()}"
+            return f"{self.economy.title()} / {self.second_economy.title()}"
         
     def getStrSystemPopulation(self):
         if self.population == -1:

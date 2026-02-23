@@ -61,7 +61,7 @@ class SystemView(discord.ui.View):
         system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
         system.isArchitected = False
 
-        DataStorageManager.updateSystem(interaction.guild_id,system)
+        DataStorageManager.store_system(interaction.guild_id,system)
 
         systemView = SystemView(system, self.guildSettings)
         await interaction.response.edit_message(view=systemView,embed=systemView.getEmbed())
