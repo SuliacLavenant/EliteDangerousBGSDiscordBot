@@ -18,7 +18,7 @@ class DataManager:
             print("no minor faction found")
             return False
         else:
-            DataStorageManager.storeMinorFaction(guild_id,minorFaction)
+            DataStorageManager.store_minor_faction(guild_id,minorFaction)
 
             guildSettings = DataStorageManager.get_guild_settings(guild_id)
             guildSettings.minor_faction_name = minorFaction.name

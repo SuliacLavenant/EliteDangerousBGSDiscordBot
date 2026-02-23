@@ -21,7 +21,7 @@ class MinorFactionView(discord.ui.View):
                 emoji="🌐"
             ))
 
-
+    #a check
     @discord.ui.button(label="Set Minor Faction", style=discord.ButtonStyle.primary)
     async def setMinorFaction(self, button: discord.ui.Button, interaction: discord.Interaction):
         setMinorFactionModal = SetMinorFactionModal()
@@ -57,10 +57,8 @@ class MinorFactionView(discord.ui.View):
         title = self.minorFaction.name.title()
         description = f"Allegiance: **{self.minorFaction.allegiance.title()}**\n"
         description += f"Government: **{self.minorFaction.government.title()}**\n"
-        description += f"Origin System: [**{self.minorFaction.originSystemName.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.minorFaction.originSystemName)})"
+        description += f"Origin System: [**{self.minorFaction.origin_system_name.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.minorFaction.origin_system_name)})"
         
         embed = discord.Embed(title=title, description=description)
-
-        embed.add_field(name=f"Systems", value=f"Present in **{self.minorFaction.numberOfSystems}** systems. \n Controlling **TBA** systems.", inline=True)
 
         return embed

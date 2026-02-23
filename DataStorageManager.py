@@ -28,13 +28,13 @@ class DataStorageManager:
         os.replace(file_path+".tmp", file_path)
 
 
-    def getGuildFolderPath(guild_id: str):
+    def get_guild_folder_path(guild_id: str):
         return f"{BotConfig.guildsDataFolder}/{guild_id}/"
 
 
     def create_missing_data_files(guild_id: str):
-        guild_folder_path = DataStorageManager.getGuildFolderPath(guild_id)
-        template_folder_path = DataStorageManager.getGuildFolderPath("template")
+        guild_folder_path = DataStorageManager.get_guild_folder_path(guild_id)
+        template_folder_path = DataStorageManager.get_guild_folder_path("template")
 
         #create guild data folder if not exist
         if not os.path.exists(guild_folder_path):
@@ -50,26 +50,21 @@ class DataStorageManager:
 ################################################## Minor Faction
 
     #set minor faction to the data file
-    def storeMinorFaction(guild_id: str, minorFaction: MinorFaction):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"minorFaction.json"
-        minorFactionsData = DataStorageManager.read_file_content(file_path)
-
-        #data update
-        minorFactionsData[minorFaction.name] = {}
-        minorFactionsData[minorFaction.name]["name"] = minorFaction.name
-        minorFactionsData[minorFaction.name]["allegiance"] = minorFaction.allegiance
-        minorFactionsData[minorFaction.name]["government"] = minorFaction.government
-        minorFactionsData[minorFaction.name]["originSystemName"] = minorFaction.originSystemName
-        DataStorageManager.atomic_write_file_content(file_path,minorFactionsData)
+    def store_minor_faction(guild_id: str, minor_faction: MinorFaction):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"minorFactions.json"
+        minor_factions_data = DataStorageManager.read_file_content(file_path)
+        minor_factions_data[minor_faction.name] = minor_faction.get_as_dict()
+        
+        DataStorageManager.atomic_write_file_content(file_path,minor_factions_data)
         return True
 
 
     def get_minor_faction(guild_id: str, minor_faction_name: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"minorFaction.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"minorFactions.json"
         minor_factions_data = DataStorageManager.read_file_content(file_path)
 
         if minor_faction_name in minor_factions_data.keys():
-            minor_faction = MinorFaction.initFromStoredData(minor_factions_data[minor_faction_name])
+            minor_faction = MinorFaction.init_from_dict(minor_factions_data[minor_faction_name])
             return minor_faction
         else:
             return None
@@ -79,7 +74,7 @@ class DataStorageManager:
 ################################################## Systems
 
     def addSystemToDataFile(guild_id: str, system: System):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systemsData = DataStorageManager.read_file_content(file_path)
 
         systemsData[system.name] = {}
@@ -102,7 +97,7 @@ class DataStorageManager:
 
 
     def removeSystemFromDataFile(guild_id: str, systemName: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systemsData = DataStorageManager.read_file_content(file_path)
 
         #data update
@@ -114,14 +109,14 @@ class DataStorageManager:
 
 
     def get_system_names_list(guild_id: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)
 
         return list(systems_data.keys())
 
 
     def get_system(guild_id: str, system_name: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)
 
         if system_name in systems_data:
@@ -132,7 +127,7 @@ class DataStorageManager:
 
 
     def updateSystem(guild_id: str, system: System):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systemsData = DataStorageManager.read_file_content(file_path)
 
         if system.name in systemsData:
@@ -156,7 +151,7 @@ class DataStorageManager:
 
 
     def updateSystems(guild_id: str, systems: list):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systemsData = DataStorageManager.read_file_content(file_path)
 
         for system in systems:
@@ -184,7 +179,7 @@ class DataStorageManager:
 ################################################## System Groups
 
     def storeSystemGroup(guild_id: str, system_group: SystemGroup):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systemGroups.json"
         system_groups_dict = DataStorageManager.read_file_content(file_path)
 
         system_groups_dict[system_group.name] = system_group.get_as_dict()
@@ -194,14 +189,14 @@ class DataStorageManager:
 
     
     def getSystemGroupNames(guild_id: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systemGroups.json"
         system_groups_dict = DataStorageManager.read_file_content(file_path)
 
         return list(system_groups_dict.keys())
 
 
     def get_system_groups(guild_id: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systemGroups.json"
         system_groups_dict = DataStorageManager.read_file_content(file_path)
 
         system_groups = []
@@ -212,7 +207,7 @@ class DataStorageManager:
 
 
     def get_system_group(guild_id: str, system_group_name: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systemGroups.json"
         system_groups_dict = DataStorageManager.read_file_content(file_path)
 
         if system_group_name in system_groups_dict.keys():
@@ -222,7 +217,7 @@ class DataStorageManager:
 
 
     def removeSystemGroup(guild_id: str, systemGroupName: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"systemGroups.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systemGroups.json"
         systemGroupsData = DataStorageManager.read_file_content(file_path)
         
         if systemGroupName in systemGroupsData.keys():
@@ -237,13 +232,13 @@ class DataStorageManager:
 ################################################## Guild Settings
 
     def get_guild_settings(guild_id: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"guildSettings.json"
         guild_settings_dict = DataStorageManager.read_file_content(file_path)
         return GuildSettings.init_from_dict(guild_settings_dict)
 
 
     def store_guild_settings(guild_id: str, guild_settings: GuildSettings):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"guildSettings.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"guildSettings.json"
         DataStorageManager.atomic_write_file_content(file_path,guild_settings.get_as_dict())
         return True
 
@@ -255,7 +250,7 @@ class DataStorageManager:
 ######################## Diplomatic System
 
     def storeDiplomaticSystem(guild_id: str, diplomaticSystem: DiplomaticSystem):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"diplomaticSystems.json"
         diplomaticSystemsData = DataStorageManager.read_file_content(file_path)
 
         #data update
@@ -276,14 +271,14 @@ class DataStorageManager:
 
 
     def getDiplomaticSystemNames(guild_id: str):############
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"diplomaticSystems.json"
         diplomaticSystemsData = DataStorageManager.read_file_content(file_path)
 
         return list(diplomaticSystemsData.keys())
 
 
     def getDiplomaticSystems(guild_id: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"diplomaticSystems.json"
         diplomaticSystemsData = DataStorageManager.read_file_content(file_path)
 
         diplomaticSystems = []
@@ -294,7 +289,7 @@ class DataStorageManager:
 
 
     def getDiplomaticSystem(guild_id: str, diplomaticSystemName: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"diplomaticSystems.json"
         diplomaticSystemsData = DataStorageManager.read_file_content(file_path)
 
         if diplomaticSystemName in diplomaticSystemsData.keys():
@@ -304,7 +299,7 @@ class DataStorageManager:
 
 
     def removeDiplomaticSystem(guild_id: str, diplomaticSystemName: str):
-        file_path = DataStorageManager.getGuildFolderPath(guild_id)+"diplomaticSystems.json"
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"diplomaticSystems.json"
         diplomaticSystemsData = DataStorageManager.read_file_content(file_path)
         
         if diplomaticSystemName in diplomaticSystemsData.keys():
