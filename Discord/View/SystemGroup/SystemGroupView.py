@@ -4,6 +4,7 @@ from DataClass.SystemGroup import SystemGroup
 from DataManager import DataManager
 from DataStorageManager import DataStorageManager
 from Discord.Modal.ConfirmationModal import ConfirmationModal
+from Discord.Modal.SystemGroup.RenameSystemGroupModal import RenameSystemGroupModal
 from Discord.Modal.SystemGroup.SelectSystemsToAddToSystemGroupModal import SelectSystemsToAddToSystemGroupModal
 from Discord.Modal.SystemGroup.SelectSystemsToRemoveFromSystemGroupModal import SelectSystemsToRemoveFromSystemGroupModal
 from Discord.Modal.SystemGroup.SetColorForSystemGroupModal import SetColorForSystemGroupModal
@@ -28,7 +29,7 @@ class SystemGroupView(discord.ui.View):
             if set_color_for_system_group_modal.color != None:
                 self.system_group.set_rgb_color(set_color_for_system_group_modal.color.to_rgb())
 
-            DataStorageManager.storeSystemGroup(interaction.guild_id,self.system_group)
+            DataStorageManager.store_system_group(interaction.guild_id,self.system_group)
 
             system_group_view = SystemGroupView(self.system_group)
             await interaction.edit_original_response(embed=system_group_view.get_embed(),view=system_group_view)
@@ -45,7 +46,7 @@ class SystemGroupView(discord.ui.View):
 
             self.system_group = DataStorageManager.get_system_group(interaction.guild_id,self.system_group.name)
             self.system_group.emote = str(set_emote_for_system_group_modal.emote_input.value)
-            DataStorageManager.storeSystemGroup(interaction.guild_id,self.system_group)
+            DataStorageManager.store_system_group(interaction.guild_id,self.system_group)
 
             system_group_view = SystemGroupView(self.system_group)
             await interaction.edit_original_response(embed=system_group_view.get_embed(),view=system_group_view)
@@ -64,7 +65,7 @@ class SystemGroupView(discord.ui.View):
 
                 self.system_group = DataStorageManager.get_system_group(interaction.guild_id,self.system_group.name)
                 self.system_group.add_systems(select_systems_to_add_to_system_group_modal.system_name_to_add_list)
-                DataStorageManager.storeSystemGroup(interaction.guild_id,self.system_group)
+                DataStorageManager.store_system_group(interaction.guild_id,self.system_group)
 
                 system_group_view = SystemGroupView(self.system_group)
                 await interaction.edit_original_response(embed=system_group_view.get_embed(),view=system_group_view)
@@ -84,12 +85,34 @@ class SystemGroupView(discord.ui.View):
 
                 self.system_group = DataStorageManager.get_system_group(interaction.guild_id,self.system_group.name)
                 self.system_group.remove_systems(select_systems_to_remove_from_system_group_modal.system_name_to_remove_list)
-                DataStorageManager.storeSystemGroup(interaction.guild_id,self.system_group)
+                DataStorageManager.store_system_group(interaction.guild_id,self.system_group)
 
                 system_group_view = SystemGroupView(self.system_group)
                 await interaction.edit_original_response(embed=system_group_view.get_embed(),view=system_group_view)
             else:
                 await interaction.response.send_message(f"No systems in this group", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+    @discord.ui.button(label="Rename System Group", style=discord.ButtonStyle.secondary, row=2)
+    async def rename_system_group(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.system_group_permissions.rename(interaction.user.id):
+            rename_system_group_modal = RenameSystemGroupModal()
+            await interaction.response.send_modal(rename_system_group_modal)
+            await rename_system_group_modal.wait()
+
+            system_group_new_name = str(rename_system_group_modal.name_input.item.value)
+
+            if system_group_new_name not in DataStorageManager.getSystemGroupNames(interaction.guild_id):
+                DataStorageManager.rename_system_group(interaction.guild_id, self.system_group.name, system_group_new_name)
+
+                system_group = DataStorageManager.get_system_group(interaction.guild_id,system_group_new_name)
+                system_group_view = SystemGroupView(system_group)
+                await interaction.edit_original_response(embed=system_group_view.get_embed(), view=system_group_view)
+
+            else:
+                await interaction.followup.send(f"System Group \"{system_group_new_name}\" already exist!", ephemeral=True)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -102,7 +125,7 @@ class SystemGroupView(discord.ui.View):
             await confirmation_modal.wait()
 
             if confirmation_modal.confirmation:
-                DataStorageManager.removeSystemGroup(interaction.guild_id,self.system_group.name)
+                DataStorageManager.remove_system_group(interaction.guild_id,self.system_group.name)
 
                 from Discord.View.SystemGroup.SystemGroupsView import SystemGroupsView
                 system_groups_view = SystemGroupsView(DataStorageManager.get_system_groups(interaction.guild_id))

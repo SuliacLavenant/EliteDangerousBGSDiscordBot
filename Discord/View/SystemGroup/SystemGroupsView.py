@@ -40,7 +40,7 @@ class SystemGroupsView(discord.ui.View):
 
             if system_group_name not in DataStorageManager.getSystemGroupNames(interaction.guild_id):
                 system_group = SystemGroup(name=system_group_name)
-                DataStorageManager.storeSystemGroup(interaction.guild_id, system_group)
+                DataStorageManager.store_system_group(interaction.guild_id, system_group)
 
                 system_group_view = SystemGroupView(system_group)
                 await interaction.edit_original_response(embed=system_group_view.get_embed(), view=system_group_view)

@@ -150,7 +150,7 @@ class DataStorageManager:
 ##################################################
 ################################################## System Groups
 
-    def storeSystemGroup(guild_id: str, system_group: SystemGroup):
+    def store_system_group(guild_id: str, system_group: SystemGroup):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systemGroups.json"
         system_groups_dict = DataStorageManager.read_file_content(file_path)
 
@@ -188,13 +188,24 @@ class DataStorageManager:
             return None
 
 
-    def removeSystemGroup(guild_id: str, systemGroupName: str):
+    def rename_system_group(guild_id: str, system_group_name: str, system_group_new_name: str):
+        system_group = DataStorageManager.get_system_group(guild_id,system_group_name)
+
+        if system_group != None:
+            DataStorageManager.remove_system_group(guild_id,system_group_name)
+            system_group.name = system_group_new_name
+            return DataStorageManager.store_system_group(guild_id,system_group)
+        else:
+            return False
+
+
+    def remove_system_group(guild_id: str, system_group_name: str):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systemGroups.json"
-        systemGroupsData = DataStorageManager.read_file_content(file_path)
+        system_groups_dict = DataStorageManager.read_file_content(file_path)
         
-        if systemGroupName in systemGroupsData.keys():
-            systemGroupsData.pop(systemGroupName)
-            DataStorageManager.atomic_write_file_content(file_path,systemGroupsData)
+        if system_group_name in system_groups_dict.keys():
+            system_groups_dict.pop(system_group_name)
+            DataStorageManager.atomic_write_file_content(file_path,system_groups_dict)
             return True
         else:
             return False

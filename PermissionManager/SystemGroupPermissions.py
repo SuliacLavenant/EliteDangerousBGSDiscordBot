@@ -21,6 +21,11 @@ class SystemGroupPermissions(AbstractPermissions):
 
 
     @classmethod
+    def rename(cls, user_id) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
+    @classmethod
     def remove_systems(cls, user_id) -> bool:
         return cls.is_user_super_admin(user_id)
 
@@ -66,6 +71,13 @@ class SystemGroupPermissions(AbstractPermissions):
     def delete_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.delete(ctx.author.id)
+        return commands.check(predicate)
+
+
+    @classmethod
+    def rename_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.rename(ctx.author.id)
         return commands.check(predicate)
 
 
