@@ -70,14 +70,13 @@ def isBotMessage(message) -> bool:
 @bot.slash_command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild_ids=guildIDs)
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.defer()
-    #print("!!! shortened for tests")
-    #await asyncio.to_thread(DataManager.updateSystemsList, ctx.guild_id)
     await asyncio.to_thread(DataManager.updateStoredSystemsBGSData, ctx.guild_id)
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
 
 
-@bot.slash_command(name="apimonitor", description="show status of each used apis", guild_ids=guildIDs)
-async def apimonitor(ctx: discord.ApplicationContext):
+
+@bot.slash_command(name="api_monitor", description="show status of each used apis", guild_ids=guildIDs)
+async def api_monitor(ctx: discord.ApplicationContext):
     await ctx.defer()
     aPIStatus = APIManager.getAPIStatus()
     aPIMonitorView = APIMonitorView(aPIStatus)
@@ -85,9 +84,9 @@ async def apimonitor(ctx: discord.ApplicationContext):
 
 
 
-@bot.slash_command(name="manage_system_groups", description="manage system groups: create group, edit group and delete group", guild_ids=guildIDs)
+@bot.slash_command(name="system_group", description="manage system groups: create group, edit group and delete group", guild_ids=guildIDs)
 @PermissionManager.system_group_permissions.see_list_predicate()
-async def manage_system_groups(ctx: discord.ApplicationContext):
+async def system_group(ctx: discord.ApplicationContext):
     await ctx.defer()
     system_groups_view = SystemGroupsView(DataStorageManager.get_system_groups(ctx.guild_id))
     await ctx.edit(embed=system_groups_view.get_embed(), view=system_groups_view)
@@ -97,7 +96,6 @@ async def manage_system_groups(ctx: discord.ApplicationContext):
 @bot.slash_command(name="system", description="show system information", guild_ids=guildIDs)
 async def system(ctx: discord.ApplicationContext, system_name: str):
     await ctx.defer()
-
     guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
     system = DataStorageManager.get_system(ctx.guild_id, system_name.lower())
     if system != None:
@@ -111,13 +109,12 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
             view = SystemView(system,guildSettings)
         else:
             view = ErrorMessageView(f"System \"{system_name}\" not found.")
-
-
     await ctx.edit(embed=view.getEmbed(), view=view)
 
 
-@bot.slash_command(name="bgsrecap", description="send recap of bgs (minor faction and system) in set channel", guild_ids=guildIDs)
-async def test(ctx: discord.ApplicationContext):
+
+@bot.slash_command(name="bgs_recap", description="send recap of bgs (minor faction and system) in set channel", guild_ids=guildIDs)
+async def bgs_recap(ctx: discord.ApplicationContext):
     guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
     minorFaction = await asyncio.to_thread(DataStorageManager.get_minor_faction, ctx.guild_id, guildSettings.minor_faction_name)
     
@@ -162,13 +159,14 @@ async def test(ctx: discord.ApplicationContext):
 
 
 
-@bot.slash_command(name="guild_settings", description="show guild settings", guild_ids=guildIDs)
+@bot.slash_command(name="settings", description="show guild settings", guild_ids=guildIDs)
 @PermissionManager.guild_settings_permissions.see_predicate()
-async def guild_settings(ctx: discord.ApplicationContext):
+async def settings(ctx: discord.ApplicationContext):
     guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
     guildSettingsView = GuildSettingsView(guildSettings)
 
     await ctx.send_response(embed=guildSettingsView.getEmbed(), view=guildSettingsView)
+
 
 
 ## error handler
