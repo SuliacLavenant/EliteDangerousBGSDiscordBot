@@ -15,10 +15,6 @@
                 "level3": 0.05,
                 "level2": 0.1,
                 "level1": 0.2
-            },
-            "other": {
-                "retreat": 0.025,
-                "expansion": 0.65
             }
         }
     },
@@ -66,5 +62,16 @@
             }
         },
         "pin": ":pushpin:"
+    },
+    "bgs": {
+        "state":{
+            "retreat": {
+                "trigger_influence": 0.025
+            },
+            "expansion": {
+                "trigger_influence":  0.75,
+                "warning_influence": 0.65
+            }
+        }
     }
 }

@@ -95,10 +95,10 @@ class SystemMinorFactionRecap:
             return "marginLvl0"
 
     def checkExpansionWarning(self):
-        self.expansionWarning = self.system.get_minor_faction_influence(self.minorFactionName)>=BotConfig.influenceExpansionWarning
+        self.expansionWarning = self.system.get_minor_faction_influence(self.minorFactionName)>=BotConfig.bgs.state.expansion.warning_influence
 
     def checkRetreatWarning(self):
-        self.retreatWarning = self.system.get_minor_faction_influence(self.minorFactionName)<=BotConfig.influenceRetreatWarning or self.system.do_minor_faction_have_state(self.minorFactionName, "retreat") != None
+        self.retreatWarning = self.system.get_minor_faction_influence(self.minorFactionName)<=BotConfig.bgs.state.retreat.trigger_influence or self.system.do_minor_faction_have_state(self.minorFactionName, "retreat") != None
 
 
     def checkImportantState(self):
