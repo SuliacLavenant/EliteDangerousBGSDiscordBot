@@ -367,7 +367,7 @@ class DataStorageManager:
 
         missions = []
         for key in missions_data.keys():
-            match missions_data[key].mission_type:
+            match missions_data[key]["mission_type"]:
                 case "RetreatMinorFactionFromSystemMission":
                     missions.append(RetreatMinorFactionFromSystemMission.init_from_dict(missions_data[key]))
 

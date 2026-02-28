@@ -22,6 +22,7 @@ from Discord.View.SystemGroup.SystemGroupsView import SystemGroupsView
 from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
 from Discord.View.GuildSettingsView import GuildSettingsView
+from Discord.View.MissionsRecap.MissionsRecapViews import MissionsRecapViews
 
 from Discord.View.APIMonitorView import APIMonitorView
 
@@ -156,7 +157,18 @@ async def bgs_recap(ctx: discord.ApplicationContext):
             conflictEmbeds = systemsRecapViews.getConflictSystemRecapEmbeds()
             for i in range(len(conflictEmbeds)):
                 await channel.send(embed=conflictEmbeds[i])
+                
+    #### Missions Recap
+    if guildSettings.mission_recap_channel_id!=None:
+        missions_recap_views = MissionsRecapViews(ctx.guild_id)
 
+        channel = bot.get_channel(guildSettings.mission_recap_channel_id)
+        await channel.purge(check=isBotMessage)
+
+        #retreat mission
+        retreat_embeds = missions_recap_views.get_retreat_minor_faction_from_system_missions_recap_embeds()
+        for i in range(len(retreat_embeds)):
+            await channel.send(embed=retreat_embeds[i])
 
 
 @bot.slash_command(name="settings", description="show guild settings", guild_ids=guildIDs)

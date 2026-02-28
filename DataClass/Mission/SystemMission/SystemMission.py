@@ -1,12 +1,19 @@
 from dataclasses import dataclass, field
 
 from DataClass.Mission.Mission import Mission
+from DataClass.Mission.MissionProgressEnum import MissionProgressEnum
+from DataClass.System import System
 
 @dataclass
 class SystemMission(Mission):
     mission_id: int = None
     mission_type: str = None
     system_name: str = None
+
+    #not stored
+    current_influence: int = None
+    state = MissionProgressEnum.NONE
+    system: System = None
 
 
     @classmethod
