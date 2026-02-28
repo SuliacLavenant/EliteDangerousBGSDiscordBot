@@ -116,7 +116,8 @@ class DataStorageManager:
         systems_data = DataStorageManager.read_file_content(file_path)
         systems_data[system.name] = system.get_as_dict()
 
-        for minor_faction in system.minor_factions:
+        for minor_faction_name in system.minor_factions:
+            minor_faction = system.minor_factions[minor_faction_name]
             minor_faction.add_system(system.name)
             DataStorageManager.store_minor_faction(guild_id,minor_faction)
 
