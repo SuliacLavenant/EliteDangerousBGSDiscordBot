@@ -4,6 +4,7 @@ import urllib.parse
 
 #custom
 from BotConfig.BotConfig import BotConfig
+from DataClass.Mission.MissionProgressEnum import MissionProgressEnum
 from DataClass.Mission.SystemMission.SystemMission import SystemMission
 from DataClass.System import System
 
@@ -46,7 +47,17 @@ class SystemMissionsRecapView(discord.ui.View):
 
 
     def get_mission_state_emote(self, mission: SystemMission):
-        return mission.state.value
+        match mission.state:
+            case MissionProgressEnum.UPCOMING:
+                return BotConfig.emotesN.mission.state.upcoming
+            case MissionProgressEnum.ACTIVE:
+                return BotConfig.emotesN.mission.state.active
+            case MissionProgressEnum.PENDING:
+                return BotConfig.emotesN.mission.state.pending
+            case MissionProgressEnum.COMPLETE:
+                return BotConfig.emotesN.mission.state.complete
+            case _:
+                return "None"
 
 
     def get_system_name_with_inara_link(self, system: System):

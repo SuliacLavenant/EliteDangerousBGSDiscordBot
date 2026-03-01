@@ -49,4 +49,4 @@ class RetreatMinorFactionFromSystemMission(SystemMission):
         elif self.current_influence <= BotConfig.bgs.state.retreat.trigger_influence:
             self.state = MissionProgressEnum.PENDING
         else:
-            self.state = MissionProgressEnum.IN_PROGRESS
+            self.state = MissionProgressEnum.ACTIVE

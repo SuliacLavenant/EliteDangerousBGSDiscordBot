@@ -1,5 +1,6 @@
 from BotConfig.Emotes.Data import Data
 from BotConfig.Emotes.MinorFaction.MinorFaction import MinorFaction
+from BotConfig.Emotes.Mission.Mission import Mission
 from BotConfig.Emotes.System.System import System
 
 class Emotes:
@@ -10,6 +11,7 @@ class Emotes:
     systems: str
     system: System
     minorFaction: MinorFaction
+    mission: Mission
 
     def __init__(self, emotesDict: dict):
         self.data = Data(emotesDict["data"])
@@ -19,3 +21,4 @@ class Emotes:
         self.systems = emotesDict["systems"]
         self.system = System(emotesDict["system"])
         self.minorFaction = MinorFaction(emotesDict["minorFaction"])
+        self.mission = Mission(emotesDict["mission"])

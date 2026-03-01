@@ -61,6 +61,14 @@
                 "other": ":bust_in_silhouette:"
             }
         },
+        "mission": {
+            "state": {
+                "active": "💪🏻",
+                "complete": "✅",
+                "pending": "⏳",
+                "upcoming": "🗓️"
+            }
+        },
         "pin": ":pushpin:"
     },
     "bgs": {
