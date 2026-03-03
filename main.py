@@ -21,7 +21,7 @@ from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
 from Discord.View.SystemGroup.SystemGroupsView import SystemGroupsView
 from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendView
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
-from Discord.View.GuildSettingsView import GuildSettingsView
+from Discord.View.GuildSettings.DefaultGuildSettingsView import DefaultGuildSettingsView
 from Discord.View.MissionsRecap.MissionsRecapViews import MissionsRecapViews
 
 from Discord.View.APIMonitorView import APIMonitorView
@@ -174,10 +174,10 @@ async def bgs_recap(ctx: discord.ApplicationContext):
 @bot.slash_command(name="settings", description="show guild settings", guild_ids=guildIDs)
 @PermissionManager.guild_settings_permissions.see_predicate()
 async def settings(ctx: discord.ApplicationContext):
-    guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
-    guildSettingsView = GuildSettingsView(guildSettings)
+    guild_settings = DataStorageManager.get_guild_settings(ctx.guild_id)
+    guild_settings_view = DefaultGuildSettingsView(guild_settings)
 
-    await ctx.send_response(embed=guildSettingsView.getEmbed(), view=guildSettingsView)
+    await ctx.send_response(embed=guild_settings_view.getEmbed(), view=guild_settings_view)
 
 
 

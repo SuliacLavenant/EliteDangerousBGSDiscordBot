@@ -3,5 +3,6 @@
     "bgs_system_recap_channel_id": null,
     "bgs_warning_recap_channel_id": null,
     "mission_recap_channel_id": null,
-    "minor_faction_name": null
+    "minor_faction_name": null,
+    "trusted_channel_ids": []
 }
