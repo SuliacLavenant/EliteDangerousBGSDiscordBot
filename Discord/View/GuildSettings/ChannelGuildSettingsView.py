@@ -45,8 +45,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"BGS System Recap Channel <#{guild_settings.bgs_system_recap_channel_id}> succesfully set!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -59,8 +58,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"BGS System Recap Channel <#{guild_settings.bgs_system_recap_channel_id}> succesfully unset!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -73,8 +71,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"BGS Warning Recap Channel <#{guild_settings.bgs_warning_recap_channel_id}> succesfully set!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -87,8 +84,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"BGS Warning Recap Channel <#{guild_settings.bgs_warning_recap_channel_id}> succesfully unset!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -101,8 +97,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"BGS Change Log Channel <#{guild_settings.bgs_change_log_channel_id}> succesfully set!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -115,8 +110,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"BGS Change Log Channel <#{guild_settings.bgs_change_log_channel_id}> succesfully unset!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -129,8 +123,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"Mission Recap Channel <#{guild_settings.mission_recap_channel_id}> succesfully set!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -143,8 +136,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"Mission Recap Channel <#{guild_settings.mission_recap_channel_id}> succesfully unset!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -157,8 +149,7 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"Channel <#{guild_settings.mission_recap_channel_id}> succesfully trusted!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
@@ -171,7 +162,6 @@ class ChannelGuildSettingsView(GuildSettingsView):
             DataStorageManager.store_guild_settings(interaction.guild_id, guild_settings)
 
             guild_settings_view = GuildSettingsView(guild_settings)
-            await interaction.response.send_message(f"Channel <#{guild_settings.mission_recap_channel_id}> succesfully removed from trusted channels!", ephemeral=True)
-            await interaction.message.edit(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
+            await interaction.response.edit_message(embed=guild_settings_view.getEmbed(),view=guild_settings_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
