@@ -136,7 +136,7 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getLastUpdateWarning(self, systemRecap: SystemMinorFactionRecap):
-        if systemRecap.daysSinceLastUpdate<=1:
+        if systemRecap.daysSinceLastUpdate<1:
             return ""
         else:
             return f" | ({BotConfig.emotesN.warning}{systemRecap.daysSinceLastUpdate} days)"
