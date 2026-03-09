@@ -1,5 +1,9 @@
+from dataclasses import dataclass, field
+
 from EventClass.SystemEvent.MinorFactionSystemEvent import MinorFactionSystemEvent
 
+@dataclass
 class MinorFactionJoinSystemEvent(MinorFactionSystemEvent):
-    minor_faction_name: str
-    system_name: str
+    event_type: str = "MinorFactionJoinSystemEvent" 
+    minor_faction_name: str = None
+    system_name: str = None

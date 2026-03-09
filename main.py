@@ -24,6 +24,9 @@ from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import Ex
 from Discord.View.GuildSettings.DefaultGuildSettingsView import DefaultGuildSettingsView
 from Discord.View.MissionsRecap.MissionsRecapViews import MissionsRecapViews
 
+from Discord.View.SystemEventLog.MinorFactionJoinSystemEventLogView import MinorFactionJoinSystemEventLogView
+from Discord.View.SystemEventLog.MinorFactionLeaveSystemEventLogView import MinorFactionLeaveSystemEventLogView
+
 from Discord.View.APIMonitorView import APIMonitorView
 
 from BotConfig.BotConfig import BotConfig
@@ -71,9 +74,28 @@ def isBotMessage(message) -> bool:
 @bot.slash_command(name="forceupdatebgsdata", description="force the update of minor faction systems bgs data", guild_ids=guildIDs)
 async def forceupdatebgsdata(ctx: discord.ApplicationContext):
     await ctx.defer()
-    await asyncio.to_thread(DataManager.updateStoredSystemsBGSData, ctx.guild_id)
+    system_events = await asyncio.to_thread(DataManager.updateStoredSystemsBGSData, ctx.guild_id)
     await ctx.edit(content="Systems BGS Data Updated Successfully!")
+    await send_system_event_log(ctx,system_events)
 
+
+async def send_system_event_log(ctx: discord.ApplicationContext, system_events: list):
+    guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
+    
+    if guildSettings.bgs_change_log_channel_id!=None:
+        channel = bot.get_channel(guildSettings.bgs_change_log_channel_id)
+
+        for system_event in system_events:
+            view = None
+            match system_event.event_type:
+                case "MinorFactionJoinSystemEvent":
+                    view = MinorFactionJoinSystemEventLogView(system_event)
+                case "MinorFactionLeaveSystemEvent":
+                    view = MinorFactionLeaveSystemEventLogView(system_event)
+                case _:
+                    view = None
+            if view != None:
+                await channel.send(embed=view.get_embed(), view=view)
 
 
 @bot.slash_command(name="api_monitor", description="show status of each used apis", guild_ids=guildIDs)

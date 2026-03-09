@@ -115,11 +115,14 @@ class DataManager:
         minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
         storedSystemNamesList = DataStorageManager.get_system_names_list(guild_id)
         systems = []
+        system_events = []
         print(f"Updating {len(storedSystemNamesList)} systems")
         i = 0
         for systemName in storedSystemNamesList:
             system = DataStorageManager.get_system(guild_id, systemName)
-            system.update(DataManager.requestSystemData(systemName))
+            system_new = DataManager.requestSystemData(systemName)
+            system_events = system_events + system.diff(system_new)
+            system.update(system_new)
             systems.append(system)
             i+=1
             print(f"Updated {i}/{len(storedSystemNamesList)} systems")
@@ -135,7 +138,7 @@ class DataManager:
         print("retreat check: DONE")
 
 
-        return True
+        return system_events
 
 
     def updateSystemBGSData(guild_id: str, systemName: str):

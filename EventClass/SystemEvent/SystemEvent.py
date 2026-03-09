@@ -1,2 +1,6 @@
+from dataclasses import dataclass, field
+
+@dataclass
 class SystemEvent:
-    system_name: str
+    event_type: str = "SystemEvent" 
+    system_name: str = None

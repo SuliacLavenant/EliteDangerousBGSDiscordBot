@@ -2,6 +2,12 @@ from dataclasses import dataclass, field
 from copy import deepcopy
 
 from DataClass.MinorFaction import MinorFaction
+from EventClass.SystemEvent.SystemEvent import SystemEvent
+from EventClass.SystemEvent.ConflictEndSystemEvent import ConflictEndSystemEvent
+from EventClass.SystemEvent.ConflictStartSystemEvent import ConflictStartSystemEvent
+from EventClass.SystemEvent.MinorFactionJoinSystemEvent import MinorFactionJoinSystemEvent
+from EventClass.SystemEvent.MinorFactionLeaveSystemEvent import MinorFactionLeaveSystemEvent
+#from EventClass.SystemEvent import 
 
 @dataclass
 class System:
@@ -88,6 +94,21 @@ class System:
         self.minor_factions_names.append(name.lower())
         self.minor_factions_influence[name.lower()] = influence
         self.minor_factions_states[name.lower()] = {"pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
+
+
+    def diff(self, system_new):
+        system_events = []
+        if system_new!=None:
+            # faction join
+            for minor_faction_name in system_new.minor_factions_names:
+                if minor_faction_name not in self.minor_factions_names:
+                    system_events.append(MinorFactionJoinSystemEvent(minor_faction_name=minor_faction_name,system_name=self.name))
+            # faction leave
+            for minor_faction_name in self.minor_factions_names:
+                if minor_faction_name not in system_new.minor_factions_names:
+                    system_events.append(MinorFactionLeaveSystemEvent(minor_faction_name=minor_faction_name,system_name=self.name))
+        
+        return system_events
 
 
     def update(self, system_new):
