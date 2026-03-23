@@ -30,6 +30,14 @@ class MinorFaction:
             return False
 
 
+    def get_shared_system_names(self, minor_faction):
+        shared_system_names = []
+        for system_name in self.system_names:
+            if system_name in minor_faction.system_names:
+                shared_system_names.append(system_name)
+        return shared_system_names
+
+
     def remove_system(self, system_name):
         if system_name in self.system_names:
             self.system_names.remove(system_name)

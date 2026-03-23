@@ -1,64 +1,56 @@
 import discord
 import urllib.parse
 
-#custom
-from DataManager import DataManager
-
 from DataClass.MinorFaction import MinorFaction
-
+from DataClass.GuildSettings import GuildSettings
+from DataStorageManager import DataStorageManager
 from Discord.Modal.SetMinorFactionModal import SetMinorFactionModal
+from Discord.View.MinorFactionSharedSystemsView import MinorFactionSharedSystemsView
+
 
 class MinorFactionView(discord.ui.View):
-    def __init__(self, minorFaction: MinorFaction):
-        super().__init__()
-        self.minorFaction = minorFaction
+    minor_faction: MinorFaction
+    guild_settings: GuildSettings
+    shared_system_names: list = None
 
-        if self.minorFaction != None:
-            self.remove_item(self.setMinorFaction)
+    def __init__(self, minor_faction: MinorFaction, guild_id: int):
+        super().__init__()
+        self.minor_faction = minor_faction
+        self.guild_id = guild_id
+        self.guild_settings = DataStorageManager.get_guild_settings(guild_id)
+        if self.guild_settings.minor_faction_name != None:
+            self.guild_minor_faction = DataStorageManager.get_minor_faction(self.guild_id, self.guild_settings.minor_faction_name.lower())
+            self.shared_system_names = self.minor_faction.get_shared_system_names(self.guild_minor_faction)
+
+        if self.minor_faction != None:
             self.add_item(discord.ui.Button(
                 label="Inara",
-                url=f"https://inara.cz/elite/minorfaction/?search={urllib.parse.quote(self.minorFaction.name)}",
+                url=f"https://inara.cz/elite/minorfaction/?search={urllib.parse.quote(self.minor_faction.name)}",
                 emoji="🌐"
             ))
 
-    #a check
-    @discord.ui.button(label="Set Minor Faction", style=discord.ButtonStyle.primary)
-    async def setMinorFaction(self, button: discord.ui.Button, interaction: discord.Interaction):
-        setMinorFactionModal = SetMinorFactionModal()
-        await interaction.response.send_modal(setMinorFactionModal)
-        await setMinorFactionModal.wait()
-        minorFactionName = setMinorFactionModal.minorFactionName.value
-        if DataManager.setPlayerMinorFaction(interaction.guild_id,minorFactionName):
-            await interaction.followup.send(f"Minor Faction \"{minorFactionName.lower().title()}\" Successfully set!", ephemeral=True)
-            minorFaction = DataManager.getMinorFaction(interaction.guild_id)
-            minorFactionView = MinorFactionView(minorFaction)
-            await interaction.edit_original_response(view=minorFactionView,embed=minorFactionView.getEmbed())
+    
+    @discord.ui.button(label="Show shared systems", style=discord.ButtonStyle.primary, row=2)
+    async def show_shared_systems(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if True: #permission
+            systems = []
+            for shared_system_name in self.shared_system_names:
+                systems.append(DataStorageManager.get_system(self.guild_id,shared_system_name))
+            
+            view = MinorFactionSharedSystemsView(systems,self.minor_faction,self.guild_minor_faction)
+            await interaction.response.send_message(embed=view.getEmbed(), view=view)
+            #await interaction.followup.send("Autre message")
         else:
-            await interaction.followup.send(f"cannot find \"{minorFactionName.lower().title()}\" Minor Faction. This can happen if the faction does not exist, if it is a recent addition, or if the API has not responded.")
-
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
     def getEmbed(self):
-        if self.minorFaction == None:
-            return self.getNoMinorFactionEmbed()
-        else:
-            return self.getFactionRecapEmbed()
-
-
-    def getNoMinorFactionEmbed(self):
-        embed = discord.Embed(
-            title="No Minor Faction Set",
-            description="Please set a Minor Faction"
-        )
-        return embed
-
-
-    def getFactionRecapEmbed(self):
-        title = self.minorFaction.name.title()
-        description = f"Allegiance: **{self.minorFaction.allegiance.title()}**\n"
-        description += f"Government: **{self.minorFaction.government.title()}**\n"
-        description += f"Origin System: [**{self.minorFaction.origin_system_name.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.minorFaction.origin_system_name)})"
-        
+        title = self.minor_faction.name.title()
+        description = f"Allegiance: **{self.minor_faction.allegiance.title()}**\n"
+        description += f"Government: **{self.minor_faction.government.title()}**\n"
+        if self.minor_faction.origin_system_name != "" and self.minor_faction.origin_system_name != None:
+            description += f"Origin System: [**{self.minor_faction.origin_system_name.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.minor_faction.origin_system_name)})\n"
+        if self.shared_system_names != None:
+            description += f"Shared system: {len(self.shared_system_names)}\n"
         embed = discord.Embed(title=title, description=description)
-
         return embed

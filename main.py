@@ -119,21 +119,31 @@ async def system_group(ctx: discord.ApplicationContext):
 @bot.slash_command(name="system", description="show system information", guild_ids=guildIDs)
 async def system(ctx: discord.ApplicationContext, system_name: str):
     await ctx.defer()
-    guildSettings = DataStorageManager.get_guild_settings(ctx.guild_id)
+    guild_settings = DataStorageManager.get_guild_settings(ctx.guild_id)
     system = DataStorageManager.get_system(ctx.guild_id, system_name.lower())
     if system != None:
-        view = SystemView(system,guildSettings)
+        view = SystemView(system,guild_settings)
     else:
         system = DataManager.requestSystemData(system_name.lower())
         if system != None:
-            if system.minor_faction_is_present(guildSettings.minor_faction_name):
+            if system.minor_faction_is_present(guild_settings.minor_faction_name):
                 DataStorageManager.store_system(ctx.guild_id, system)
                 print("Untracked System Added")
-            view = SystemView(system,guildSettings)
+            view = SystemView(system,guild_settings)
         else:
             view = ErrorMessageView(f"System \"{system_name}\" not found.")
     await ctx.edit(embed=view.getEmbed(), view=view)
 
+
+@bot.slash_command(name="minor_faction", description="show minor faction information", guild_ids=guildIDs)
+async def minor_faction(ctx: discord.ApplicationContext, minor_faction_name: str):
+    await ctx.defer()
+    minor_faction = DataStorageManager.get_minor_faction(ctx.guild_id, minor_faction_name.lower())
+    if minor_faction != None:
+        view = MinorFactionView(minor_faction,ctx.guild_id)
+    else:
+        view = ErrorMessageView(f"Minor Faction \"{minor_faction_name}\" not found.")
+    await ctx.edit(embed=view.getEmbed(), view=view)
 
 
 @bot.slash_command(name="bgs_recap", description="send recap of bgs (minor faction and system) in set channel", guild_ids=guildIDs)
