@@ -74,7 +74,8 @@
     "bgs": {
         "state":{
             "retreat": {
-                "trigger_influence": 0.025
+                "trigger_influence": 0.025,
+                "warning_influence": 0.1
             },
             "expansion": {
                 "trigger_influence":  0.75,

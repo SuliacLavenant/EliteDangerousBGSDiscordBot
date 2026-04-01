@@ -5,6 +5,7 @@ from Discord.View.SystemRecap.GeneralSystemsRecapView import GeneralSystemsRecap
 from Discord.View.SystemRecap.Warning.ConflictSystemsRecapView import ConflictSystemsRecapView
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
 from Discord.View.SystemRecap.Warning.InfluenceMarginWarningSystemsRecapView import InfluenceMarginWarningSystemsRecapView
+from Discord.View.SystemRecap.Warning.RetreatWarningSystemsRecapView import RetreatWarningSystemsRecapView
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 from DataClass.SystemGroup import SystemGroup
 
@@ -125,6 +126,30 @@ class SystemsRecapViews:
         if len(systems)>0:
             if not titleSet:
                 embeds.append(ExpansionWarningSystemsRecapView(systems, not titleSet).getEmbed())
+
+        return embeds
+
+
+    ############## Retreat Warning
+    def get_retreat_warning_system_recap_embeds(self):
+        system_names_in_retreat_warning = []
+        for system_name in self.systemRecapsDict:
+            if self.systemRecapsDict[system_name].retreatWarning:
+                system_names_in_retreat_warning.append(system_name)
+        system_names_in_retreat_warning = self.sortListByInfluence(system_names_in_retreat_warning)
+
+        embeds = []
+        title_set = False
+        systems = {}
+        for system_name in system_names_in_retreat_warning:
+            systems[system_name] = self.systemRecapsDict[system_name]
+            if len(systems)>=15:
+                embeds.append(RetreatWarningSystemsRecapView(systems, not title_set).getEmbed())
+                title_set = True
+                systems = {}
+        if len(systems)>0:
+            if not title_set:
+                embeds.append(RetreatWarningSystemsRecapView(systems, not title_set).getEmbed())
 
         return embeds
     

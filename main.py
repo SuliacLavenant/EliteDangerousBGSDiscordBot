@@ -189,6 +189,10 @@ async def bgs_recap(ctx: discord.ApplicationContext):
             conflictEmbeds = systemsRecapViews.getConflictSystemRecapEmbeds()
             for i in range(len(conflictEmbeds)):
                 await channel.send(embed=conflictEmbeds[i])
+            #retreat
+            retreatEmbeds = systemsRecapViews.get_retreat_warning_system_recap_embeds()
+            for i in range(len(retreatEmbeds)):
+                await channel.send(embed=retreatEmbeds[i])
                 
     #### Missions Recap
     if guildSettings.mission_recap_channel_id!=None:

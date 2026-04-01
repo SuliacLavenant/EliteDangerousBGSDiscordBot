@@ -18,6 +18,7 @@ class SystemMinorFactionRecap:
     leaderInfluence: int = -1
 
     expansionWarning: bool = False
+    retreat: bool = False
     retreatWarning: bool = False
 
     warning: str = None
@@ -98,11 +99,12 @@ class SystemMinorFactionRecap:
         self.expansionWarning = self.system.get_minor_faction_influence(self.minorFactionName)>=BotConfig.bgs.state.expansion.warning_influence
 
     def checkRetreatWarning(self):
-        self.retreatWarning = self.system.get_minor_faction_influence(self.minorFactionName)<=BotConfig.bgs.state.retreat.trigger_influence or self.system.do_minor_faction_have_state(self.minorFactionName, "retreat") != None
+        self.retreat = self.system.do_minor_faction_have_state(self.minorFactionName, "retreat") != None
+        self.retreatWarning = self.system.get_minor_faction_influence(self.minorFactionName)<=BotConfig.bgs.state.retreat.warning_influence or self.retreat
 
 
     def checkImportantState(self):
-        if self.retreatWarning:
+        if self.retreat:
             self.importantState = "retreat"
         conflictState = self.system.get_minor_faction_conflict_state(self.minorFactionName)
         if conflictState!=None:
