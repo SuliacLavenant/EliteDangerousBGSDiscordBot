@@ -96,15 +96,15 @@ class SystemsRecapView(discord.ui.View):
             case "expansion":
                 emote = BotConfig.emotesN.minorFaction.state.expansion_warning
             case None:
-                emote = BotConfig.emotes["warningLevelOther"]
+                emote = BotConfig.emotesN.nothing
             case "marginLvl0":
-                emote = BotConfig.emotes["warningLevel0"]
+                emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level0
             case "marginLvl1":
-                emote = BotConfig.emotes["warningLevel1"]
+                emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level1
             case "marginLvl2":
-                emote = BotConfig.emotes["warningLevel2"]
+                emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level2
             case "marginLvl3":
-                emote = BotConfig.emotes["warningLevel3"]
+                emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level3
             case "retreat":
                 emote = BotConfig.emotesN.minorFaction.state.retreat_warning
             case "important":
@@ -114,13 +114,13 @@ class SystemsRecapView(discord.ui.View):
         if systemRecap.isDiplomatic:
             match systemRecap.diplomaticWarning:
                 case "shouldBeLeader":
-                    emote = BotConfig.emotes["warningLevel3"]
+                    emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level3
                 case "shouldNotBeLeader":
-                    emote = BotConfig.emotes["warningLevel3"]
+                    emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level3
                 case "shouldtBeSecond":
-                    emote = BotConfig.emotes["warningLevel3"]
+                    emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level3
                 case "notLeaderGood":
-                    emote = BotConfig.emotes["warningLevel0"]
+                    emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level0
 
         return emote
 

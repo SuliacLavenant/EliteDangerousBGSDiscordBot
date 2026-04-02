@@ -26,8 +26,3 @@ class BotConfig:
         # new
         cls.bgs = BGS(data["bgs"])
         cls.emotesN = Emotes(data["emotes"])
-
-
-
-
-        cls.emotes = data["systemRecap"]["emotes"]

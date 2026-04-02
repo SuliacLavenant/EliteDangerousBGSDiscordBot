@@ -1,4 +1,4 @@
-from BotConfig.Emotes.MinorFaction.Influence import Influence
+from BotConfig.Emotes.MinorFaction.Influence.Influence import Influence
 from BotConfig.Emotes.MinorFaction.PositionInSystem import PositionInSystem
 from BotConfig.Emotes.MinorFaction.State import State
 

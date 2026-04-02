@@ -1,14 +1,5 @@
 {
     "guilds_data_folder": "guildsData",
-    "systemRecap": {
-        "emotes":{
-            "warningLevelOther": ":white_circle:",
-            "warningLevel0": ":green_circle:",
-            "warningLevel1": ":yellow_circle:",
-            "warningLevel2": ":orange_circle:",
-            "warningLevel3": ":red_circle:"
-        }
-    },
     "emotes": {
         "warning": ":warning:",
         "nothing": ":white_small_square:",
@@ -37,7 +28,13 @@
         "minorFaction": {
             "influence": {
                 "down": ":chart_with_downwards_trend:",
-                "up": ":chart_with_upwards_trend:"
+                "up": ":chart_with_upwards_trend:",
+                "leader_influence_warning": {
+                    "level0": ":green_circle:",
+                    "level1": ":yellow_circle:",
+                    "level2": ":orange_circle:",
+                    "level3": ":red_circle:"
+                }
             },
             "state": {
                 "none": ":white_small_square:",
