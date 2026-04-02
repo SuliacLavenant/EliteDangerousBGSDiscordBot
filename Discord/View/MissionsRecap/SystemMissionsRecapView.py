@@ -38,7 +38,7 @@ class SystemMissionsRecapView(discord.ui.View):
         if days_since_last_update<=1:
             return ""
         else:
-            return f" | ({BotConfig.emotesN.warning}{days_since_last_update} days)"
+            return f" | ({BotConfig.emotes.warning}{days_since_last_update} days)"
 
 
     def get_mission_recap_one_line(self, mission: SystemMission):
@@ -49,13 +49,13 @@ class SystemMissionsRecapView(discord.ui.View):
     def get_mission_state_emote(self, mission: SystemMission):
         match mission.state:
             case MissionProgressEnum.UPCOMING:
-                return BotConfig.emotesN.mission.state.upcoming
+                return BotConfig.emotes.mission.state.upcoming
             case MissionProgressEnum.ACTIVE:
-                return BotConfig.emotesN.mission.state.active
+                return BotConfig.emotes.mission.state.active
             case MissionProgressEnum.PENDING:
-                return BotConfig.emotesN.mission.state.pending
+                return BotConfig.emotes.mission.state.pending
             case MissionProgressEnum.COMPLETE:
-                return BotConfig.emotesN.mission.state.complete
+                return BotConfig.emotes.mission.state.complete
             case _:
                 return "None"
 

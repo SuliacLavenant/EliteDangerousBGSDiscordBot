@@ -46,45 +46,45 @@ class SystemsRecapView(discord.ui.View):
     def getPositionEmote(self, systemRecap: SystemMinorFactionRecap):
         match systemRecap.positionInSystem:
             case "leader":
-                return BotConfig.emotesN.minorFaction.positionInSystem.leader
+                return BotConfig.emotes.minorFaction.positionInSystem.leader
             case "diplomatic":
-                return BotConfig.emotesN.minorFaction.positionInSystem.diplomatic
+                return BotConfig.emotes.minorFaction.positionInSystem.diplomatic
             case "other":
-                return BotConfig.emotesN.minorFaction.positionInSystem.other
+                return BotConfig.emotes.minorFaction.positionInSystem.other
 
 
     def getImportantStatusEmote(self, systemRecap: SystemMinorFactionRecap):
         match systemRecap.importantState:
             case None:
-                return BotConfig.emotesN.minorFaction.state.none
+                return BotConfig.emotes.minorFaction.state.none
             case "war" | "civil war":
-                return BotConfig.emotesN.minorFaction.state.war
+                return BotConfig.emotes.minorFaction.state.war
             case "election":
-                return BotConfig.emotesN.minorFaction.state.election
+                return BotConfig.emotes.minorFaction.state.election
             case "retreat":
-                return BotConfig.emotesN.minorFaction.state.retreat
+                return BotConfig.emotes.minorFaction.state.retreat
 
 
     def getNumberFactionEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.numberOfFactions<=3:
-            return BotConfig.emotesN.system.numberOfMinorFaction[3]
+            return BotConfig.emotes.system.numberOfMinorFaction[3]
         elif systemRecap.numberOfFactions>=7:
-            return BotConfig.emotesN.system.numberOfMinorFaction[7]
+            return BotConfig.emotes.system.numberOfMinorFaction[7]
         else:
-            return BotConfig.emotesN.system.numberOfMinorFaction[systemRecap.numberOfFactions]
+            return BotConfig.emotes.system.numberOfMinorFaction[systemRecap.numberOfFactions]
 
 
     def getSpecialSystemEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isOrigin:
-            return BotConfig.emotesN.system.information.origin
+            return BotConfig.emotes.system.information.origin
         elif systemRecap.isArchitect:
-            return BotConfig.emotesN.system.information.architect
+            return BotConfig.emotes.system.information.architect
         else:
-            return BotConfig.emotesN.nothing
+            return BotConfig.emotes.nothing
 
 
     def getSystemGroupEmote(self, systemRecap: SystemMinorFactionRecap):
-        emote = BotConfig.emotesN.nothing
+        emote = BotConfig.emotes.nothing
         if systemRecap.systemGroup != None and systemRecap.systemGroup.emote != None:
             emote = systemRecap.systemGroup.emote
         return emote
@@ -94,33 +94,33 @@ class SystemsRecapView(discord.ui.View):
         emote = ""
         match systemRecap.warning:
             case "expansion":
-                emote = BotConfig.emotesN.minorFaction.state.expansion_warning
+                emote = BotConfig.emotes.minorFaction.state.expansion_warning
             case None:
-                emote = BotConfig.emotesN.nothing
+                emote = BotConfig.emotes.nothing
             case "marginLvl0":
-                emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level0
+                emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level0
             case "marginLvl1":
-                emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level1
+                emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level1
             case "marginLvl2":
-                emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level2
+                emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level2
             case "marginLvl3":
-                emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level3
+                emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level3
             case "retreat":
-                emote = BotConfig.emotesN.minorFaction.state.retreat_warning
+                emote = BotConfig.emotes.minorFaction.state.retreat_warning
             case "important":
-                emote = BotConfig.emotesN.minorFaction.state.important
+                emote = BotConfig.emotes.minorFaction.state.important
         
         #diplomatic #overide retreat warning, take care #even global warning
         if systemRecap.isDiplomatic:
             match systemRecap.diplomaticWarning:
                 case "shouldBeLeader":
-                    emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level3
+                    emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level3
                 case "shouldNotBeLeader":
-                    emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level3
+                    emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level3
                 case "shouldtBeSecond":
-                    emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level3
+                    emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level3
                 case "notLeaderGood":
-                    emote = BotConfig.emotesN.minorFaction.influence.leader_influence_warning.level0
+                    emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level0
 
         return emote
 
@@ -141,4 +141,4 @@ class SystemsRecapView(discord.ui.View):
         if systemRecap.daysSinceLastUpdate<1:
             return ""
         else:
-            return f" | ({BotConfig.emotesN.warning}{systemRecap.daysSinceLastUpdate} days)"
+            return f" | ({BotConfig.emotes.warning}{systemRecap.daysSinceLastUpdate} days)"

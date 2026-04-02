@@ -14,7 +14,7 @@ class ExpansionWarningSystemsRecapView(SystemsRecapView):
         self.color = discord.Color.blue()
 
         if isTitle:
-            self.title = f"{BotConfig.emotesN.minorFaction.state.expansion} Expansion Warning {BotConfig.emotesN.minorFaction.state.expansion}"
+            self.title = f"{BotConfig.emotes.minorFaction.state.expansion} Expansion Warning {BotConfig.emotes.minorFaction.state.expansion}"
 
 
     def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):

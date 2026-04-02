@@ -14,7 +14,7 @@ class ConflictSystemsRecapView(SystemsRecapView):
         self.color = discord.Color.red()
 
         if isTitle:
-            self.title = f"{BotConfig.emotesN.minorFaction.state.war}{BotConfig.emotesN.minorFaction.state.election} Conflicts (War and Election) {BotConfig.emotesN.minorFaction.state.election}{BotConfig.emotesN.minorFaction.state.war}"
+            self.title = f"{BotConfig.emotes.minorFaction.state.war}{BotConfig.emotes.minorFaction.state.election} Conflicts (War and Election) {BotConfig.emotes.minorFaction.state.election}{BotConfig.emotes.minorFaction.state.war}"
 
 
     def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):

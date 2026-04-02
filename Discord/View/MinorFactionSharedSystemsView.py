@@ -28,7 +28,7 @@ class MinorFactionSharedSystemsView(discord.ui.View):
             minor_faction_line = f"{emote} **{self.minor_faction.name}** {emote} - <**{round(system.minor_factions_influence[self.minor_faction.name.lower()]*100,1)}%**>\n"
 
             emote = self.get_minor_faction_emote(system,self.guild_minor_faction.name)
-            guild_minor_faction_line = f"{emote} **{self.guild_minor_faction.name}** {emote} - <**{round(system.minor_factions_influence[self.guild_minor_faction.name.lower()]*100,1)}%**> {BotConfig.emotesN.pin}\n"
+            guild_minor_faction_line = f"{emote} **{self.guild_minor_faction.name}** {emote} - <**{round(system.minor_factions_influence[self.guild_minor_faction.name.lower()]*100,1)}%**> {BotConfig.emotes.pin}\n"
 
             value = ""
             if system.controlling_faction_name.lower() == self.minor_faction.name.lower():
@@ -52,6 +52,6 @@ class MinorFactionSharedSystemsView(discord.ui.View):
 
     def get_minor_faction_emote(self, system: System, minor_faction_name: str):
         if system.controlling_faction_name.lower() == minor_faction_name.lower():
-            return BotConfig.emotesN.minorFaction.positionInSystem.leader
+            return BotConfig.emotes.minorFaction.positionInSystem.leader
         else:
-            return BotConfig.emotesN.minorFaction.positionInSystem.other
+            return BotConfig.emotes.minorFaction.positionInSystem.other

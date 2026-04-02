@@ -14,7 +14,7 @@ class RetreatWarningSystemsRecapView(SystemsRecapView):
         self.color = discord.Color.red()
 
         if isTitle:
-            self.title = f"{BotConfig.emotesN.minorFaction.state.retreat} Retreat Warning {BotConfig.emotesN.minorFaction.state.retreat} (retreat warning: {round(BotConfig.bgs.state.retreat.warning_influence*100,1)}%, retreat trigger: {round(BotConfig.bgs.state.retreat.trigger_influence*100,1)}%)"
+            self.title = f"{BotConfig.emotes.minorFaction.state.retreat} Retreat Warning {BotConfig.emotes.minorFaction.state.retreat} (retreat warning: {round(BotConfig.bgs.state.retreat.warning_influence*100,1)}%, retreat trigger: {round(BotConfig.bgs.state.retreat.trigger_influence*100,1)}%)"
 
 
     def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):

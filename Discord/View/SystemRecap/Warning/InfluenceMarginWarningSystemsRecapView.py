@@ -21,7 +21,7 @@ class InfluenceMarginWarningSystemsRecapView(SystemsRecapView):
                 self.color = discord.Color.yellow()
 
         if isTitle:
-            self.title = f"{BotConfig.emotesN.minorFaction.influence.down} Influence Margin Warning Level {warningLvl} {BotConfig.emotesN.minorFaction.influence.down} (Inf Margin < {self.get_influence_warning_percent(warningLvl)})"
+            self.title = f"{BotConfig.emotes.minorFaction.influence.down} Influence Margin Warning Level {warningLvl} {BotConfig.emotes.minorFaction.influence.down} (Inf Margin < {self.get_influence_warning_percent(warningLvl)})"
 
     def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
         systemLine = f"{self.getSystemGroupEmote(systemRecap)} | {self.getNumberFactionEmote(systemRecap)} {self.getSpecialSystemEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} | {self.getInfluenceString(systemRecap)}"

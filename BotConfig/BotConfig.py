@@ -15,7 +15,7 @@ class BotConfig:
     stateEmotes: dict
 
     bgs: BGS
-    emotesN: Emotes
+    emotes: Emotes
 
     @classmethod
     def load(cls):
@@ -25,4 +25,4 @@ class BotConfig:
 
         # new
         cls.bgs = BGS(data["bgs"])
-        cls.emotesN = Emotes(data["emotes"])
+        cls.emotes = Emotes(data["emotes"])
