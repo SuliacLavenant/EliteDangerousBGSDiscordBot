@@ -22,7 +22,6 @@ class BotConfig:
         with open(cls.configPath, "r", encoding="utf-8") as f:
             data = json.load(f)
         cls.guildsDataFolder = data["guilds_data_folder"]
-        cls.leaderInfluenceWarning = data["systemRecap"]["influenceWarning"]["leader"]
 
         # new
         cls.bgs = BGS(data["bgs"])

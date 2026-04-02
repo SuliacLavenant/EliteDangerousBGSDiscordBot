@@ -18,10 +18,10 @@ class SystemsRecapLegendView(discord.ui.View):
         embed = discord.Embed(title=self.title, description=description)
 
         #status Warning Indicator
-        status = f"{BotConfig.emotes["warningLevel0"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level1"]*100)}%** margin.\n"
-        status += f"{BotConfig.emotes["warningLevel1"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level2"]*100)}%**-**{int(BotConfig.leaderInfluenceWarning["level1"]*100)}%** margin.\n"
-        status += f"{BotConfig.emotes["warningLevel2"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%**-**{int(BotConfig.leaderInfluenceWarning["level2"]*100)}%** margin.\n"
-        status += f"{BotConfig.emotes["warningLevel3"]}: **{self.minorFactionName}** is leader with less than a **{int(BotConfig.leaderInfluenceWarning["level3"]*100)}%** margin.\n"
+        status = f"{BotConfig.emotes["warningLevel0"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.bgs.leader_influence_warning.level1*100)}%** margin.\n"
+        status += f"{BotConfig.emotes["warningLevel1"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.bgs.leader_influence_warning.level2*100)}%**-**{int(BotConfig.bgs.leader_influence_warning.level1*100)}%** margin.\n"
+        status += f"{BotConfig.emotes["warningLevel2"]}: **{self.minorFactionName}** is leader with a **{int(BotConfig.bgs.leader_influence_warning.level3*100)}%**-**{int(BotConfig.bgs.leader_influence_warning.level2*100)}%** margin.\n"
+        status += f"{BotConfig.emotes["warningLevel3"]}: **{self.minorFactionName}** is leader with less than a **{int(BotConfig.bgs.leader_influence_warning.level3*100)}%** margin.\n"
         status += f"{BotConfig.emotesN.minorFaction.state.important}: **{self.minorFactionName}** have an Important state (conflict or...).\n"
         status += f"{BotConfig.emotesN.minorFaction.state.retreat_warning}: **{self.minorFactionName}** is in retreat warning (influence<{round(BotConfig.bgs.state.retreat.warning_influence*100,1)}%, {round(BotConfig.bgs.state.retreat.trigger_influence*100,1)}% to trigger retreat).\n"
         status += f"{BotConfig.emotesN.minorFaction.state.expansion_warning}: **{self.minorFactionName}** is close to trigger an **Expansion** (influence>**{int(BotConfig.bgs.state.expansion.warning_influence*100)}%**, **75%** to trigger an **Expansion**).\n"
