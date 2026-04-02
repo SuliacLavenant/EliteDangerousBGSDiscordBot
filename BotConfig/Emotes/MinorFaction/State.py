@@ -10,4 +10,7 @@ class State:
         self.war = emotesDict["war"]
         self.election = emotesDict["election"]
         self.expansion = emotesDict["expansion"]
+        self.expansion_warning = emotesDict["expansion_warning"]
+        self.important = emotesDict["important"]
         self.retreat = emotesDict["retreat"]
+        self.retreat_warning = emotesDict["retreat_warning"]

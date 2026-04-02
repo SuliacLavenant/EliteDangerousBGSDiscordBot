@@ -69,14 +69,14 @@ class SystemMinorFactionRecap:
 
     #Calculate influence warning
     def checkInfluenceWarning(self):
-        if self.isLeader:
-            self.warning = self.calculateLeaderInfluenceMarginWarning()
-        if self.retreatWarning:
-            self.warning = "retreat"
         if self.expansionWarning:
             self.warning = "expansion"
-        if self.importantState != None:
-            self.warning = "state"
+        elif self.isLeader:
+            self.warning = self.calculateLeaderInfluenceMarginWarning()
+        elif self.retreatWarning:
+            self.warning = "retreat"
+        elif self.importantState != None:
+            self.warning = "important"
 
     def calculateLeaderInfluenceMarginWarning(self):
         if self.leaderInfluenceMargin < BotConfig.leaderInfluenceWarning["level3"]:

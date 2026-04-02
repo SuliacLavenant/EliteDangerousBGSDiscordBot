@@ -6,9 +6,7 @@
             "warningLevel0": ":green_circle:",
             "warningLevel1": ":yellow_circle:",
             "warningLevel2": ":orange_circle:",
-            "warningLevel3": ":red_circle:",
-            "warningExpansion": ":blue_circle:",
-            "warningImportantState": ":no_entry:"
+            "warningLevel3": ":red_circle:"
         },
         "influenceWarning": {
             "leader": {
@@ -51,9 +49,12 @@
             "state": {
                 "none": ":white_small_square:",
                 "war": ":crossed_swords:",
+                "important": ":black_circle:",
                 "election": ":incoming_envelope:",
                 "expansion": ":diamond_shape_with_a_dot_inside:",
-                "retreat": ":door:"
+                "expansion_warning": ":blue_circle:",
+                "retreat": ":door:",
+                "retreat_warning": ":no_entry:"
             },
             "positionInSystem": {
                 "leader": ":crown:",

@@ -94,7 +94,7 @@ class SystemsRecapView(discord.ui.View):
         emote = ""
         match systemRecap.warning:
             case "expansion":
-                emote = BotConfig.emotes["warningExpansion"]
+                emote = BotConfig.emotesN.minorFaction.state.expansion_warning
             case None:
                 emote = BotConfig.emotes["warningLevelOther"]
             case "marginLvl0":
@@ -105,10 +105,12 @@ class SystemsRecapView(discord.ui.View):
                 emote = BotConfig.emotes["warningLevel2"]
             case "marginLvl3":
                 emote = BotConfig.emotes["warningLevel3"]
-            case "state":
-                emote = BotConfig.emotes["warningImportantState"]
+            case "retreat":
+                emote = BotConfig.emotesN.minorFaction.state.retreat_warning
+            case "important":
+                emote = BotConfig.emotesN.minorFaction.state.important
         
-        #diplomatic
+        #diplomatic #overide retreat warning, take care #even global warning
         if systemRecap.isDiplomatic:
             match systemRecap.diplomaticWarning:
                 case "shouldBeLeader":
