@@ -1,6 +1,7 @@
 import discord
 
 #custom
+from BotConfig.BotConfig import BotConfig
 from Discord.View.SystemRecap.GeneralSystemsRecapView import GeneralSystemsRecapView
 from Discord.View.SystemRecap.Warning.ConflictSystemsRecapView import ConflictSystemsRecapView
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
@@ -46,31 +47,51 @@ class SystemsRecapViews:
     def getSystemsMinorFactionRecapEmbeds(self):
         embeds=[]
         for systemGroup in self.systemGroups:
-            systemNames = systemGroup.systems
-            if systemNames!=None and len(systemNames)>0:
-                systemNames.sort()
-                embeds += self.getSystemGroupRecapEmbeds(systemNames,systemGroup)
+            if systemGroup.systems!=None and len(systemGroup.systems)>0:
+                systemGroup.calculate_number_leader_systems(self.systemRecapsDict)
+                systemGroup.systems.sort()
+                embeds += self.getSystemGroupRecapEmbeds(systemGroup)
 
         if len(self.systemsWithNoGroups)>0:
-            self.systemsWithNoGroups.sort()
-            embeds += self.getSystemGroupRecapEmbeds(self.systemsWithNoGroups, None)
+            embeds += self.getSystemNoGroupRecapEmbeds()
         return embeds
 
-    def getSystemGroupRecapEmbeds(self, systemNames: list, systemGroup: SystemGroup):
-        title = None
+    def getSystemGroupRecapEmbeds(self, systemGroup: SystemGroup):
+        title = systemGroup.name
         color = None
-        if systemGroup!=None:
-            title = systemGroup.name
-            if systemGroup.rgb_color != None:
-                color = discord.Color.from_rgb(systemGroup.rgb_color[0],systemGroup.rgb_color[1],systemGroup.rgb_color[2])
-            if systemGroup.emote != None:
-                title = f"{systemGroup.emote} {title} {systemGroup.emote}"
-        else:
-            title = "Other"
+        if systemGroup.rgb_color != None:
+            color = discord.Color.from_rgb(systemGroup.rgb_color[0],systemGroup.rgb_color[1],systemGroup.rgb_color[2])
+        if systemGroup.emote != None:
+            title = f"{systemGroup.emote} {systemGroup.name} {systemGroup.emote}"
+        title += f" ({systemGroup.number_leader_systems} {BotConfig.emotes.minorFaction.positionInSystem.leader} | {len(systemGroup.systems)} {BotConfig.emotes.systems})"
 
         embeds=[]
         systems = {}
-        for systemName in systemNames:
+        for systemName in systemGroup.systems:
+            systems[systemName] = self.systemRecapsDict[systemName]
+            if len(systems)>=15:
+                embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
+                title = None
+                systems = {}
+        if len(systems)>0:
+            embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
+
+        return embeds
+
+
+    def getSystemNoGroupRecapEmbeds(self):
+        self.systemsWithNoGroups.sort()
+        number_leader_systems = 0
+        for system_name in self.systemsWithNoGroups:
+            if self.systemRecapsDict[system_name].isLeader:
+                number_leader_systems += 1
+
+        title = f"Other ({number_leader_systems} {BotConfig.emotes.minorFaction.positionInSystem.leader} | {len(self.systemsWithNoGroups)} {BotConfig.emotes.systems})"
+        color = None
+
+        embeds=[]
+        systems = {}
+        for systemName in self.systemsWithNoGroups:
             systems[systemName] = self.systemRecapsDict[systemName]
             if len(systems)>=15:
                 embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())

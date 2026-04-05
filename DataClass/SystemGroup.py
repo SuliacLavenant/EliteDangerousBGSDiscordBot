@@ -7,6 +7,10 @@ class SystemGroup:
     emote: str = None
     systems: list = field(default_factory=list)
 
+    #not stored
+    number_leader_systems: int = None
+
+
     @classmethod
     def init_from_dict(cls, system_group_dict: dict):
         return cls(
@@ -61,6 +65,13 @@ class SystemGroup:
         system_group_dict["systems"] = self.systems
 
         return system_group_dict
+
+
+    def calculate_number_leader_systems(self, system_recaps: dict):
+        self.number_leader_systems = 0
+        for system_name in self.systems:
+            if system_recaps[system_name].isLeader:
+                self.number_leader_systems += 1
 
 
     def __str__(self):
