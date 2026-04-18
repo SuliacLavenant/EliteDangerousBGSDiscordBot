@@ -193,20 +193,22 @@ async def bgs_recap(ctx: discord.ApplicationContext):
             retreatEmbeds = systemsRecapViews.get_retreat_warning_system_recap_embeds()
             for i in range(len(retreatEmbeds)):
                 await channel.send(embed=retreatEmbeds[i])
-                
+        
+        update_mission_recaps(ctx.guild_id)
+
+
+async def update_mission_recaps(guild_id: int):
+    guildSettings = DataStorageManager.get_guild_settings(guild_id)
     #### Missions Recap
     if guildSettings.mission_recap_channel_id!=None:
-        missions_recap_views = MissionsRecapViews(ctx.guild_id)
-
+        missions_recap_views = MissionsRecapViews(guild_id)
+        
         channel = bot.get_channel(guildSettings.mission_recap_channel_id)
         await channel.purge(check=isBotMessage)
 
-        #retreat mission
         retreat_embeds = missions_recap_views.get_retreat_minor_faction_from_system_missions_recap_embeds()
         for i in range(len(retreat_embeds)):
             await channel.send(embed=retreat_embeds[i])
-
-        #set leader mission
         set_leader_embeds = missions_recap_views.get_set_minor_faction_as_leader_in_system_missions_recap_embeds()
         for i in range(len(set_leader_embeds)):
             await channel.send(embed=set_leader_embeds[i])
