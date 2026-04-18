@@ -7,11 +7,12 @@ from DataStorageManager import DataStorageManager
 from DataClass.System import System
 from DataClass.GuildSettings import GuildSettings
 from DataClass.Mission.SystemMission.RetreatMinorFactionFromSystemMission import RetreatMinorFactionFromSystemMission
+from DataClass.Mission.SystemMission.SetMinorFactionAsLeaderInSystemMission import SetMinorFactionAsLeaderInSystemMission
 from PermissionManager.PermissionManager import PermissionManager
 
 from Discord.Modal.System.SetSystemArchitectModal import SetSystemArchitectModal
 from Discord.Modal.Mission.CreateRetreatMinorFactionFromSystemMissionModal import CreateRetreatMinorFactionFromSystemMissionModal
-
+from Discord.Modal.Mission.CreateSetMinorFactionAsLeaderInSystemMissionModal import CreateSetMinorFactionAsLeaderInSystemMissionModal
 class SystemView(discord.ui.View):
     def __init__(self, system: System, guildSettings: GuildSettings):
         super().__init__()
@@ -68,7 +69,7 @@ class SystemView(discord.ui.View):
 
 
     @discord.ui.button(label="Create Retreat Mission", style=discord.ButtonStyle.primary, row=2)
-    async def create_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def create_retreat_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.mission_permissions.create(interaction.user.id):
             create_retreat_minor_faction_from_system_mission_modal = CreateRetreatMinorFactionFromSystemMissionModal(self.system)
             await interaction.response.send_modal(create_retreat_minor_faction_from_system_mission_modal)
@@ -77,6 +78,24 @@ class SystemView(discord.ui.View):
             minor_faction_name = create_retreat_minor_faction_from_system_mission_modal.minor_faction
             if minor_faction_name != None:
                 mission = RetreatMinorFactionFromSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
+                DataStorageManager.store_mission(interaction.guild_id,mission)
+
+            system_view = SystemView(self.system, self.guildSettings)
+            await interaction.message.edit(view=system_view,embed=system_view.getEmbed())
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+    @discord.ui.button(label="Create Set Leader Mission", style=discord.ButtonStyle.primary, row=2)
+    async def create_set_leader_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.mission_permissions.create(interaction.user.id):
+            create_set_minor_faction_as_leader_in_system_mission_modal = CreateSetMinorFactionAsLeaderInSystemMissionModal(self.system)
+            await interaction.response.send_modal(create_set_minor_faction_as_leader_in_system_mission_modal)
+            await create_set_minor_faction_as_leader_in_system_mission_modal.wait()
+            
+            minor_faction_name = create_set_minor_faction_as_leader_in_system_mission_modal.minor_faction
+            if minor_faction_name != None:
+                mission = SetMinorFactionAsLeaderInSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
                 DataStorageManager.store_mission(interaction.guild_id,mission)
 
             system_view = SystemView(self.system, self.guildSettings)

@@ -206,6 +206,11 @@ async def bgs_recap(ctx: discord.ApplicationContext):
         for i in range(len(retreat_embeds)):
             await channel.send(embed=retreat_embeds[i])
 
+        #set leader mission
+        set_leader_embeds = missions_recap_views.get_set_minor_faction_as_leader_in_system_missions_recap_embeds()
+        for i in range(len(set_leader_embeds)):
+            await channel.send(embed=set_leader_embeds[i])
+
 
 @bot.slash_command(name="settings", description="show guild settings", guild_ids=guildIDs)
 @PermissionManager.guild_settings_permissions.see_predicate()

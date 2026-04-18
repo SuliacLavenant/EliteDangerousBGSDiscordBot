@@ -177,6 +177,10 @@ class System:
                     second_influence = faction_influence
 
         return leader_influence-second_influence
+    
+
+    def get_minor_faction_influence_difference_from_leader(self, minor_faction_name: str) -> float:
+        return self.get_minor_faction_influence(minor_faction_name) - self.get_leader_influence()
 
 
     def get_second_and_its_influence(self):

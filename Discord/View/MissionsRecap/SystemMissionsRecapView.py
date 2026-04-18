@@ -67,3 +67,9 @@ class SystemMissionsRecapView(discord.ui.View):
     def get_target_minor_faction_influence_string(self, mission: SystemMission):
         influence = round(mission.current_influence*100,1)
         return f"< **{influence}**% >"
+    
+
+    #set leader missions
+    def get_target_minor_faction_influence_difference_string(self, mission: SystemMission):
+        influence = round(mission.current_influence_difference*100,1)
+        return f"< **{influence}**% >"

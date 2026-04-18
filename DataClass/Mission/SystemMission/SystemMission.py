@@ -11,7 +11,6 @@ class SystemMission(Mission):
     system_name: str = None
 
     #not stored
-    current_influence: int = None
     state = MissionProgressEnum.NONE
     system: System = None
 

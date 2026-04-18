@@ -8,6 +8,7 @@ from DataClass.DiplomaticSystem import DiplomaticSystem
 from DataClass.MinorFaction import MinorFaction
 from DataClass.Mission.Mission import Mission
 from DataClass.Mission.SystemMission.RetreatMinorFactionFromSystemMission import RetreatMinorFactionFromSystemMission
+from DataClass.Mission.SystemMission.SetMinorFactionAsLeaderInSystemMission import SetMinorFactionAsLeaderInSystemMission
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
 from DataClass.GuildSettings import GuildSettings
@@ -370,5 +371,7 @@ class DataStorageManager:
             match missions_data[key]["mission_type"]:
                 case "RetreatMinorFactionFromSystemMission":
                     missions.append(RetreatMinorFactionFromSystemMission.init_from_dict(missions_data[key]))
+                case "SetMinorFactionAsLeaderInSystemMission":
+                    missions.append(SetMinorFactionAsLeaderInSystemMission.init_from_dict(missions_data[key]))
 
         return missions
