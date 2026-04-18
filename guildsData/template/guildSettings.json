@@ -1,4 +1,5 @@
 {
+    "guild_id": null,
     "bgs_change_log_channel_id": null,
     "bgs_system_recap_channel_id": null,
     "bgs_warning_recap_channel_id": null,
