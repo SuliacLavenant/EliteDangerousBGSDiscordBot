@@ -12,6 +12,7 @@ class Emotes:
     system: System
     minorFaction: MinorFaction
     mission: Mission
+    target: str
 
     def __init__(self, emotesDict: dict):
         self.data = Data(emotesDict["data"])
@@ -22,3 +23,4 @@ class Emotes:
         self.system = System(emotesDict["system"])
         self.minorFaction = MinorFaction(emotesDict["minorFaction"])
         self.mission = Mission(emotesDict["mission"])
+        self.target = emotesDict["target"]

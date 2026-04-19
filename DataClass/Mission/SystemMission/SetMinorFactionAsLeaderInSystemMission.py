@@ -54,3 +54,12 @@ class SetMinorFactionAsLeaderInSystemMission(SystemMission):
             self.state = MissionProgressEnum.COMPLETE
         else:
             self.state = MissionProgressEnum.ACTIVE
+
+
+
+    ### STR
+
+
+    def get_target_minor_faction_influence_difference_string(self):
+        influence = round(self.current_influence_difference*100,1)
+        return f"**{influence}**%"

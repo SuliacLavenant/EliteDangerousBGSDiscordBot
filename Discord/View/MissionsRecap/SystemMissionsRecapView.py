@@ -46,30 +46,5 @@ class SystemMissionsRecapView(discord.ui.View):
         return systemLine
 
 
-    def get_mission_state_emote(self, mission: SystemMission):
-        match mission.state:
-            case MissionProgressEnum.UPCOMING:
-                return BotConfig.emotes.mission.state.upcoming
-            case MissionProgressEnum.ACTIVE:
-                return BotConfig.emotes.mission.state.active
-            case MissionProgressEnum.PENDING:
-                return BotConfig.emotes.mission.state.pending
-            case MissionProgressEnum.COMPLETE:
-                return BotConfig.emotes.mission.state.complete
-            case _:
-                return "None"
-
-
     def get_system_name_with_inara_link(self, system: System):
         return f"[**{system.name.title()}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(system.name)})"
-    
-
-    def get_target_minor_faction_influence_string(self, mission: SystemMission):
-        influence = round(mission.current_influence*100,1)
-        return f"< **{influence}**% >"
-    
-
-    #set leader missions
-    def get_target_minor_faction_influence_difference_string(self, mission: SystemMission):
-        influence = round(mission.current_influence_difference*100,1)
-        return f"< **{influence}**% >"

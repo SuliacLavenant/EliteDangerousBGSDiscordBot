@@ -355,11 +355,31 @@ class DataStorageManager:
                 mission.mission_id = 0
             else:
                 mission.mission_id = int(max(keys))+1
+            #if mission system
+            system = DataStorageManager.get_system(guild_id, mission.system_name)
+            system.add_mission(mission.mission_id)
+            DataStorageManager.store_system(guild_id, system)
 
         missions_data[mission.mission_id] = mission.get_as_dict()
 
         DataStorageManager.atomic_write_file_content(file_path,missions_data)
         return True
+
+
+    def get_mission(guild_id: str, mission_id: int):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"missions.json"
+        missions_data = DataStorageManager.read_file_content(file_path)
+
+        if str(mission_id) in missions_data.keys():
+            match missions_data[str(mission_id)]["mission_type"]:
+                case "RetreatMinorFactionFromSystemMission":
+                    return RetreatMinorFactionFromSystemMission.init_from_dict(missions_data[str(mission_id)])
+                case "SetMinorFactionAsLeaderInSystemMission":
+                    return SetMinorFactionAsLeaderInSystemMission.init_from_dict(missions_data[str(mission_id)])
+                case _:
+                    return None
+        else:
+            return None
 
 
     def get_missions(guild_id: str):

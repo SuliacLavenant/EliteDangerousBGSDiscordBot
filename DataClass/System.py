@@ -34,6 +34,8 @@ class System:
 
     isStored: int = False #stored system
 
+    mission_ids: list = field(default_factory=list)
+
 
     @classmethod
     def init_from_dict(cls, system_dict: dict):
@@ -53,7 +55,8 @@ class System:
             architect = system_dict["architect"],
             isDiplomatic = system_dict["isDiplomatic"],
             lastInfluenceUpdate = system_dict["lastInfluenceUpdate"],
-            isStored = True
+            isStored = True,
+            mission_ids = system_dict["mission_ids"]
             )
         return system
 
@@ -85,6 +88,7 @@ class System:
         system_dict["architect"] = self.architect
         system_dict["isDiplomatic"] = self.isDiplomatic
         system_dict["lastInfluenceUpdate"] = self.lastInfluenceUpdate
+        system_dict["mission_ids"] = self.mission_ids
 
         return system_dict
 
@@ -235,6 +239,14 @@ class System:
                 if faction_influence == minor_faction_influence:
                     return True
         return False
+
+
+    def add_mission(self, mission_id: int):
+        self.mission_ids.append(mission_id)
+
+
+    def remove_mission(self, mission_id: int):
+        self.mission_ids.remove(mission_id)
 
 
     def lower(self, string: str):

@@ -122,17 +122,19 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
     guild_settings = DataStorageManager.get_guild_settings(ctx.guild_id)
     system = DataStorageManager.get_system(ctx.guild_id, system_name.lower())
     if system != None:
-        view = SystemView(system,guild_settings)
+        view = SystemView(system, guild_settings, guild_settings.is_channel_trusted(ctx.channel_id))
+        await ctx.edit(embeds=view.get_embeds(), view=view)
     else:
         system = DataManager.requestSystemData(system_name.lower())
         if system != None:
             if system.minor_faction_is_present(guild_settings.minor_faction_name):
                 DataStorageManager.store_system(ctx.guild_id, system)
                 print("Untracked System Added")
-            view = SystemView(system,guild_settings)
+            view = SystemView(system, guild_settings, guild_settings.is_channel_trusted(ctx.channel_id))
+            await ctx.edit(embeds=view.get_embeds(), view=view)
         else:
             view = ErrorMessageView(f"System \"{system_name}\" not found.")
-    await ctx.edit(embed=view.getEmbed(), view=view)
+            await ctx.edit(embed=view.getEmbed(), view=view)
 
 
 @bot.slash_command(name="minor_faction", description="show minor faction information", guild_ids=guildIDs)
@@ -194,7 +196,7 @@ async def bgs_recap(ctx: discord.ApplicationContext):
             for i in range(len(retreatEmbeds)):
                 await channel.send(embed=retreatEmbeds[i])
         
-        update_mission_recaps(ctx.guild_id)
+    await update_mission_recaps(ctx.guild_id)
 
 
 async def update_mission_recaps(guild_id: int):
@@ -202,7 +204,7 @@ async def update_mission_recaps(guild_id: int):
     #### Missions Recap
     if guildSettings.mission_recap_channel_id!=None:
         missions_recap_views = MissionsRecapViews(guild_id)
-        
+
         channel = bot.get_channel(guildSettings.mission_recap_channel_id)
         await channel.purge(check=isBotMessage)
 

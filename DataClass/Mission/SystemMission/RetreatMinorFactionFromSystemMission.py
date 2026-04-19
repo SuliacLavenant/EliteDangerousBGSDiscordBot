@@ -50,3 +50,10 @@ class RetreatMinorFactionFromSystemMission(SystemMission):
             self.state = MissionProgressEnum.PENDING
         else:
             self.state = MissionProgressEnum.ACTIVE
+
+
+    ### STR
+
+    def get_current_influence_string(self):
+        influence = round(self.current_influence*100,1)
+        return f"**{influence}**%"

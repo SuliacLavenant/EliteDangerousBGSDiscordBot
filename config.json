@@ -3,6 +3,7 @@
     "emotes": {
         "warning": ":warning:",
         "nothing": ":white_small_square:",
+        "target": ":dart:",
         "data": {
             "online": ":globe_with_meridians:",
             "saved": ":package:",
@@ -57,6 +58,7 @@
                 "active": "💪🏻",
                 "complete": "✅",
                 "pending": "⏳",
+                "state": "📋",
                 "upcoming": "🗓️"
             }
         },

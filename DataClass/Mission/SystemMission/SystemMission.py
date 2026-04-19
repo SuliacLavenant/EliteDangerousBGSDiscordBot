@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+from BotConfig.BotConfig import BotConfig
 from DataClass.Mission.Mission import Mission
 from DataClass.Mission.MissionProgressEnum import MissionProgressEnum
 from DataClass.System import System
@@ -31,3 +32,21 @@ class SystemMission(Mission):
         mission_dict["mission_type"] = self.mission_type
         mission_dict["system_name"] = self.system_name
         return mission_dict
+
+
+
+    #### STR
+
+
+    def get_mission_state_emote(self):
+        match self.state:
+            case MissionProgressEnum.UPCOMING:
+                return BotConfig.emotes.mission.state.upcoming
+            case MissionProgressEnum.ACTIVE:
+                return BotConfig.emotes.mission.state.active
+            case MissionProgressEnum.PENDING:
+                return BotConfig.emotes.mission.state.pending
+            case MissionProgressEnum.COMPLETE:
+                return BotConfig.emotes.mission.state.complete
+            case _:
+                return "None"

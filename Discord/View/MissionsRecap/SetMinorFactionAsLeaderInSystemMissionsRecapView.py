@@ -20,5 +20,5 @@ class SetMinorFactionAsLeaderInSystemMissionsRecapView(SystemMissionsRecapView):
 
 
     def get_mission_recap_one_line(self, mission: SetMinorFactionAsLeaderInSystemMission):
-        systemLine = f"{self.get_mission_state_emote(mission)} | **{mission.minor_faction_name}** | {mission.system.name} | {self.get_target_minor_faction_influence_difference_string(mission)} {self.get_last_update_warning(mission.system)}"
+        systemLine = f"{mission.get_mission_state_emote()} | **{mission.minor_faction_name}** | {mission.system.name} | <{mission.get_target_minor_faction_influence_difference_string()}> {self.get_last_update_warning(mission.system)}"
         return systemLine
