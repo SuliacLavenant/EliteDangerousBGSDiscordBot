@@ -85,8 +85,11 @@ class SystemView(discord.ui.View):
                 mission = RetreatMinorFactionFromSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
                 DataStorageManager.store_mission(interaction.guild_id,mission)
 
-            system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
-            system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
+                self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+                self.system.add_mission(mission.mission_id)
+                DataStorageManager.store_system(interaction.guild_id, self.system)
+
+            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
             await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
@@ -104,8 +107,11 @@ class SystemView(discord.ui.View):
                 mission = SetMinorFactionAsLeaderInSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
                 DataStorageManager.store_mission(interaction.guild_id,mission)
 
-            system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
-            system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
+                self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+                self.system.add_mission(mission.mission_id)
+                DataStorageManager.store_system(interaction.guild_id, self.system)
+
+            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
             await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)

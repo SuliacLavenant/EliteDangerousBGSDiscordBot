@@ -351,14 +351,10 @@ class DataStorageManager:
 
         if mission.mission_id == None:
             keys = missions_data.keys()
-            if len(keys) == 0:
-                mission.mission_id = 0
-            else:
-                mission.mission_id = int(max(keys))+1
-            #if mission system
-            system = DataStorageManager.get_system(guild_id, mission.system_name)
-            system.add_mission(mission.mission_id)
-            DataStorageManager.store_system(guild_id, system)
+            key = 0
+            while str(key) in keys and key<200:
+                key += 1
+            mission.mission_id = key
 
         missions_data[mission.mission_id] = mission.get_as_dict()
 
