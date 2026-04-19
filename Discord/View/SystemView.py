@@ -59,8 +59,8 @@ class SystemView(discord.ui.View):
         await setSystemArchitectModal.wait()
 
         system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
-        systemView = SystemView(system, self.guildSettings)
-        await interaction.edit_original_response(view=systemView,embed=systemView.getEmbed())
+        system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
+        await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
 
 
     async def setNativeSystemtButtonCallback(self, interaction: discord.Interaction):
@@ -69,8 +69,8 @@ class SystemView(discord.ui.View):
 
         DataStorageManager.store_system(interaction.guild_id,system)
 
-        systemView = SystemView(system, self.guildSettings)
-        await interaction.response.edit_message(view=systemView,embed=systemView.getEmbed())
+        system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
+        await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
 
 
     @discord.ui.button(label="Create Retreat Mission", style=discord.ButtonStyle.primary, row=2)
@@ -85,7 +85,8 @@ class SystemView(discord.ui.View):
                 mission = RetreatMinorFactionFromSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
                 DataStorageManager.store_mission(interaction.guild_id,mission)
 
-            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
+            system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
+            system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
             await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
@@ -103,7 +104,8 @@ class SystemView(discord.ui.View):
                 mission = SetMinorFactionAsLeaderInSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
                 DataStorageManager.store_mission(interaction.guild_id,mission)
 
-            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
+            system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
+            system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
             await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
