@@ -121,7 +121,7 @@ class DataManager:
         for systemName in storedSystemNamesList:
             system = DataStorageManager.get_system(guild_id, systemName)
             system_new = DataManager.requestSystemData(systemName)
-            system_events = system_events + system.diff(system_new)
+            system_events = system_events + system.diff(system_new,minorFactionName)
             system.update(system_new)
             systems.append(system)
             i+=1

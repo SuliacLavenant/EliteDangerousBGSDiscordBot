@@ -5,8 +5,10 @@ from DataClass.MinorFaction import MinorFaction
 from EventClass.SystemEvent.SystemEvent import SystemEvent
 from EventClass.SystemEvent.ConflictEndSystemEvent import ConflictEndSystemEvent
 from EventClass.SystemEvent.ConflictStartSystemEvent import ConflictStartSystemEvent
+from EventClass.SystemEvent.MinorFactionAcquireLeadershipSystemEvent import MinorFactionAcquireLeadershipSystemEvent
 from EventClass.SystemEvent.MinorFactionJoinSystemEvent import MinorFactionJoinSystemEvent
 from EventClass.SystemEvent.MinorFactionLeaveSystemEvent import MinorFactionLeaveSystemEvent
+from EventClass.SystemEvent.MinorFactionLoseLeadershipSystemEvent import MinorFactionLoseLeadershipSystemEvent
 #from EventClass.SystemEvent import 
 
 @dataclass
@@ -100,7 +102,7 @@ class System:
         self.minor_factions_states[name.lower()] = {"pendingStates": pendingStates, "activeStates": activeStates, "recoveringStates": recoveringStates}
 
 
-    def diff(self, system_new):
+    def diff(self, system_new, tracked_minor_faction_name):
         system_events = []
         if system_new!=None:
             # faction join
@@ -111,7 +113,13 @@ class System:
             for minor_faction_name in self.minor_factions_names:
                 if minor_faction_name not in system_new.minor_factions_names:
                     system_events.append(MinorFactionLeaveSystemEvent(minor_faction_name=minor_faction_name,system_name=self.name))
-        
+            # tracked faction lose leadership
+            if self.is_controlled_by(tracked_minor_faction_name) and not system_new.is_controlled_by(tracked_minor_faction_name):
+                system_events.append(MinorFactionLoseLeadershipSystemEvent(minor_faction_name=tracked_minor_faction_name,system_name=self.name,new_leader_minor_faction_name=system_new.controlling_faction_name))
+            # tracked faction acquire leadership
+            if not self.is_controlled_by(tracked_minor_faction_name) and system_new.is_controlled_by(tracked_minor_faction_name):
+                system_events.append(MinorFactionAcquireLeadershipSystemEvent(minor_faction_name=tracked_minor_faction_name,system_name=self.name,old_leader_minor_faction_name=self.controlling_faction_name))
+
         return system_events
 
 

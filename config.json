@@ -62,7 +62,13 @@
                 "upcoming": "🗓️"
             }
         },
-        "pin": ":pushpin:"
+        "pin": ":pushpin:",
+        "arrow": {
+            "down": ":arrow_down:",
+            "left": ":arrow_left:",
+            "right": ":arrow_right:",
+            "up": ":arrow_up:"
+        }
     },
     "bgs": {
         "leader_influence_warning": {
