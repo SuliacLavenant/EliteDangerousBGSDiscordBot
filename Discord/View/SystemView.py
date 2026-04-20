@@ -172,7 +172,7 @@ class SystemView(discord.ui.View):
         description += f"{self.getNumberMinorFactionEmote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
         if self.system.isArchitected:
             description += f"{BotConfig.emotes.system.information.architect} Architect: **{self.system.architect.title()}**\n"
-        description += f"{BotConfig.indent}"
+        description += f"{BotConfig.indent2}"
 
         embed = discord.Embed(title=title, description=description)
         embeds.append(embed)
@@ -181,8 +181,8 @@ class SystemView(discord.ui.View):
         current = 1
         while current<=len(ranking):
             minor_faction = self.system.minor_factions[ranking[current]]
-            minorFactionDescription = f"{BotConfig.indent} Allegiance: **{minor_faction.allegiance.title()}**\n"
-            minorFactionDescription += f"{BotConfig.indent} Government: **{minor_faction.government.title()}**\n"
+            minorFactionDescription = f"{BotConfig.indent2} Allegiance: **{minor_faction.allegiance.title()}**\n"
+            minorFactionDescription += f"{BotConfig.indent2} Government: **{minor_faction.government.title()}**\n"
 
             emote = ""
             if current == 1:
@@ -211,20 +211,20 @@ class SystemView(discord.ui.View):
                     title = f"{BotConfig.emotes.minorFaction.positionInSystem.leader} Set Leader {BotConfig.emotes.minorFaction.positionInSystem.leader}"
                     mission.update_with_system_data(self.system)
                     mission.check_mission_state()
-                    details += f"{BotConfig.indent}{BotConfig.emotes.mission.state.state} State: {mission.get_mission_state_emote()} **{mission.state.value}** \n"
-                    details += f"{BotConfig.indent}{BotConfig.emotes.target} Target: **{mission.minor_faction_name}** \n"
+                    details += f"{BotConfig.indent2}{BotConfig.emotes.mission.state.state} State: {mission.get_mission_state_emote()} **{mission.state.value}** \n"
+                    details += f"{BotConfig.indent2}{BotConfig.emotes.target} Target: **{mission.minor_faction_name}** \n"
                     if mission.current_influence_difference<0:
-                        details += f"{BotConfig.indent}{BotConfig.emotes.minorFaction.influence.up} Missing Influence: {mission.get_target_minor_faction_influence_difference_string()} \n"
+                        details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.influence.up} Missing Influence: {mission.get_target_minor_faction_influence_difference_string()} \n"
                     elif mission.conflict != None:
-                        details += f"{BotConfig.indent}{BotConfig.emotes.minorFaction.state.war} Conflict: {mission.conflict} \n"
+                        details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.state.war} Conflict: {mission.conflict} \n"
                     
                 elif mission.mission_type == "RetreatMinorFactionFromSystemMission":
                     title = f"{BotConfig.emotes.minorFaction.state.retreat} Retreat {BotConfig.emotes.minorFaction.state.retreat}"
                     mission.update_with_system_data(self.system)
                     mission.check_mission_state()
-                    details += f"{BotConfig.indent}{BotConfig.emotes.mission.state.state} State: {mission.get_mission_state_emote()} **{mission.state.value}** \n"
-                    details += f"{BotConfig.indent}{BotConfig.emotes.target} Target: **{mission.minor_faction_name}** \n"
-                    details += f"{BotConfig.indent}{BotConfig.emotes.minorFaction.influence.down} Current Influence: {mission.get_current_influence_string()} \n"
+                    details += f"{BotConfig.indent2}{BotConfig.emotes.mission.state.state} State: {mission.get_mission_state_emote()} **{mission.state.value}** \n"
+                    details += f"{BotConfig.indent2}{BotConfig.emotes.target} Target: **{mission.minor_faction_name}** \n"
+                    details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.influence.down} Current Influence: {mission.get_current_influence_string()} \n"
 
                 embed.add_field(name=title, value=details, inline=False)
 

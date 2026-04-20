@@ -12,8 +12,8 @@ class MinorFactionLoseLeadershipSystemEventLogView(SystemEventLogView):
 
 
     def get_embed(self):
-        emote = BotConfig.emotes.arrow.down + BotConfig.emotes.minorFaction.positionInSystem.other + BotConfig.emotes.arrow.down
-        title = f"{emote} Minor Faction Lost System Leadership {emote}"
+        emote = f"{BotConfig.emotes.arrow.down} {BotConfig.emotes.minorFaction.positionInSystem.other} {BotConfig.emotes.arrow.down}"
+        title = f"{emote}{BotConfig.indent}Minor Faction Lost System Leadership{BotConfig.indent}{emote}"
         description = f"System: **{self.system_event.system_name}**\n"
         description += f"Minor Faction: **{self.system_event.minor_faction_name}**\n"
         description += f"New Leader: **{self.system_event.new_leader_minor_faction_name}**"

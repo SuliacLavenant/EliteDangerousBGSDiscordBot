@@ -17,7 +17,8 @@ class BotConfig:
     bgs: BGS
     emotes: Emotes
 
-    indent: str = "⠀"*2
+    indent: str = "⠀"
+    indent2: str = "⠀"*2
 
     @classmethod
     def load(cls):

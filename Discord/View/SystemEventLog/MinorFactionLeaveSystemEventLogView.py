@@ -12,8 +12,8 @@ class MinorFactionLeaveSystemEventLogView(SystemEventLogView):
 
 
     def get_embed(self):
-        emote = BotConfig.emotes.minorFaction.state.retreat
-        title = f"{emote} Minor Faction leave System {emote}"
+        emote = f"{BotConfig.emotes.arrow.right}{BotConfig.emotes.minorFaction.state.retreat}"
+        title = f"{emote}{BotConfig.indent}Minor Faction leave System{BotConfig.indent}{emote}"
         description = f"System: **{self.system_event.system_name}**\n"
         description += f"Minor Faction: **{self.system_event.minor_faction_name}**"
         embed = discord.Embed(title=title, description=description)

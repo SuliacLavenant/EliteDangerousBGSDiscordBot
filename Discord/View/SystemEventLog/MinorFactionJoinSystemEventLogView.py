@@ -13,7 +13,7 @@ class MinorFactionJoinSystemEventLogView(SystemEventLogView):
 
     def get_embed(self):
         emote = BotConfig.emotes.minorFaction.state.expansion
-        title = f"{emote} Minor Faction join System {emote}"
+        title = f"{emote}{BotConfig.indent}Minor Faction join System{BotConfig.indent}{emote}"
         description = f"System: **{self.system_event.system_name}**\n"
         description += f"Minor Faction: **{self.system_event.minor_faction_name}**"
         embed = discord.Embed(title=title, description=description)
