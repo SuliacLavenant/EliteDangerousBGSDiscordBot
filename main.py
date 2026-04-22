@@ -16,6 +16,8 @@ from APIRequester.APIManager import APIManager
 
 from Discord.View.ErrorMessageView import ErrorMessageView
 from Discord.View.MinorFactionView import MinorFactionView
+from Discord.View.SquadronView import SquadronView
+from Discord.View.SquadronNotFoundView import SquadronNotFoundView
 from Discord.View.SystemView import SystemView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
 from Discord.View.SystemGroup.SystemGroupsView import SystemGroupsView
@@ -229,6 +231,19 @@ async def settings(ctx: discord.ApplicationContext):
     guild_settings_view = DefaultGuildSettingsView(guild_settings)
 
     await ctx.send_response(embed=guild_settings_view.getEmbed(), view=guild_settings_view,ephemeral=True)
+
+
+@bot.slash_command(name="squadron", description="show squadron information", guild_ids=guildIDs)
+@PermissionManager.squadron_permissions.see_predicate()
+async def squadron(ctx: discord.ApplicationContext, squadron_name: str):
+    await ctx.defer()
+    squadron = DataStorageManager.get_squadron_by_name(ctx.guild_id, squadron_name)
+    if squadron == None:
+        squadron_not_found_view = SquadronNotFoundView(squadron_name, ctx.guild_id)
+        await ctx.edit(embed=squadron_not_found_view.get_embed(), view=squadron_not_found_view)
+    else:
+        squadron_view = SquadronView(squadron, ctx.guild_id)
+        await ctx.edit(embed=squadron_view.get_embed(), view=squadron_view)
 
 
 

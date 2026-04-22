@@ -9,6 +9,8 @@ from DataClass.MinorFaction import MinorFaction
 from DataClass.Mission.Mission import Mission
 from DataClass.Mission.SystemMission.RetreatMinorFactionFromSystemMission import RetreatMinorFactionFromSystemMission
 from DataClass.Mission.SystemMission.SetMinorFactionAsLeaderInSystemMission import SetMinorFactionAsLeaderInSystemMission
+from DataClass.Player import Player
+from DataClass.Squadron import Squadron
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
 from DataClass.GuildSettings import GuildSettings
@@ -85,8 +87,8 @@ class DataStorageManager:
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"minorFactions.json"
         minor_factions_data = DataStorageManager.read_file_content(file_path)
 
-        if minor_faction_name in minor_factions_data.keys():
-            minor_faction = MinorFaction.init_from_dict(minor_factions_data[minor_faction_name])
+        if minor_faction_name.lower() in minor_factions_data.keys():
+            minor_faction = MinorFaction.init_from_dict(minor_factions_data[minor_faction_name.lower()])
             return minor_faction
         else:
             return None
@@ -391,3 +393,52 @@ class DataStorageManager:
                     missions.append(SetMinorFactionAsLeaderInSystemMission.init_from_dict(missions_data[key]))
 
         return missions
+
+
+
+##################################################
+################################################## Squadron
+
+    def store_squadron(guild_id: str, squadron: Squadron):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"squadrons.json"
+        squadron_data = DataStorageManager.read_file_content(file_path)
+
+        if squadron.id == None:
+            keys = squadron_data.keys()
+            key = 0
+            while str(key) in keys and key<200:
+                key += 1
+            squadron.id = key
+
+        squadron_data[str(squadron.id)] = squadron.get_as_dict()
+
+        DataStorageManager.atomic_write_file_content(file_path,squadron_data)
+        return True
+
+
+    def get_squadron_by_id(guild_id: str, squadron_id: int):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"squadrons.json"
+        squadron_data = DataStorageManager.read_file_content(file_path)
+        if str(squadron_id) in squadron_data.keys():
+            return Squadron.init_from_dict(squadron_data[str(squadron_id)])
+        else:
+            return None
+
+
+    def get_squadron_by_name(guild_id: str, squadron_name: str):
+        squadrons = DataStorageManager.get_squadrons(guild_id)
+
+        for squadron in squadrons:
+            if squadron.name.lower() == squadron_name.lower():
+                return squadron
+        return None
+
+
+    def get_squadrons(guild_id: str):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"squadrons.json"
+        squadron_data = DataStorageManager.read_file_content(file_path)
+
+        squadrons = []
+        for key in squadron_data.keys():
+           squadrons.append(Squadron.init_from_dict(squadron_data[key]))
+        return squadrons
