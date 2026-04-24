@@ -442,3 +442,52 @@ class DataStorageManager:
         for key in squadron_data.keys():
            squadrons.append(Squadron.init_from_dict(squadron_data[key]))
         return squadrons
+
+
+
+##################################################
+################################################## Player
+
+    def store_player(guild_id: str, player: Player):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"players.json"
+        player_data = DataStorageManager.read_file_content(file_path)
+
+        if player.id == None:
+            keys = player_data.keys()
+            key = 0
+            while str(key) in keys and key<200:
+                key += 1
+            player.id = key
+
+        player_data[str(player.id)] = player.get_as_dict()
+
+        DataStorageManager.atomic_write_file_content(file_path,player_data)
+        return True
+
+
+    def get_player_by_id(guild_id: str, player_id: int) -> Player:
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"players.json"
+        player_data = DataStorageManager.read_file_content(file_path)
+        if str(player_id) in player_data.keys():
+            return Player.init_from_dict(player_data[str(player_id)])
+        else:
+            return None
+
+
+    def get_player_by_name(guild_id: str, player_name: str) -> Player:
+        players = DataStorageManager.get_players(guild_id)
+
+        for player in players:
+            if player.name.lower() == player_name.lower():
+                return player
+        return None
+
+
+    def get_players(guild_id: str) -> list:
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"players.json"
+        player_data = DataStorageManager.read_file_content(file_path)
+
+        players = []
+        for key in player_data.keys():
+           players.append(Player.init_from_dict(player_data[key]))
+        return players

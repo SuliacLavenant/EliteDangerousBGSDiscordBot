@@ -16,6 +16,8 @@ from APIRequester.APIManager import APIManager
 
 from Discord.View.ErrorMessageView import ErrorMessageView
 from Discord.View.MinorFactionView import MinorFactionView
+from Discord.View.Player.PlayerView import PlayerView
+from Discord.View.Player.PlayerNotFoundView import PlayerNotFoundView
 from Discord.View.SquadronView import SquadronView
 from Discord.View.SquadronNotFoundView import SquadronNotFoundView
 from Discord.View.SystemView import SystemView
@@ -31,7 +33,7 @@ from Discord.View.SystemEventLog.MinorFactionAcquireLeadershipSystemEventLogView
 from Discord.View.SystemEventLog.MinorFactionLeaveSystemEventLogView import MinorFactionLeaveSystemEventLogView
 from Discord.View.SystemEventLog.MinorFactionLoseLeadershipSystemEventLogView import MinorFactionLoseLeadershipSystemEventLogView
 
-from Discord.View.APIMonitorView import APIMonitorView
+#from Discord.View.APIMonitorView import APIMonitorView
 
 from BotConfig.BotConfig import BotConfig
 BotConfig.load()
@@ -106,12 +108,12 @@ async def send_system_event_log(ctx: discord.ApplicationContext, system_events: 
                 await channel.send(embed=view.get_embed(), view=view)
 
 
-@bot.slash_command(name="api_monitor", description="show status of each used apis", guild_ids=guildIDs)
-async def api_monitor(ctx: discord.ApplicationContext):
-    await ctx.defer()
-    aPIStatus = APIManager.getAPIStatus()
-    aPIMonitorView = APIMonitorView(aPIStatus)
-    await ctx.edit(embed=aPIMonitorView.getEmbed(), view=aPIMonitorView)
+# @bot.slash_command(name="api_monitor", description="show status of each used apis", guild_ids=guildIDs)
+# async def api_monitor(ctx: discord.ApplicationContext):
+#     await ctx.defer()
+#     aPIStatus = APIManager.getAPIStatus()
+#     aPIMonitorView = APIMonitorView(aPIStatus)
+#     await ctx.edit(embed=aPIMonitorView.getEmbed(), view=aPIMonitorView)
 
 
 
@@ -244,6 +246,19 @@ async def squadron(ctx: discord.ApplicationContext, squadron_name: str):
     else:
         squadron_view = SquadronView(squadron, ctx.guild_id)
         await ctx.edit(embed=squadron_view.get_embed(), view=squadron_view)
+
+
+@bot.slash_command(name="player", description="show player information", guild_ids=guildIDs)
+@PermissionManager.player_permissions.see_predicate()
+async def player(ctx: discord.ApplicationContext, player_name: str):
+    await ctx.defer()
+    player = DataStorageManager.get_player_by_name(ctx.guild_id, player_name)
+    if player == None:
+        player_not_found_view = PlayerNotFoundView(player_name, ctx.guild_id)
+        await ctx.edit(embed=player_not_found_view.get_embed(), view=player_not_found_view)
+    else:
+        player_view = PlayerView(player, ctx.guild_id)
+        await ctx.edit(embed=player_view.get_embed(), view=player_view)
 
 
 

@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 class Player:
     discord_id: int = None
     id: int = None
-    pseudo: str = ""
+    name: str = ""
     squadron_id: str = None
 
 
@@ -13,7 +13,7 @@ class Player:
         player = cls(
             discord_id = player_dict["discord_id"],
             id = player_dict["id"],
-            pseudo = player_dict["pseudo"],
+            name = player_dict["name"],
             squadron_id = player_dict["squadron_id"]
             )
         return player
@@ -23,10 +23,10 @@ class Player:
         player_dict = {}
         player_dict["discord_id"] = self.discord_id
         player_dict["id"] = self.id
-        player_dict["pseudo"] = self.pseudo
+        player_dict["name"] = self.name
         player_dict["squadron_id"] = self.squadron_id
         return player_dict
 
 
     def __str__(self):
-        return f"Pseudo: {self.pseudo.title()}"
+        return f"Name: {self.name.title()}"
