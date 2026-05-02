@@ -218,12 +218,16 @@ async def update_mission_recaps(guild_id: int):
         channel = bot.get_channel(guildSettings.mission_recap_channel_id)
         await channel.purge(check=isBotMessage)
 
-        retreat_embeds = missions_recap_views.get_retreat_minor_faction_from_system_missions_recap_embeds()
-        for i in range(len(retreat_embeds)):
-            await channel.send(embed=retreat_embeds[i])
-        set_leader_embeds = missions_recap_views.get_set_minor_faction_as_leader_in_system_missions_recap_embeds()
-        for i in range(len(set_leader_embeds)):
-            await channel.send(embed=set_leader_embeds[i])
+        # retreat_embeds = missions_recap_views.get_retreat_minor_faction_from_system_missions_recap_embeds()
+        # for i in range(len(retreat_embeds)):
+        #     await channel.send(embed=retreat_embeds[i])
+        # set_leader_embeds = missions_recap_views.get_set_minor_faction_as_leader_in_system_missions_recap_embeds()
+        # for i in range(len(set_leader_embeds)):
+        #     await channel.send(embed=set_leader_embeds[i])
+
+        system_missions_views = missions_recap_views.get_missions_recap_per_system_views()
+        for system_missions_view in system_missions_views:
+            await channel.send(embed=system_missions_view.get_embed(), view=system_missions_view)
 
 
 @bot.slash_command(name="settings", description="show guild settings", guild_ids=guildIDs)

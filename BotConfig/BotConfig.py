@@ -19,6 +19,7 @@ class BotConfig:
 
     indent: str = "⠀"
     indent2: str = "⠀"*2
+    indent4: str = "⠀"*4
 
     @classmethod
     def load(cls):

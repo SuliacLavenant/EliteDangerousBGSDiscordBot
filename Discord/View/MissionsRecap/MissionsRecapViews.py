@@ -5,25 +5,36 @@ from DataClass.Mission.SystemMission.SetMinorFactionAsLeaderInSystemMission impo
 from DataStorageManager import DataStorageManager
 from Discord.View.MissionsRecap.RetreatMinorFactionFromSystemMissionsRecapView import RetreatMinorFactionFromSystemMissionsRecapView
 from Discord.View.MissionsRecap.SetMinorFactionAsLeaderInSystemMissionsRecapView import SetMinorFactionAsLeaderInSystemMissionsRecapView
+from Discord.View.MissionsRecap.SystemMissionsRecapPerSystemView import SystemMissionsRecapPerSystemView
 
 class MissionsRecapViews:
     guild_id: int = None
     retreat_missions: list = None
+    set_leader_mission: list = None
+
+    missions_per_system: dict = None
 
 
     def __init__(self, guild_id):
         self.guild_id = guild_id
         missions = DataStorageManager.get_missions(self.guild_id)
 
+        self.missions_per_system = {}
         self.retreat_missions = []
         self.set_leader_mission = []
         for mission in missions:
             match mission.mission_type:
                 case "RetreatMinorFactionFromSystemMission":
                     self.retreat_missions.append(mission)
+                    if mission.system_name not in self.missions_per_system.keys():
+                        self.missions_per_system[mission.system_name] = []
+                    self.missions_per_system[mission.system_name].append(mission)
                 case "SetMinorFactionAsLeaderInSystemMission":
                     self.set_leader_mission.append(mission)
-        
+                    if mission.system_name not in self.missions_per_system.keys():
+                        self.missions_per_system[mission.system_name] = []
+                    self.missions_per_system[mission.system_name].append(mission)
+
         self.process_retreat_mission()
         self.process_set_leader_mission()
 
@@ -72,3 +83,11 @@ class MissionsRecapViews:
                 embeds.append(SetMinorFactionAsLeaderInSystemMissionsRecapView(missions, not titleSet).getEmbed())
 
         return embeds
+
+
+    def get_missions_recap_per_system_views(self):
+        views = []
+        for system_missions in self.missions_per_system.values():
+            views.append(SystemMissionsRecapPerSystemView(system_missions[0].system, system_missions))
+
+        return views
