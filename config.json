@@ -54,6 +54,7 @@
             }
         },
         "mission": {
+            "mission": ":clipboard:",
             "state": {
                 "active": "💪🏻",
                 "complete": "✅",

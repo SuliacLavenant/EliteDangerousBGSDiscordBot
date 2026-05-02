@@ -142,3 +142,10 @@ class SystemsRecapView(discord.ui.View):
             return ""
         else:
             return f" | ({BotConfig.emotes.warning}{systemRecap.daysSinceLastUpdate} days)"
+
+
+    def get_have_mission_string(self, systemRecap: SystemMinorFactionRecap):
+        if len(systemRecap.system.mission_ids)>=1:
+            return f" | {BotConfig.emotes.mission.mission}"
+        else:
+            return ""

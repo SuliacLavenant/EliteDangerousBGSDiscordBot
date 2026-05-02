@@ -20,6 +20,7 @@ class GeneralSystemsRecapView(SystemsRecapView):
         if systemRecap.marginWarning and systemRecap.importantState!= "war" and systemRecap.importantState!= "election":
             systemLine += f" {self.getInfluenceDiffLevelStr(systemRecap)}"
 
+        systemLine +=  f"{self.get_have_mission_string(systemRecap)}"
         systemLine +=  f"{self.getLastUpdateWarning(systemRecap)}"
 
         return systemLine
