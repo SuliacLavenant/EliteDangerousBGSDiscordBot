@@ -27,6 +27,7 @@ from Discord.View.SystemRecap.SystemRecapLegendView import SystemsRecapLegendVie
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
 from Discord.View.GuildSettings.DefaultGuildSettingsView import DefaultGuildSettingsView
 from Discord.View.MissionsRecap.MissionsRecapViews import MissionsRecapViews
+from Discord.View.MissionsRecap.MissionRecapLegendView import MissionRecapLegendView
 
 from Discord.View.SystemEventLog.MinorFactionJoinSystemEventLogView import MinorFactionJoinSystemEventLogView
 from Discord.View.SystemEventLog.MinorFactionAcquireLeadershipSystemEventLogView import MinorFactionAcquireLeadershipSystemEventLogView
@@ -217,6 +218,10 @@ async def update_mission_recaps(guild_id: int):
 
         channel = bot.get_channel(guildSettings.mission_recap_channel_id)
         await channel.purge(check=isBotMessage)
+
+        ##### Legend
+        mission_recap_legend_view = MissionRecapLegendView()
+        await channel.send(embed=mission_recap_legend_view.get_embed())
 
         # retreat_embeds = missions_recap_views.get_retreat_minor_faction_from_system_missions_recap_embeds()
         # for i in range(len(retreat_embeds)):
