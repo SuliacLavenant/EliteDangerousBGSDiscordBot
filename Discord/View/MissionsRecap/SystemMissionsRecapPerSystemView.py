@@ -36,13 +36,13 @@ class SystemMissionsRecapPerSystemView(discord.ui.View):
         for mission in self.mission_list:
             match mission.mission_type:
                 case "SetMinorFactionAsLeaderInSystemMission":
-                    mission_title = f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.positionInSystem.leader} Set Leader {BotConfig.emotes.minorFaction.positionInSystem.leader} | {mission.get_mission_state_emote()}"
+                    mission_title = f"{BotConfig.indent2}{mission.get_mission_state_emote()} | {BotConfig.emotes.minorFaction.positionInSystem.leader} Set Leader {BotConfig.emotes.minorFaction.positionInSystem.leader}"
                     mission_description = ""
                     mission_description += f"{BotConfig.indent4} Target: **{mission.minor_faction_name.title()}**\n"
                     mission_description += f"{BotConfig.indent4} Influence Diff: {mission.get_target_minor_faction_influence_difference_string()}"
                     embed.add_field(name=mission_title, value=mission_description, inline=False)
                 case "RetreatMinorFactionFromSystemMission":
-                    mission_title = f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.state.retreat} Retreat Minor Faction {BotConfig.emotes.minorFaction.state.retreat} | {mission.get_mission_state_emote()}"
+                    mission_title = f"{BotConfig.indent2}{mission.get_mission_state_emote()} | {BotConfig.emotes.minorFaction.state.retreat} Retreat Minor Faction {BotConfig.emotes.minorFaction.state.retreat}"
                     mission_description = ""
                     mission_description += f"{BotConfig.indent4} Target: **{mission.minor_faction_name.title()}**\n"
                     mission_description += f"{BotConfig.indent4} Current Influence: {mission.get_current_influence_string()}\n"
