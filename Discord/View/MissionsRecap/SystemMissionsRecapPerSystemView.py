@@ -18,12 +18,12 @@ class SystemMissionsRecapPerSystemView(discord.ui.View):
         self.mission_list = mission_list
         self.system = system
 
-        self.add_item(discord.ui.Button(
-            label="Inara",
-            url=f"https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.system.name)}",
-            emoji="🌐",
-            row=0
-        ))
+        # self.add_item(discord.ui.Button(
+        #     label="Inara",
+        #     url=f"https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.system.name)}",
+        #     emoji="🌐",
+        #     row=0
+        # ))
 
 
     def get_embed_large(self):
