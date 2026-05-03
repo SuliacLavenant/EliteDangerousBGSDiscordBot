@@ -232,7 +232,7 @@ async def update_mission_recaps(guild_id: int):
 
         system_missions_views = missions_recap_views.get_missions_recap_per_system_views()
         for system_missions_view in system_missions_views:
-            await channel.send(embed=system_missions_view.get_embed(), view=system_missions_view)
+            await channel.send(embed=system_missions_view.get_embed_short(), view=system_missions_view)
 
 
 @bot.slash_command(name="settings", description="show guild settings", guild_ids=guildIDs)

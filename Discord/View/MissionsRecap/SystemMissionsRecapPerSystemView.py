@@ -26,7 +26,7 @@ class SystemMissionsRecapPerSystemView(discord.ui.View):
         ))
 
 
-    def get_embed(self):
+    def get_embed_large(self):
         title = f"{self.system.name} {self.get_last_update_warning(self.mission_list[0].system)}"
         if self.color!=None:
             embed = discord.Embed(title=title, description="", color=self.color)
@@ -47,6 +47,29 @@ class SystemMissionsRecapPerSystemView(discord.ui.View):
                     mission_description += f"{BotConfig.indent4} Target: **{mission.minor_faction_name.title()}**\n"
                     mission_description += f"{BotConfig.indent4} Current Influence: {mission.get_current_influence_string()}\n"
                     embed.add_field(name=mission_title, value=mission_description, inline=False)
+
+        return embed
+
+
+    def get_embed_short(self):
+        title = f"{self.system.name} {self.get_last_update_warning(self.mission_list[0].system)}"
+        if self.color!=None:
+            embed = discord.Embed(title=title, description="", color=self.color)
+        else:
+            embed = discord.Embed(title=title, description="")
+
+        for mission in self.mission_list:
+            match mission.mission_type:
+                case "SetMinorFactionAsLeaderInSystemMission":
+                    mission_title = f"{BotConfig.indent2}{mission.get_mission_state_emote()} | {BotConfig.emotes.minorFaction.positionInSystem.leader} Set Leader {BotConfig.emotes.minorFaction.positionInSystem.leader} |"
+                    mission_title += f" **{mission.minor_faction_name.title()}** |"
+                    mission_title += f" Diff: {mission.get_target_minor_faction_influence_difference_string()}"
+                    embed.add_field(name=mission_title, value="", inline=False)
+                case "RetreatMinorFactionFromSystemMission":
+                    mission_title = f"{BotConfig.indent2}{mission.get_mission_state_emote()} | {BotConfig.emotes.minorFaction.state.retreat} Retreat Minor Faction {BotConfig.emotes.minorFaction.state.retreat} |"
+                    mission_title += f" **{mission.minor_faction_name.title()}** |"
+                    mission_title += f" Inf: {mission.get_current_influence_string()}"
+                    embed.add_field(name=mission_title, value="", inline=False)
 
         return embed
 
