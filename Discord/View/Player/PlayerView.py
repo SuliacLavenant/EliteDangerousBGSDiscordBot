@@ -1,9 +1,11 @@
 import discord
 
+from BotConfig.BotConfig import BotConfig
 from DataClass.Player import Player
 from DataClass.GuildSettings import GuildSettings
 from DataStorageManager import DataStorageManager
 from Discord.Modal.Player.RenamePlayerModal import RenamePlayerModal
+from Discord.Modal.Player.SetPlayerInaraIdModal import SetPlayerInaraIdModal
 from PermissionManager.PermissionManager import PermissionManager
 
 
@@ -24,9 +26,18 @@ class PlayerView(discord.ui.View):
             self.remove_item(self.edit)
         else:
             self.remove_item(self.rename)
+            self.remove_item(self.set_inara_id)
+
+        if self.player.inara_id != None:
+            self.add_item(discord.ui.Button(
+                label="Inara",
+                url=f"https://inara.cz/elite/cmdr/{str(self.player.inara_id)}/",
+                emoji="🌐",
+                row=0
+            ))
 
 
-    @discord.ui.button(label="Edit", style=discord.ButtonStyle.primary, row=0)
+    @discord.ui.button(label="Edit", style=discord.ButtonStyle.primary, row=1)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
             player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
@@ -36,7 +47,7 @@ class PlayerView(discord.ui.View):
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
-    @discord.ui.button(label="Rename", style=discord.ButtonStyle.primary, row=0)
+    @discord.ui.button(label="Rename", style=discord.ButtonStyle.primary, row=1)
     async def rename(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
             rename_player_modal = RenamePlayerModal(self.player)
@@ -54,6 +65,25 @@ class PlayerView(discord.ui.View):
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
+    @discord.ui.button(label="Set Inara Id", style=discord.ButtonStyle.primary, row=1)
+    async def set_inara_id(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
+            set_inara_id_player_modal = SetPlayerInaraIdModal()
+            await interaction.response.send_modal(set_inara_id_player_modal)
+            await set_inara_id_player_modal.wait()
+
+            if set_inara_id_player_modal.inara_id != None:
+                player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+                player.inara_id = set_inara_id_player_modal.inara_id
+                DataStorageManager.store_player(interaction.guild_id, player)
+
+            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+            player_view = PlayerView(player, self.guild_id, True)
+            await interaction.message.edit(embed=player_view.get_embed(),view=player_view)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
     def get_embed(self):
         title = f"{self.player.name}"
         if self.player.squadron_id != None:
@@ -61,5 +91,21 @@ class PlayerView(discord.ui.View):
             title += f" [{squadron.tag}]"
         description = ""
         embed = discord.Embed(title=title, description=description)
+
+        ##### Accounts
+        accounts_details = ""
+        if self.player.discord_id != None:
+            accounts_details += f"{BotConfig.indent2}**Discord**: \n"
+        else:
+            accounts_details += f"{BotConfig.indent2}**Discord**: Unknown\n"
+        if self.player.inara_id != None:
+            accounts_details += f"{BotConfig.indent2}**Inara**: [{self.player.name}](https://inara.cz/elite/cmdr/{str(self.player.inara_id)}/)"
+        else:
+            accounts_details += f"{BotConfig.indent2}**Inara**: Unknown"
+        embed.add_field(name="Accounts", value=accounts_details, inline=False)
+
+        ##### Squadron
+        squadron_details = ""
+        embed.add_field(name="Squadron", value=squadron_details, inline=False)
 
         return embed

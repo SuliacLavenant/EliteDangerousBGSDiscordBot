@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 class Player:
     discord_id: int = None
     id: int = None
+    inara_id: int = None
     name: str = ""
     squadron_id: str = None
 
@@ -13,6 +14,7 @@ class Player:
         player = cls(
             discord_id = player_dict["discord_id"],
             id = player_dict["id"],
+            inara_id = player_dict["inara_id"],
             name = player_dict["name"],
             squadron_id = player_dict["squadron_id"]
             )
@@ -23,6 +25,7 @@ class Player:
         player_dict = {}
         player_dict["discord_id"] = self.discord_id
         player_dict["id"] = self.id
+        player_dict["inara_id"] = self.inara_id
         player_dict["name"] = self.name
         player_dict["squadron_id"] = self.squadron_id
         return player_dict
