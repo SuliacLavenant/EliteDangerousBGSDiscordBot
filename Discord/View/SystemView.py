@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import discord
 import urllib.parse
 
@@ -127,7 +128,7 @@ class SystemView(discord.ui.View):
         description = f"{BotConfig.emotes.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
         description += f"{BotConfig.emotes.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
         description += f"{BotConfig.emotes.system.information.security} Security Level: **{self.system.security.title()}**\n"
-        description += f"{self.getNumberMinorFactionEmote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
+        description += f"{self.get_number_minor_faction_emote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
         if self.system.isArchitected:
             description += f"{BotConfig.emotes.system.information.architect} Architect: **{self.system.architect.title()}**\n"
         description += "."
@@ -165,11 +166,12 @@ class SystemView(discord.ui.View):
             title += f" {BotConfig.emotes.data.saved}"
         else:
             title += f" {BotConfig.emotes.data.online}"
+        title += self.get_last_update_warning()
 
         description = f"{BotConfig.emotes.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
         description += f"{BotConfig.emotes.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
         description += f"{BotConfig.emotes.system.information.security} Security Level: **{self.system.security.title()}**\n"
-        description += f"{self.getNumberMinorFactionEmote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
+        description += f"{self.get_number_minor_faction_emote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
         if self.system.isArchitected:
             description += f"{BotConfig.emotes.system.information.architect} Architect: **{self.system.architect.title()}**\n"
         description += f"{BotConfig.indent2}"
@@ -232,13 +234,22 @@ class SystemView(discord.ui.View):
         return embeds
 
 
-    def getNumberMinorFactionEmote(self, system: System):
+    def get_number_minor_faction_emote(self, system: System):
         if len(system.minor_factions_names)<=3:
             return BotConfig.emotes.system.numberOfMinorFaction[3]
         elif len(system.minor_factions_names)>=7:
             return BotConfig.emotes.system.numberOfMinorFaction[7]
         else:
             return BotConfig.emotes.system.numberOfMinorFaction[len(system.minor_factions_names)]
+
+
+    def get_last_update_warning(self):
+        time_since_last_update = datetime.now(timezone.utc) - datetime.fromtimestamp(self.system.lastInfluenceUpdate, tz=timezone.utc)
+        days_since_last_update = time_since_last_update.days
+        if days_since_last_update<=1:
+            return ""
+        else:
+            return f" | ({BotConfig.emotes.warning}{days_since_last_update} days)"
 
 
     def get_mission_state_emote(self, mission):
