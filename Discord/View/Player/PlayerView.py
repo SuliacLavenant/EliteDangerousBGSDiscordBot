@@ -28,7 +28,7 @@ class PlayerView(discord.ui.View):
             self.remove_item(self.rename)
             self.remove_item(self.set_inara_id)
 
-        if self.player.inara_id != None:
+        if self.player.inara_id != None and not self.edit_mode:
             self.add_item(discord.ui.Button(
                 label="Inara",
                 url=f"https://inara.cz/elite/cmdr/{str(self.player.inara_id)}/",
