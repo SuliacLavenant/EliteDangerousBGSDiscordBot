@@ -61,6 +61,23 @@ class Squadron:
         self.recruit_ids.append(player_id)
 
 
+    def remove_player(self, player_id: int) -> bool:
+        if player_id in self.leader_ids:
+            self.leader_ids.remove(player_id)
+            return True
+        elif player_id in self.officer_ids:
+            self.officer_ids.remove(player_id)
+            return True
+        elif player_id in self.member_ids:
+            self.member_ids.remove(player_id)
+            return True
+        elif player_id in self.recruit_ids:
+            self.recruit_ids.remove(player_id)
+            return True
+        else:
+            return False
+
+
     def get_player_position_in_squadron(self, player_id: int) -> str:
         if player_id in self.leader_ids:
             return "Leader"
@@ -71,6 +88,10 @@ class Squadron:
         elif player_id in self.recruit_ids:
             return "Recruit"
         return None
+
+
+    def get_player_ids(self) -> list:
+        return self.leader_ids + self.officer_ids + self.member_ids + self.recruit_ids
 
 
     def __str__(self):

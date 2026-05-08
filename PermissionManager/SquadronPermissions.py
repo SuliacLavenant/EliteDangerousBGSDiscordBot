@@ -21,6 +21,11 @@ class SquadronPermissions(AbstractPermissions):
 
 
     @classmethod
+    def remove_player_from_squadron(cls, user_id, guild_id) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
+    @classmethod
     def see(cls, user_id, guild_id) -> bool:
         return cls.is_user_super_admin(user_id)
 
@@ -45,6 +50,13 @@ class SquadronPermissions(AbstractPermissions):
     def edit_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.edit(ctx.author.id, ctx.guild_id)
+        return commands.check(predicate)
+
+
+    @classmethod
+    def remove_player_from_squadron_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.remove_player_from_squadron(ctx.author.id, ctx.guild_id)
         return commands.check(predicate)
 
 

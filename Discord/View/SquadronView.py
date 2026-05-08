@@ -7,6 +7,7 @@ from DataStorageManager import DataStorageManager
 from Discord.Modal.Squadron.AddMinorFactionToSquadronModal import AddMinorFactionToSquadronModal
 from Discord.Modal.Squadron.AddPlayerToSquadronModal import AddPlayerToSquadronModal
 from Discord.Modal.Squadron.RemoveMinorFactionFromSquadronModal import RemoveMinorFactionFromSquadronModal
+from Discord.Modal.Squadron.RemovePlayerFromSquadronModal import RemovePlayerFromSquadronModal
 from Discord.Modal.Squadron.ChangeSquadronTagModal import ChangeSquadronTagModal
 from PermissionManager.PermissionManager import PermissionManager
 
@@ -33,6 +34,7 @@ class SquadronView(discord.ui.View):
             self.remove_item(self.add_minor_faction)
             self.remove_item(self.remove_minor_faction)
             self.remove_item(self.add_player_to_squadron)
+            self.remove_item(self.remove_player_from_squadron)
 
 
     @discord.ui.button(label="Edit", style=discord.ButtonStyle.primary, row=0)
@@ -121,6 +123,32 @@ class SquadronView(discord.ui.View):
 
             squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.squadron.id)
             squadron_view = SquadronView(squadron, self.guild_id, True)
+            await interaction.message.edit(embed=squadron_view.get_embed(),view=squadron_view)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+    @discord.ui.button(label="Remove Player From Squadron", style=discord.ButtonStyle.danger, row=2)
+    async def remove_player_from_squadron(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.squadron_permissions.remove_player_from_squadron(interaction.user.id, interaction.guild_id):
+            squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.squadron.id)
+            players = []
+            for player_id in squadron.get_player_ids():
+                players.append(DataStorageManager.get_player_by_id(interaction.guild_id, player_id))
+            remove_player_from_squadron_modal = RemovePlayerFromSquadronModal(players)
+            await interaction.response.send_modal(remove_player_from_squadron_modal)
+            await remove_player_from_squadron_modal.wait()
+
+            squadron = DataStorageManager.get_squadron_by_id(interaction.guild_id, self.squadron.id)
+            for player_id in remove_player_from_squadron_modal.player_id_to_remove_list:
+                squadron.remove_player(player_id)
+                player = DataStorageManager.get_player_by_id(interaction.guild_id, player_id)
+                player.squadron_id = None
+                DataStorageManager.store_player(interaction.guild_id, player)
+            DataStorageManager.store_squadron(interaction.guild_id, squadron)
+
+            squadron = DataStorageManager.get_squadron_by_id(interaction.guild_id, self.squadron.id)
+            squadron_view = SquadronView(squadron, interaction.guild_id, True)
             await interaction.message.edit(embed=squadron_view.get_embed(),view=squadron_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
