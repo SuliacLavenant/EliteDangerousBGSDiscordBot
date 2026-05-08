@@ -69,6 +69,14 @@
             "left": ":arrow_left:",
             "right": ":arrow_right:",
             "up": ":arrow_up:"
+        },
+        "squadron": {
+            "members": {
+                "leader": ":judge:",
+                "officer": ":police_officer:",
+                "member": ":pilot:",
+                "recruit": ":student:"
+            }
         }
     },
     "bgs": {

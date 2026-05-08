@@ -180,26 +180,30 @@ class SquadronView(discord.ui.View):
         if len(self.squadron.leader_ids)>0:
             players = ""
             for player_id in self.squadron.recruit_ids:
+                emote = BotConfig.emotes.squadron.members.leader
                 player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
-                players += f"{BotConfig.indent2} {player.name}\n"
+                players += f"{BotConfig.indent2}{emote} {player.name}\n"
             embed.add_field(name="Leaders", value=players, inline=False)
         if len(self.squadron.officer_ids)>0:
             players = ""
             for player_id in self.squadron.recruit_ids:
+                emote = BotConfig.emotes.squadron.members.officer
                 player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
-                players += f"{BotConfig.indent2} {player.name}\n"
+                players += f"{BotConfig.indent2}{emote} {player.name}\n"
             embed.add_field(name="Officers", value=players, inline=False)
         if len(self.squadron.member_ids)>0:
             players = ""
             for player_id in self.squadron.recruit_ids:
+                emote = BotConfig.emotes.squadron.members.member
                 player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
-                players += f"{BotConfig.indent2} {player.name}\n"
+                players += f"{BotConfig.indent2}{emote} {player.name}\n"
             embed.add_field(name="Members", value=players, inline=False)
         if len(self.squadron.recruit_ids)>0:
             players = ""
             for player_id in self.squadron.recruit_ids:
+                emote = BotConfig.emotes.squadron.members.recruit
                 player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
-                players += f"{BotConfig.indent2} {player.name}\n"
+                players += f"{BotConfig.indent2}{emote} {player.name}\n"
             embed.add_field(name="Recruits", value=players, inline=False)
 
         return embed
