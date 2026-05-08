@@ -61,5 +61,17 @@ class Squadron:
         self.recruit_ids.append(player_id)
 
 
+    def get_player_position_in_squadron(self, player_id: int) -> str:
+        if player_id in self.leader_ids:
+            return "Leader"
+        elif player_id in self.officer_ids:
+            return "Officer"
+        elif player_id in self.member_ids:
+            return "Member"
+        elif player_id in self.recruit_ids:
+            return "Recruit"
+        return None
+
+
     def __str__(self):
         return f"Squadron: {self.name.title()} ({self.tag})"

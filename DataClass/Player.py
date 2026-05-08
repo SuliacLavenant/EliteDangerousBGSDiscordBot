@@ -6,7 +6,7 @@ class Player:
     id: int = None
     inara_id: int = None
     name: str = ""
-    squadron_id: str = None
+    squadron_id: int = None
 
 
     @classmethod

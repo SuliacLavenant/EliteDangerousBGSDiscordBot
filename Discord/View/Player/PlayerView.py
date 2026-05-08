@@ -86,9 +86,6 @@ class PlayerView(discord.ui.View):
 
     def get_embed(self):
         title = f"{self.player.name}"
-        if self.player.squadron_id != None:
-            squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.player.squadron_id)
-            title += f" [{squadron.tag}]"
         description = ""
         embed = discord.Embed(title=title, description=description)
 
@@ -105,7 +102,12 @@ class PlayerView(discord.ui.View):
         embed.add_field(name="Accounts", value=accounts_details, inline=False)
 
         ##### Squadron
-        squadron_details = ""
-        embed.add_field(name="Squadron", value=squadron_details, inline=False)
+        if self.player.squadron_id != None:
+            squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.player.squadron_id)
+            squadron_details = ""
+            squadron_details += f"{BotConfig.indent2}**Name**: {squadron.name}\n"
+            squadron_details += f"{BotConfig.indent2}**Tag**: [{squadron.tag}]\n"
+            squadron_details += f"{BotConfig.indent2}**Position in squadron**: {squadron.get_player_position_in_squadron(self.player.id)}\n"
+            embed.add_field(name="Squadron", value=squadron_details, inline=False)
 
         return embed
