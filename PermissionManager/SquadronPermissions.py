@@ -6,6 +6,11 @@ from PermissionManager.AbstractPermissions import AbstractPermissions
 class SquadronPermissions(AbstractPermissions):
 
     @classmethod
+    def add_player_to_squadron(cls, user_id, guild_id) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
+    @classmethod
     def create(cls, user_id, guild_id) -> bool:
         return cls.is_user_super_admin(user_id)
 
@@ -22,6 +27,13 @@ class SquadronPermissions(AbstractPermissions):
 
 
 ################ Predicates
+    @classmethod
+    def add_player_to_squadron_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.add_player_to_squadron(ctx.author.id, ctx.guild_id)
+        return commands.check(predicate)
+
+
     @classmethod
     def create_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:

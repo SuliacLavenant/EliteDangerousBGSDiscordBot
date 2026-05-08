@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Squadron:
-    id: str = None
+    id: int = None
     minor_faction_names: list = field(default_factory=list)
     name: str = ""
     tag: str = ""
@@ -55,6 +55,10 @@ class Squadron:
             return True
         else:
             return False
+
+
+    def add_player(self, player_id: int):
+        self.recruit_ids.append(player_id)
 
 
     def __str__(self):

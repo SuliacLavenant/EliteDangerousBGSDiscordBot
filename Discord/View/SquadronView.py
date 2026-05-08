@@ -1,9 +1,11 @@
 import discord
 
+from BotConfig.BotConfig import BotConfig
 from DataClass.Squadron import Squadron
 from DataClass.GuildSettings import GuildSettings
 from DataStorageManager import DataStorageManager
 from Discord.Modal.Squadron.AddMinorFactionToSquadronModal import AddMinorFactionToSquadronModal
+from Discord.Modal.Squadron.AddPlayerToSquadronModal import AddPlayerToSquadronModal
 from Discord.Modal.Squadron.RemoveMinorFactionFromSquadronModal import RemoveMinorFactionFromSquadronModal
 from Discord.Modal.Squadron.ChangeSquadronTagModal import ChangeSquadronTagModal
 from PermissionManager.PermissionManager import PermissionManager
@@ -30,6 +32,7 @@ class SquadronView(discord.ui.View):
             self.remove_item(self.change_tag)
             self.remove_item(self.add_minor_faction)
             self.remove_item(self.remove_minor_faction)
+            self.remove_item(self.add_player_to_squadron)
 
 
     @discord.ui.button(label="Edit", style=discord.ButtonStyle.primary, row=0)
@@ -96,6 +99,33 @@ class SquadronView(discord.ui.View):
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
+    @discord.ui.button(label="Add Player To Squadron", style=discord.ButtonStyle.success, row=2)
+    async def add_player_to_squadron(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.squadron_permissions.add_player_to_squadron(interaction.user.id, self.guild_id):
+            players = DataStorageManager.get_players(interaction.guild_id)
+            players_without_squadron = []
+            for player in players:
+                if player.squadron_id == None:
+                    players_without_squadron.append(player)
+            add_player_to_squadron_modal = AddPlayerToSquadronModal(players_without_squadron)
+            await interaction.response.send_modal(add_player_to_squadron_modal)
+            await add_player_to_squadron_modal.wait()
+
+            squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.squadron.id)
+            for player_id in add_player_to_squadron_modal.player_id_to_add_list:
+                squadron.add_player(player_id)
+                player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
+                player.squadron_id = squadron.id
+                DataStorageManager.store_player(interaction.guild_id, player)
+            DataStorageManager.store_squadron(interaction.guild_id, squadron)
+
+            squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.squadron.id)
+            squadron_view = SquadronView(squadron, self.guild_id, True)
+            await interaction.message.edit(embed=squadron_view.get_embed(),view=squadron_view)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
     def get_embed(self):
         title = f"{self.squadron.name} [{self.squadron.tag}]"
         description = ""
@@ -120,12 +150,28 @@ class SquadronView(discord.ui.View):
 
         #players
         if len(self.squadron.leader_ids)>0:
-            embed.add_field(name="Leaders", value="list of leaders", inline=False)
+            players = ""
+            for player_id in self.squadron.recruit_ids:
+                player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
+                players += f"{BotConfig.indent2} {player.name}"
+            embed.add_field(name="Leaders", value=players, inline=False)
         if len(self.squadron.officer_ids)>0:
-            embed.add_field(name="Officers", value="list of Officers", inline=False)
+            players = ""
+            for player_id in self.squadron.recruit_ids:
+                player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
+                players += f"{BotConfig.indent2} {player.name}"
+            embed.add_field(name="Officers", value=players, inline=False)
         if len(self.squadron.member_ids)>0:
-            embed.add_field(name="Members", value="list of Members", inline=False)
+            players = ""
+            for player_id in self.squadron.recruit_ids:
+                player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
+                players += f"{BotConfig.indent2} {player.name}"
+            embed.add_field(name="Members", value=players, inline=False)
         if len(self.squadron.recruit_ids)>0:
-            embed.add_field(name="Recruits", value="list of Recruits", inline=False)
+            players = ""
+            for player_id in self.squadron.recruit_ids:
+                player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
+                players += f"{BotConfig.indent2} {player.name}"
+            embed.add_field(name="Recruits", value=players, inline=False)
 
         return embed
