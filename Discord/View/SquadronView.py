@@ -6,6 +6,7 @@ from DataClass.GuildSettings import GuildSettings
 from DataStorageManager import DataStorageManager
 from Discord.Modal.Squadron.AddMinorFactionToSquadronModal import AddMinorFactionToSquadronModal
 from Discord.Modal.Squadron.AddPlayerToSquadronModal import AddPlayerToSquadronModal
+from Discord.Modal.Squadron.PromoteDemoteSquadronModal import PromoteDemoteSquadronModal
 from Discord.Modal.Squadron.RemoveMinorFactionFromSquadronModal import RemoveMinorFactionFromSquadronModal
 from Discord.Modal.Squadron.RemovePlayerFromSquadronModal import RemovePlayerFromSquadronModal
 from Discord.Modal.Squadron.ChangeSquadronTagModal import ChangeSquadronTagModal
@@ -35,6 +36,7 @@ class SquadronView(discord.ui.View):
             self.remove_item(self.remove_minor_faction)
             self.remove_item(self.add_player_to_squadron)
             self.remove_item(self.remove_player_from_squadron)
+            self.remove_item(self.promote_demote_member)
 
 
     @discord.ui.button(label="Edit", style=discord.ButtonStyle.primary, row=0)
@@ -154,6 +156,29 @@ class SquadronView(discord.ui.View):
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
+    @discord.ui.button(label="Promote/Demote Member", style=discord.ButtonStyle.primary, row=2)
+    async def promote_demote_member(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.squadron_permissions.remove_player_from_squadron(interaction.user.id, interaction.guild_id):
+            squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.squadron.id)
+            players = []
+            for player_id in squadron.get_player_ids():
+                players.append(DataStorageManager.get_player_by_id(interaction.guild_id, player_id))
+
+            promote_demote_member_squadron_modal = PromoteDemoteSquadronModal(players, squadron.player_ranks)
+            await interaction.response.send_modal(promote_demote_member_squadron_modal)
+            await promote_demote_member_squadron_modal.wait()
+
+            squadron = DataStorageManager.get_squadron_by_id(interaction.guild_id, self.squadron.id)
+            squadron.change_players_rank_to(promote_demote_member_squadron_modal.player_id_to_promote_demote, promote_demote_member_squadron_modal.player_rank)
+            DataStorageManager.store_squadron(interaction.guild_id, squadron)
+
+            squadron = DataStorageManager.get_squadron_by_id(interaction.guild_id, self.squadron.id)
+            squadron_view = SquadronView(squadron, interaction.guild_id, True)
+            await interaction.message.edit(embed=squadron_view.get_embed(),view=squadron_view)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
     def get_embed(self):
         title = f"{self.squadron.name} [{self.squadron.tag}]"
         description = ""
@@ -179,21 +204,21 @@ class SquadronView(discord.ui.View):
         #players
         if len(self.squadron.leader_ids)>0:
             players = ""
-            for player_id in self.squadron.recruit_ids:
+            for player_id in self.squadron.leader_ids:
                 emote = BotConfig.emotes.squadron.members.leader
                 player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
                 players += f"{BotConfig.indent2}{emote} {player.name}\n"
             embed.add_field(name="Leaders", value=players, inline=False)
         if len(self.squadron.officer_ids)>0:
             players = ""
-            for player_id in self.squadron.recruit_ids:
+            for player_id in self.squadron.officer_ids:
                 emote = BotConfig.emotes.squadron.members.officer
                 player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
                 players += f"{BotConfig.indent2}{emote} {player.name}\n"
             embed.add_field(name="Officers", value=players, inline=False)
         if len(self.squadron.member_ids)>0:
             players = ""
-            for player_id in self.squadron.recruit_ids:
+            for player_id in self.squadron.member_ids:
                 emote = BotConfig.emotes.squadron.members.member
                 player = DataStorageManager.get_player_by_id(self.guild_id, player_id)
                 players += f"{BotConfig.indent2}{emote} {player.name}\n"

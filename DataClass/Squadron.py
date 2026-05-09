@@ -7,10 +7,12 @@ class Squadron:
     name: str = ""
     tag: str = ""
 
-    leader_ids: list = field(default_factory=list)
-    officer_ids: list = field(default_factory=list)
-    member_ids: list = field(default_factory=list)
-    recruit_ids: list = field(default_factory=list)
+    leader_ids: list[int] = field(default_factory=list[int])
+    officer_ids: list[int] = field(default_factory=list[int])
+    member_ids: list[int] = field(default_factory=list[int])
+    recruit_ids: list[int] = field(default_factory=list[int])
+
+    player_ranks: list[str] = field(default_factory=lambda: ["leader","officer","member","recruit"])
 
 
     @classmethod
@@ -92,6 +94,26 @@ class Squadron:
 
     def get_player_ids(self) -> list:
         return self.leader_ids + self.officer_ids + self.member_ids + self.recruit_ids
+
+
+    def change_players_rank_to(self, player_ids: list[int], rank: str):
+        match rank:
+            case "leader":
+                for player_id in player_ids:
+                    self.remove_player(player_id)
+                    self.leader_ids.append(player_id)
+            case "officer":
+                for player_id in player_ids:
+                    self.remove_player(player_id)
+                    self.officer_ids.append(player_id)
+            case "member":
+                for player_id in player_ids:
+                    self.remove_player(player_id)
+                    self.member_ids.append(player_id)
+            case "recruit":
+                for player_id in player_ids:
+                    self.remove_player(player_id)
+                    self.recruit_ids.append(player_id)
 
 
     def __str__(self):
