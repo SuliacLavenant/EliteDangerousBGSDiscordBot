@@ -17,6 +17,18 @@ class PromoteDemoteSquadronModal(discord.ui.DesignerModal):
         self.player_list = player_list
         self.player_ranks = player_ranks
         #self.player_name_list.sort()
+
+        options = []
+        for player_rank in self.player_ranks:
+            options.append(discord.SelectOption(label=player_rank, value=player_rank))
+        self.rank_select = discord.ui.Label(label="Rank To Promote/Demote to:").set_select(
+            options=options,
+            min_values=1,
+            max_values=1,
+            default_values=None,
+            required=True
+        )
+        self.add_item(self.rank_select)
         
         self.players_selects = []
         options = []
@@ -44,18 +56,6 @@ class PromoteDemoteSquadronModal(discord.ui.DesignerModal):
             )
             self.add_item(players_select)
             self.players_selects.append(players_select)
-
-        options = []
-        for player_rank in self.player_ranks:
-            options.append(discord.SelectOption(label=player_rank, value=player_rank))
-        self.rank_select = discord.ui.Label(label="Rank To Promote/Demote to:").set_select(
-            options=options,
-            min_values=1,
-            max_values=1,
-            default_values=None,
-            required=True
-        )
-        self.add_item(self.rank_select)
 
 
     async def callback(self, interaction: discord.Interaction):
