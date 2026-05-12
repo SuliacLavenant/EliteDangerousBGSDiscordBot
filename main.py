@@ -267,7 +267,7 @@ async def player(ctx: discord.ApplicationContext, player_name: str):
         await ctx.edit(embed=player_not_found_view.get_embed(), view=player_not_found_view)
     else:
         player_view = PlayerView(player, ctx.guild_id)
-        await ctx.edit(embed=player_view.get_embed(), view=player_view)
+        await ctx.edit(embeds=player_view.get_embeds(), view=player_view)
 
 
 

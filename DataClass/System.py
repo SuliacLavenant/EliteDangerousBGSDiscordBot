@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
+import urllib.parse
 
 from DataClass.MinorFaction import MinorFaction
 from EventClass.SystemEvent.SystemEvent import SystemEvent
@@ -284,3 +285,7 @@ class System:
                 return f"{str(round(self.population/1000000,2))} million"
             case _:
                 return f"{str(round(self.population/1000000000,2))} billion"
+
+
+    def get_system_name_with_inara_link(self):
+        return f"[**{self.name}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.name.lower())})"

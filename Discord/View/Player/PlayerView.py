@@ -2,6 +2,7 @@ import discord
 
 from BotConfig.BotConfig import BotConfig
 from DataClass.Player import Player
+from DataClass.System import System
 from DataClass.GuildSettings import GuildSettings
 from DataStorageManager import DataStorageManager
 from Discord.Modal.Player.RenamePlayerModal import RenamePlayerModal
@@ -111,3 +112,20 @@ class PlayerView(discord.ui.View):
             embed.add_field(name="Squadron", value=squadron_details, inline=False)
 
         return embed
+
+
+    def get_embeds(self):
+        embeds: list[discord.Embed] = []
+        main_embed = self.get_embed()
+        embeds.append(main_embed)
+
+        ##### Architected Systems
+        if len(self.player.architected_systems) > 0:
+            description: str = ""
+            for system_name in self.player.architected_systems:
+                system: System = DataStorageManager.get_system(self.guild_id, system_name)
+                description += f"{system.get_system_name_with_inara_link()}\n"
+            embed_architect: discord.Embed = discord.Embed(title=f"Architected Systems", description=description)
+            embeds.append(embed_architect)
+
+        return embeds
