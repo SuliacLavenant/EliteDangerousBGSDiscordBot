@@ -6,11 +6,17 @@ from PermissionManager.AbstractPermissions import AbstractPermissions
 class GuildSettingsPermissions(AbstractPermissions):
 
     @classmethod
-    def see(cls, user_id) -> bool:
+    def see(cls, user_id: int) -> bool:
         return cls.is_user_super_admin(user_id)
 
+
     @classmethod
-    def set_channel(cls, user_id) -> bool:
+    def set_channel(cls, user_id: int) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
+    @classmethod
+    def set_squadron(cls, user_id: int) -> bool:
         return cls.is_user_super_admin(user_id)
 
 
@@ -22,8 +28,16 @@ class GuildSettingsPermissions(AbstractPermissions):
             return cls.see(ctx.author.id)
         return commands.check(predicate)
 
+
     @classmethod
     def set_channel_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.set_channel(ctx.author.id)
+        return commands.check(predicate)
+
+
+    @classmethod
+    def set_squadron_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.set_squadron(ctx.author.id)
         return commands.check(predicate)

@@ -241,7 +241,7 @@ async def settings(ctx: discord.ApplicationContext):
     guild_settings = DataStorageManager.get_guild_settings(ctx.guild_id)
     guild_settings_view = DefaultGuildSettingsView(guild_settings)
 
-    await ctx.send_response(embed=guild_settings_view.getEmbed(), view=guild_settings_view,ephemeral=True)
+    await ctx.send_response(embed=guild_settings_view.getEmbed(), view=guild_settings_view)
 
 
 @bot.slash_command(name="squadron", description="show squadron information", guild_ids=guildIDs)
