@@ -164,6 +164,33 @@ class DataStorageManager:
             return None
 
 
+    def get_systems(guild_id: str):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
+        systems_data = DataStorageManager.read_file_content(file_path)
+
+        systems: list[System] = []
+        for system_name in systems_data.keys():
+            system: System = System.init_from_dict(systems_data[system_name])
+            for minor_faction_name in system.minor_factions_names:
+                system.minor_factions[minor_faction_name] = DataStorageManager.get_minor_faction(guild_id,minor_faction_name)
+            systems.append(system)
+
+        return systems
+
+
+    def update_system_only(guild_id: str, system: System):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
+        systems_data = DataStorageManager.read_file_content(file_path)
+
+        if system.name in systems_data:
+            systems_data[system.name] = system.get_as_dict()
+        else:
+            print(f"{system.name} do not exist in storage")
+
+        DataStorageManager.atomic_write_file_content(file_path,systems_data)
+        return True
+
+
     def updateSystems(guild_id: str, systems: list):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)

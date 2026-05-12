@@ -5,6 +5,7 @@ import urllib.parse
 from BotConfig.BotConfig import BotConfig
 from DataManager import DataManager
 from DataStorageManager import DataStorageManager
+from DataClass.Player import Player
 from DataClass.System import System
 from DataClass.GuildSettings import GuildSettings
 from DataClass.Mission.MissionProgressEnum import MissionProgressEnum
@@ -34,7 +35,7 @@ class SystemView(discord.ui.View):
         ))
 
         if self.system.isStored:
-            if self.system.isArchitected == None:
+            if self.system.is_architected == None:
                 setArchitectButton = discord.ui.Button(
                     label="Set Architect",
                     style=discord.ButtonStyle.secondary,
@@ -55,9 +56,30 @@ class SystemView(discord.ui.View):
 
 
     async def setArchitectButtonCallback(self, interaction: discord.Interaction):
-        setSystemArchitectModal = SetSystemArchitectModal(self.system)
-        await interaction.response.send_modal(setSystemArchitectModal)
-        await setSystemArchitectModal.wait()
+        if PermissionManager.system_permissions.set_architect(interaction.user.id):
+            players: list[Player] = DataStorageManager.get_players(interaction.guild_id)
+            set_system_architect_modal = SetSystemArchitectModal(players)
+            await interaction.response.send_modal(set_system_architect_modal)
+            await set_system_architect_modal.wait()
+
+            if set_system_architect_modal.player_id != None:
+                system: System = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+                system.is_architected = True
+                system.architect_id = set_system_architect_modal.player_id
+                DataStorageManager.update_system_only(interaction.guild_id, system)
+
+                player: Player = DataStorageManager.get_player_by_id(interaction.guild_id, set_system_architect_modal.player_id)
+                player.add_architected_system(system.name.lower())
+                DataStorageManager.store_player(interaction.guild_id, player)
+
+            system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
+            system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
+            await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+        
 
         system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
         system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
@@ -172,8 +194,9 @@ class SystemView(discord.ui.View):
         description += f"{BotConfig.emotes.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
         description += f"{BotConfig.emotes.system.information.security} Security Level: **{self.system.security.title()}**\n"
         description += f"{self.get_number_minor_faction_emote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
-        if self.system.isArchitected:
-            description += f"{BotConfig.emotes.system.information.architect} Architect: **{self.system.architect.title()}**\n"
+        if self.system.is_architected:
+            player: Player = DataStorageManager.get_player_by_id(self.guildSettings.guild_id, self.system.architect_id)
+            description += f"{BotConfig.emotes.system.information.architect} Architect: **{player.name}**\n"
         description += f"{BotConfig.indent2}"
 
         embed = discord.Embed(title=title, description=description)

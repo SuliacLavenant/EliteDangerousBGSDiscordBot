@@ -6,6 +6,7 @@ from PermissionManager.MissionPermissions import MissionPermissions
 from PermissionManager.PlayerPermissions import PlayerPermissions
 from PermissionManager.SquadronPermissions import SquadronPermissions
 from PermissionManager.SystemGroupPermissions import SystemGroupPermissions
+from PermissionManager.SystemPermissions import SystemPermissions
 
 class PermissionManager:
     super_admin_id: int | None = None
@@ -15,6 +16,7 @@ class PermissionManager:
     player_permissions = PlayerPermissions
     squadron_permissions = SquadronPermissions
     system_group_permissions = SystemGroupPermissions
+    system_permissions: SystemPermissions = SystemPermissions
 
 
     @classmethod
@@ -25,6 +27,7 @@ class PermissionManager:
         cls.player_permissions.set_super_admin_id(user_id)
         cls.squadron_permissions.set_super_admin_id(user_id)
         cls.system_group_permissions.set_super_admin_id(user_id)
+        cls.system_permissions.set_super_admin_id(user_id)
 
 
     @classmethod

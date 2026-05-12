@@ -28,8 +28,8 @@ class System:
     minor_factions_states: dict[str, dict] = field(default_factory=dict)
 
     isOrigin: bool = False
-    isArchitected: bool = None
-    architect: str = ""
+    is_architected: bool = None
+    architect_id: int = None
     isDiplomatic: bool = False
 
     lastInfluenceUpdate: int = 0 #unix time
@@ -53,8 +53,8 @@ class System:
             minor_factions_influence = system_dict["minor_factions_influence"],
             minor_factions_states = system_dict["minor_factions_states"],
             isOrigin = system_dict["isOrigin"],
-            isArchitected = system_dict["isArchitected"],
-            architect = system_dict["architect"],
+            is_architected = system_dict["is_architected"],
+            architect_id = system_dict["architect_id"],
             isDiplomatic = system_dict["isDiplomatic"],
             lastInfluenceUpdate = system_dict["lastInfluenceUpdate"],
             isStored = True,
@@ -70,7 +70,6 @@ class System:
         self.second_economy = self.second_economy.lower() if self.second_economy!=None else None
         self.reserve = self.reserve.lower() if self.reserve!=None else None
         self.controlling_faction_name = self.controlling_faction_name.lower()
-        self.architect = self.architect.lower()
 
 
     def get_as_dict(self) -> dict:
@@ -86,8 +85,8 @@ class System:
         system_dict["minor_factions_influence"] = self.minor_factions_influence
         system_dict["minor_factions_states"] = self.minor_factions_states
         system_dict["isOrigin"] = self.isOrigin
-        system_dict["isArchitected"] = self.isArchitected
-        system_dict["architect"] = self.architect
+        system_dict["is_architected"] = self.is_architected
+        system_dict["architect_id"] = self.architect_id
         system_dict["isDiplomatic"] = self.isDiplomatic
         system_dict["lastInfluenceUpdate"] = self.lastInfluenceUpdate
         system_dict["mission_ids"] = self.mission_ids
