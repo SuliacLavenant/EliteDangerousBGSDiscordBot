@@ -2,6 +2,7 @@ import discord
 
 #custom
 from BotConfig.BotConfig import BotConfig
+from DataClass.GuildSettings import GuildSettings
 from Discord.View.SystemRecap.GeneralSystemsRecapView import GeneralSystemsRecapView
 from Discord.View.SystemRecap.Warning.ConflictSystemsRecapView import ConflictSystemsRecapView
 from Discord.View.SystemRecap.Warning.ExpansionWarningSystemsRecapView import ExpansionWarningSystemsRecapView
@@ -11,7 +12,10 @@ from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 from DataClass.SystemGroup import SystemGroup
 
 class SystemsRecapViews:
-    def __init__(self, systemRecapsDict: dict, systemGroups: list, systemsWithNoGroups: list):
+    guild_settings: GuildSettings
+
+    def __init__(self, guild_settings: GuildSettings, systemRecapsDict: dict, systemGroups: list, systemsWithNoGroups: list):
+        self.guild_settings = guild_settings
         self.systemRecapsDict = systemRecapsDict
         self.systemGroups = systemGroups
         self.systemsWithNoGroups = systemsWithNoGroups
@@ -32,13 +36,13 @@ class SystemsRecapViews:
             systems[systemName] = self.systemRecapsDict[systemName]
             if len(systems)>=15:
                 if not titleSet:
-                    embeds.append(GeneralSystemsRecapView(systems, "Raw Systems Recap").getEmbed())
+                    embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, "Raw Systems Recap").getEmbed())
                     titleSet = True
                 else:
-                    embeds.append(GeneralSystemsRecapView(systems).getEmbed())
+                    embeds.append(GeneralSystemsRecapView(self.guild_settings, systems).getEmbed())
                 systems = {}
         if len(systems)>0:
-            embeds.append(GeneralSystemsRecapView(systems).getEmbed())
+            embeds.append(GeneralSystemsRecapView(self.guild_settings, systems).getEmbed())
 
         return embeds
 
@@ -70,11 +74,11 @@ class SystemsRecapViews:
         for systemName in systemGroup.systems:
             systems[systemName] = self.systemRecapsDict[systemName]
             if len(systems)>=15:
-                embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
+                embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())
                 title = None
                 systems = {}
         if len(systems)>0:
-            embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
+            embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())
 
         return embeds
 
@@ -94,11 +98,11 @@ class SystemsRecapViews:
         for systemName in self.systemsWithNoGroups:
             systems[systemName] = self.systemRecapsDict[systemName]
             if len(systems)>=15:
-                embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
+                embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())
                 title = None
                 systems = {}
         if len(systems)>0:
-            embeds.append(GeneralSystemsRecapView(systems, color, title).getEmbed())
+            embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())
 
         return embeds
     ##############
@@ -117,12 +121,12 @@ class SystemsRecapViews:
         for systemName in systemNamesInConflict:
             systems[systemName] = self.systemRecapsDict[systemName]
             if len(systems)>=15:
-                embeds.append(ConflictSystemsRecapView(systems, not titleSet).getEmbed())
+                embeds.append(ConflictSystemsRecapView(self.guild_settings, systems, not titleSet).getEmbed())
                 titleSet = True
                 systems = {}
         if len(systems)>0:
             if not titleSet:
-                embeds.append(ConflictSystemsRecapView(systems, not titleSet).getEmbed())
+                embeds.append(ConflictSystemsRecapView(self.guild_settings, systems, not titleSet).getEmbed())
 
         return embeds
 
@@ -141,12 +145,12 @@ class SystemsRecapViews:
         for systemName in systemNamesInExpansionWarning:
             systems[systemName] = self.systemRecapsDict[systemName]
             if len(systems)>=15:
-                embeds.append(ExpansionWarningSystemsRecapView(systems, not titleSet).getEmbed())
+                embeds.append(ExpansionWarningSystemsRecapView(self.guild_settings, systems, not titleSet).getEmbed())
                 titleSet = True
                 systems = {}
         if len(systems)>0:
             if not titleSet:
-                embeds.append(ExpansionWarningSystemsRecapView(systems, not titleSet).getEmbed())
+                embeds.append(ExpansionWarningSystemsRecapView(self.guild_settings, systems, not titleSet).getEmbed())
 
         return embeds
 
@@ -165,12 +169,12 @@ class SystemsRecapViews:
         for system_name in system_names_in_retreat_warning:
             systems[system_name] = self.systemRecapsDict[system_name]
             if len(systems)>=15:
-                embeds.append(RetreatWarningSystemsRecapView(systems, not title_set).getEmbed())
+                embeds.append(RetreatWarningSystemsRecapView(self.guild_settings, systems, not title_set).getEmbed())
                 title_set = True
                 systems = {}
         if len(systems)>0:
             if not title_set:
-                embeds.append(RetreatWarningSystemsRecapView(systems, not title_set).getEmbed())
+                embeds.append(RetreatWarningSystemsRecapView(self.guild_settings, systems, not title_set).getEmbed())
 
         return embeds
     
@@ -207,12 +211,12 @@ class SystemsRecapViews:
             for systemRecapName in warningLvl[lvl]:
                 systems[systemRecapName] = self.systemRecapsDict[systemRecapName]
                 if len(systems)>=15:
-                    embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(systems, lvl, not titleSet).getEmbed())
+                    embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(self.guild_settings, systems, lvl, not titleSet).getEmbed())
                     titleSet = True
                     systems = {}
             if len(systems)>0:
                 if not titleSet:
-                    embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(systems, lvl, not titleSet).getEmbed())
+                    embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(self.guild_settings, systems, lvl, not titleSet).getEmbed())
 
         return embeds
 

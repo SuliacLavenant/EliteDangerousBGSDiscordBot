@@ -1,15 +1,14 @@
 import discord
-import urllib.parse
 
-#custom
+from DataClass.GuildSettings import GuildSettings
 from BotConfig.BotConfig import BotConfig
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 from Discord.View.SystemRecap.SystemsRecapView import SystemsRecapView
 
 class InfluenceMarginWarningSystemsRecapView(SystemsRecapView):
-    def __init__(self, systemsRecapDict: dict, warningLvl: int, isTitle: bool = False):
-        super().__init__(systemsRecapDict)
+    def __init__(self, guild_settings: GuildSettings, systemsRecapDict: dict, warningLvl: int, isTitle: bool = False):
+        super().__init__(guild_settings, systemsRecapDict)
         self.isTitle = isTitle
 
         match warningLvl:

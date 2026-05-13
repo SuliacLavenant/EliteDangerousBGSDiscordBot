@@ -1,17 +1,21 @@
 import discord
 import urllib.parse
 
-#custom
 from BotConfig.BotConfig import BotConfig
+from DataClass.GuildSettings import GuildSettings
+from DataClass.Squadron import Squadron
+from DataStorageManager import DataStorageManager
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 class SystemsRecapView(discord.ui.View):
     color: discord.Color = ""
-    title: str = ""
+    guild_settings: GuildSettings
     systemsRecapDict: dict
+    title: str = ""
 
-    def __init__(self, systemsRecapDict: dict):
+    def __init__(self, guild_settings: GuildSettings, systemsRecapDict: dict):
         super().__init__()
+        self.guild_settings = guild_settings
         self.systemsRecapDict = systemsRecapDict
 
 
@@ -77,10 +81,13 @@ class SystemsRecapView(discord.ui.View):
     def getSpecialSystemEmote(self, systemRecap: SystemMinorFactionRecap):
         if systemRecap.isOrigin:
             return BotConfig.emotes.system.information.origin
-        elif systemRecap.isArchitect:
-            return BotConfig.emotes.system.information.architect
-        else:
-            return BotConfig.emotes.nothing
+        if systemRecap.system.is_architected:
+            if self.guild_settings.squadron_id != None:
+                squadron: Squadron = DataStorageManager.get_squadron_by_id(self.guild_settings.guild_id, self.guild_settings.squadron_id)
+                if squadron.get_player_position_in_squadron(systemRecap.system.architect_id) != None:
+                    return BotConfig.emotes.system.information.architect
+
+        return BotConfig.emotes.nothing
 
 
     def getSystemGroupEmote(self, systemRecap: SystemMinorFactionRecap):
