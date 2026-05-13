@@ -87,13 +87,13 @@ class SystemView(discord.ui.View):
 
 
     async def setNativeSystemtButtonCallback(self, interaction: discord.Interaction):
-        system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
-        system.isArchitected = False
+        system: System = DataStorageManager.get_system(interaction.guild_id,self.system.name)
+        system.is_architected = False
 
         DataStorageManager.store_system(interaction.guild_id,system)
 
         system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
-        await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
+        await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
 
 
     @discord.ui.button(label="Create Retreat Mission", style=discord.ButtonStyle.primary, row=2)
