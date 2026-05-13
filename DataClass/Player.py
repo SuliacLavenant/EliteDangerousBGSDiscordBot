@@ -37,6 +37,7 @@ class Player:
     def add_architected_system(self, system_name: str) -> bool:
         if system_name.lower() not in self.architected_systems:
             self.architected_systems.append(system_name.lower())
+            self.architected_systems.sort()
             return True
         else:
             return False
