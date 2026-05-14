@@ -58,6 +58,7 @@
             "state": {
                 "active": "💪🏻",
                 "complete": "✅",
+                "failed": "❌",
                 "pending": "⏳",
                 "state": "📋",
                 "upcoming": "🗓️"

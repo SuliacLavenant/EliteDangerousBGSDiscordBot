@@ -46,6 +46,8 @@ class RetreatMinorFactionFromSystemMission(SystemMission):
     def check_mission_state(self):
         if self.current_influence == 0:
             self.state = MissionProgressEnum.COMPLETE
+        elif len(self.system.minor_factions_names) == 3:
+            self.state = MissionProgressEnum.FAILED
         elif self.current_influence <= BotConfig.bgs.state.retreat.trigger_influence:
             self.state = MissionProgressEnum.PENDING
         else:

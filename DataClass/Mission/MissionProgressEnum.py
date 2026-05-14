@@ -7,3 +7,4 @@ class MissionProgressEnum(Enum):
     ACTIVE = "active"
     PENDING = "pending"
     COMPLETE = "complete"
+    FAILED = "failed"

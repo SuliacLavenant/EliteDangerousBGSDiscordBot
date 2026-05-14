@@ -48,5 +48,7 @@ class SystemMission(Mission):
                 return BotConfig.emotes.mission.state.pending
             case MissionProgressEnum.COMPLETE:
                 return BotConfig.emotes.mission.state.complete
+            case MissionProgressEnum.FAILED:
+                return BotConfig.emotes.mission.state.failed
             case _:
                 return "None"
