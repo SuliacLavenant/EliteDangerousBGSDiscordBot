@@ -2,6 +2,7 @@
 from APIRequester.APIManager import APIManager
 from DataStorageManager import DataStorageManager
 
+from DataClass.DiplomaticSystem import DiplomaticSystem
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
 from DataClass.SystemGroup import SystemGroup
@@ -130,14 +131,6 @@ class DataManager:
         DataStorageManager.updateSystems(guild_id, systems)
         print("updateStoredSystemsBGSData: DONE")
 
-        # remove lost systems
-        for system in systems:
-            if not system.minor_faction_is_present(minorFactionName):
-                print(f"Retreated From System \"{systemName}\"")
-                DataStorageManager.removeSystemFromDataFile(guild_id,systemName)
-        print("retreat check: DONE")
-
-
         return system_events
 
 
@@ -157,20 +150,21 @@ class DataManager:
 ##################################################
 ################################################## Recap
 
-    def getMinorFactionSystemsRecap(guild_id: str):
-        systemNames = DataStorageManager.get_system_names_list(guild_id)
-        minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
-        minorFactionSystemsRecap = {}
+    def get_minor_faction_system_recaps(guild_id: str, minor_faction: MinorFaction) -> dict[str,SystemMinorFactionRecap]:
+        system_names: list[str] = DataStorageManager.get_system_names_list(guild_id)
 
-        for systemName in systemNames:
-            minorFactionSystemsRecap[systemName] = DataManager.getMinorFactionSystemRecap(guild_id, systemName, minorFactionName)
+        minor_faction_system_recaps: dict[str,SystemMinorFactionRecap] = {}
+        system_name: str
+        for system_name in system_names:
+            minor_faction_system_recaps[system_name] = DataManager.get_minor_faction_system_recap(guild_id, system_name, minor_faction.name)
 
-        return minorFactionSystemsRecap
+        return minor_faction_system_recaps
 
 
-    def getMinorFactionSystemRecap(guild_id: str, systemName: str, minorFactionName: str):
-        system = DataStorageManager.get_system(guild_id, systemName)
-        diplomaticSystem = None
+    def get_minor_faction_system_recap(guild_id: str, system_name: str, minor_faction_name: str) -> SystemMinorFactionRecap:
+        system: System = DataStorageManager.get_system(guild_id, system_name)
+        diplomatic_system: DiplomaticSystem = None
         if system.isDiplomatic:
-            diplomaticSystem = DataStorageManager.getDiplomaticSystem(guild_id,systemName)
-        return SystemMinorFactionRecap(system,minorFactionName,diplomaticSystem)
+            diplomatic_system = DataStorageManager.getDiplomaticSystem(guild_id,system_name)
+
+        return SystemMinorFactionRecap(system,minor_faction_name,diplomatic_system)

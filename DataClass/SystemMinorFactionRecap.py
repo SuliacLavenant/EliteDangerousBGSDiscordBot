@@ -43,27 +43,30 @@ class SystemMinorFactionRecap:
 
     def __init__(self, system: System, minorFactionName: str, diplomaticSystem: DiplomaticSystem = None):
         self.system = system
-        self.minorFactionName = minorFactionName
+        self.minorFactionName = minorFactionName.lower()
         self.isDiplomatic = self.system.isDiplomatic
         self.diplomaticSystem = diplomaticSystem
 
         self.influence = system.get_minor_faction_influence(self.minorFactionName)
         self.leaderInfluence = system.get_leader_influence()
         self.isLeader = system.is_controlled_by(self.minorFactionName)
-        if self.isLeader:
-            self.leaderInfluenceMargin = self.system.get_leader_influence_margin()
-            self.calculateLeaderInfluenceMarginWarning()
 
-        self.checkRetreatWarning()
-        self.checkExpansionWarning()
+        if self.influence != 0:
+            if self.isLeader:
+                self.leaderInfluenceMargin = self.system.get_leader_influence_margin()
+                self.calculateLeaderInfluenceMarginWarning()
 
-        self.checkImportantState()
-        self.checkPositionInSystem()
-        self.checkInfluenceWarning()
-        self.checkDiplomaticPosition()
+            self.checkRetreatWarning()
+            self.checkExpansionWarning()
+
+            self.checkImportantState()
+            self.checkPositionInSystem()
+            self.checkInfluenceWarning()
+            self.checkDiplomaticPosition()
+        else:
+            print("not in system")
 
         self.numberOfFactions = len(system.minor_factions_names)
-
         self.calculateDaysSinceLastUpdate()
 
 

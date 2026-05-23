@@ -165,7 +165,7 @@ async def bgs_recap(ctx: discord.ApplicationContext):
     minorFaction = await asyncio.to_thread(DataStorageManager.get_minor_faction, ctx.guild_id, guildSettings.minor_faction_name)
     
     if minorFaction!=None:
-        systemsRecap = DataManager.getMinorFactionSystemsRecap(ctx.guild_id)
+        systemsRecap = DataManager.get_minor_faction_system_recaps(ctx.guild_id, minorFaction)
         systemGroups = DataStorageManager.get_system_groups(ctx.guild_id)
         systemsWithNoGroups = DataManager.getSystemNamesWithNoGroupList(ctx.guild_id)
         systemsRecapViews = SystemsRecapViews(guildSettings, systemsRecap,systemGroups,systemsWithNoGroups)
