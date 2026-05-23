@@ -114,11 +114,11 @@ class System:
                 if minor_faction_name not in system_new.minor_factions_names:
                     system_events.append(MinorFactionLeaveSystemEvent(minor_faction_name=minor_faction_name,system_name=self.name))
             # tracked faction lose leadership
-            if self.is_controlled_by(tracked_minor_faction_name) and not system_new.is_controlled_by(tracked_minor_faction_name):
-                system_events.append(MinorFactionLoseLeadershipSystemEvent(minor_faction_name=tracked_minor_faction_name,system_name=self.name,new_leader_minor_faction_name=system_new.controlling_faction_name))
+            if self.is_controlled_by(tracked_minor_faction_name.lower()) and not system_new.is_controlled_by(tracked_minor_faction_name.lower()):
+                system_events.append(MinorFactionLoseLeadershipSystemEvent(minor_faction_name=tracked_minor_faction_name.lower(),system_name=self.name,new_leader_minor_faction_name=system_new.controlling_faction_name))
             # tracked faction acquire leadership
-            if not self.is_controlled_by(tracked_minor_faction_name) and system_new.is_controlled_by(tracked_minor_faction_name):
-                system_events.append(MinorFactionAcquireLeadershipSystemEvent(minor_faction_name=tracked_minor_faction_name,system_name=self.name,old_leader_minor_faction_name=self.controlling_faction_name))
+            if not self.is_controlled_by(tracked_minor_faction_name.lower()) and system_new.is_controlled_by(tracked_minor_faction_name.lower()):
+                system_events.append(MinorFactionAcquireLeadershipSystemEvent(minor_faction_name=tracked_minor_faction_name.lower(),system_name=self.name,old_leader_minor_faction_name=self.controlling_faction_name))
 
         return system_events
 
@@ -149,15 +149,15 @@ class System:
 
 
     def get_minor_faction_position(self, minor_faction_name: str) -> int:
-        if minor_faction_name not in self.minor_factions_names:
+        if minor_faction_name.lower() not in self.minor_factions_names:
             return -1
-        elif self.is_controlled_by(minor_faction_name):
+        elif self.is_controlled_by(minor_faction_name.lower()):
             return 1
         else:
             position = 1
-            influence = self.minor_factions_influence[minor_faction_name]
+            influence = self.minor_factions_influence[minor_faction_name.lower()]
             for minor_faction_name_2 in self.minor_factions_names:
-                if minor_faction_name_2!=minor_faction_name:
+                if minor_faction_name_2!=minor_faction_name.lower():
                     if influence < self.minor_factions_influence[minor_faction_name_2]:
                         position+=1
             return position
@@ -192,7 +192,7 @@ class System:
     
 
     def get_minor_faction_influence_difference_from_leader(self, minor_faction_name: str) -> float:
-        return self.get_minor_faction_influence(minor_faction_name) - self.get_leader_influence()
+        return self.get_minor_faction_influence(minor_faction_name.lower()) - self.get_leader_influence()
 
 
     def get_second_and_its_influence(self):
@@ -210,39 +210,39 @@ class System:
 
 
     def get_minor_faction_influence(self, minor_faction_name: str):
-        if minor_faction_name in self.minor_factions_names:
-            return self.minor_factions_influence[minor_faction_name]
+        if minor_faction_name.lower() in self.minor_factions_names:
+            return self.minor_factions_influence[minor_faction_name.lower()]
         else:
             return 0
 
 
     def do_minor_faction_have_state(self, minor_faction_name: str, state: str):
-        if state in self.minor_factions_states[minor_faction_name]["pendingStates"]:
+        if state in self.minor_factions_states[minor_faction_name.lower()]["pendingStates"]:
             return "pending"
-        elif state in self.minor_factions_states[minor_faction_name]["activeStates"]:
+        elif state in self.minor_factions_states[minor_faction_name.lower()]["activeStates"]:
             return "active"
-        elif state in self.minor_factions_states[minor_faction_name]["recoveringStates"]:
+        elif state in self.minor_factions_states[minor_faction_name.lower()]["recoveringStates"]:
             return "recovering"
         else:
             return None
         
     def get_minor_faction_conflict_state(self, minor_faction_name: str):
-        if self.do_minor_faction_have_the_same_influence_as_another(minor_faction_name):
-            war = self.do_minor_faction_have_state(minor_faction_name, "war")
+        if self.do_minor_faction_have_the_same_influence_as_another(minor_faction_name.lower()):
+            war = self.do_minor_faction_have_state(minor_faction_name.lower(), "war")
             if war == "pending" or war == "active":
                 return "war"
-            civilWar = self.do_minor_faction_have_state(minor_faction_name, "civil war")
+            civilWar = self.do_minor_faction_have_state(minor_faction_name.lower(), "civil war")
             if civilWar == "pending" or civilWar == "active":
                 return "civil war"
-            election = self.do_minor_faction_have_state(minor_faction_name, "election")
+            election = self.do_minor_faction_have_state(minor_faction_name.lower(), "election")
             if election == "pending" or election == "active":
                 return "election"
         return None
     
     def do_minor_faction_have_the_same_influence_as_another(self, minor_faction_name: str):
-        minor_faction_influence = self.minor_factions_influence[minor_faction_name]
+        minor_faction_influence = self.minor_factions_influence[minor_faction_name.lower()]
         for minor_faction_name_2 in self.minor_factions_names:
-            if minor_faction_name_2 != minor_faction_name:
+            if minor_faction_name_2 != minor_faction_name.lower():
                 faction_influence = self.minor_factions_influence[minor_faction_name_2]
                 if faction_influence == minor_faction_influence:
                     return True
