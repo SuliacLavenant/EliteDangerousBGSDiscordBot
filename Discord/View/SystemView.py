@@ -53,6 +53,8 @@ class SystemView(discord.ui.View):
                 )
                 setNativeSystemtButton.callback = self.setNativeSystemtButtonCallback
                 self.add_item(setNativeSystemtButton)
+            
+            self.remove_item(self.store_system)
 
 
     async def setArchitectButtonCallback(self, interaction: discord.Interaction):
@@ -96,7 +98,7 @@ class SystemView(discord.ui.View):
         await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
 
 
-    @discord.ui.button(label="Create Retreat Mission", style=discord.ButtonStyle.primary, row=2)
+    @discord.ui.button(label="Create Retreat Mission", style=discord.ButtonStyle.primary, row=4)
     async def create_retreat_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.mission_permissions.create(interaction.user.id):
             create_retreat_minor_faction_from_system_mission_modal = CreateRetreatMinorFactionFromSystemMissionModal(self.system)
@@ -118,7 +120,7 @@ class SystemView(discord.ui.View):
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
-    @discord.ui.button(label="Create Set Leader Mission", style=discord.ButtonStyle.primary, row=2)
+    @discord.ui.button(label="Create Set Leader Mission", style=discord.ButtonStyle.primary, row=4)
     async def create_set_leader_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.mission_permissions.create(interaction.user.id):
             create_set_minor_faction_as_leader_in_system_mission_modal = CreateSetMinorFactionAsLeaderInSystemMissionModal(self.system)
@@ -136,6 +138,17 @@ class SystemView(discord.ui.View):
 
             system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
             await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+    
+    @discord.ui.button(label="Store System", style=discord.ButtonStyle.secondary, row=1)
+    async def store_system(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.system_permissions.store(interaction.user.id):
+            DataStorageManager.store_system(interaction.guild_id, self.system)
+            self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
+            await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
