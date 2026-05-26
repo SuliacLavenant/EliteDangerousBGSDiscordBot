@@ -150,8 +150,8 @@ class SystemMinorFactionRecap:
 
     def calculateDaysSinceLastUpdate(self):
         currentTime = datetime.now(timezone.utc)
-        lastInfluenceUpdate = datetime.fromtimestamp(self.system.lastInfluenceUpdate, tz=timezone.utc)
-        delta = currentTime - lastInfluenceUpdate
+        last_influence_update = datetime.fromtimestamp(self.system.last_influence_update, tz=timezone.utc)
+        delta = currentTime - last_influence_update
         self.daysSinceLastUpdate = delta.days
 
 

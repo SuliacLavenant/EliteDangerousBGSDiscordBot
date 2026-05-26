@@ -34,7 +34,7 @@ class SystemView(discord.ui.View):
             row=0
         ))
 
-        if self.system.isStored:
+        if self.system.is_stored:
             if self.system.is_architected == None:
                 setArchitectButton = discord.ui.Button(
                     label="Set Architect",
@@ -155,7 +155,7 @@ class SystemView(discord.ui.View):
 
     def getEmbed(self):
         title = self.system.name.title()
-        if self.system.isStored:
+        if self.system.is_stored:
             title += f" {BotConfig.emotes.data.saved}"
         else:
             title += f" {BotConfig.emotes.data.online}"
@@ -197,7 +197,7 @@ class SystemView(discord.ui.View):
     def get_embeds(self):
         embeds = []
         title = self.system.name.title()
-        if self.system.isStored:
+        if self.system.is_stored:
             title += f" {BotConfig.emotes.data.saved}"
         else:
             title += f" {BotConfig.emotes.data.online}"
@@ -280,7 +280,7 @@ class SystemView(discord.ui.View):
 
 
     def get_last_update_warning(self):
-        time_since_last_update = datetime.now(timezone.utc) - datetime.fromtimestamp(self.system.lastInfluenceUpdate, tz=timezone.utc)
+        time_since_last_update = datetime.now(timezone.utc) - datetime.fromtimestamp(self.system.last_influence_update, tz=timezone.utc)
         days_since_last_update = time_since_last_update.days
         if days_since_last_update<=1:
             return ""

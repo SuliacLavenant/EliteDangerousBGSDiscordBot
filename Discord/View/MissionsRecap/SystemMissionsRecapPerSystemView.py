@@ -75,7 +75,7 @@ class SystemMissionsRecapPerSystemView(discord.ui.View):
 
 
     def get_last_update_warning(self, system: System):
-        time_since_last_update = datetime.now(timezone.utc) - datetime.fromtimestamp(system.lastInfluenceUpdate, tz=timezone.utc)
+        time_since_last_update = datetime.now(timezone.utc) - datetime.fromtimestamp(system.last_influence_update, tz=timezone.utc)
         days_since_last_update = time_since_last_update.days
         if days_since_last_update<=1:
             return ""

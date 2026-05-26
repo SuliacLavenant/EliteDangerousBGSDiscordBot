@@ -103,7 +103,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
                     system.add_faction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], pendingStates, activeStates, recoveringStates)
 
                     if not timeStampSaved:
-                        system.lastInfluenceUpdate = max(int(ts) for ts in faction["influenceHistory"].keys())
+                        system.last_influence_update = max(int(ts) for ts in faction["influenceHistory"].keys())
                         timeStampSaved = True
 
             return system

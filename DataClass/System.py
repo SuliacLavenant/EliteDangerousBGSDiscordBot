@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from copy import deepcopy
 import urllib.parse
+from datetime import datetime, timezone
 
 from DataClass.MinorFaction import MinorFaction
 from EventClass.SystemEvent.SystemEvent import SystemEvent
@@ -33,9 +34,9 @@ class System:
     architect_id: int = None
     isDiplomatic: bool = False
 
-    lastInfluenceUpdate: int = 0 #unix time
+    last_influence_update: int = 0 #unix time
 
-    isStored: int = False #stored system
+    is_stored: bool = False
 
     mission_ids: list = field(default_factory=list)
 
@@ -57,8 +58,8 @@ class System:
             is_architected = system_dict["is_architected"],
             architect_id = system_dict["architect_id"],
             isDiplomatic = system_dict["isDiplomatic"],
-            lastInfluenceUpdate = system_dict["lastInfluenceUpdate"],
-            isStored = True,
+            last_influence_update = system_dict["last_influence_update"],
+            is_stored = True,
             mission_ids = system_dict["mission_ids"]
             )
         return system
@@ -89,7 +90,7 @@ class System:
         system_dict["is_architected"] = self.is_architected
         system_dict["architect_id"] = self.architect_id
         system_dict["isDiplomatic"] = self.isDiplomatic
-        system_dict["lastInfluenceUpdate"] = self.lastInfluenceUpdate
+        system_dict["last_influence_update"] = self.last_influence_update
         system_dict["mission_ids"] = self.mission_ids
 
         return system_dict
@@ -123,20 +124,26 @@ class System:
         return system_events
 
 
-    def update(self, system_new):
+    def update(self, system_new) -> bool: #### check plus recent
         if system_new!=None:
-            self.population = system_new.population
-            self.security = system_new.security
-            self.economy = system_new.economy
-            self.second_economy = system_new.second_economy
-            self.controlling_faction_name = system_new.controlling_faction_name
+            current_influence_date = datetime.fromtimestamp(self.last_influence_update, tz=timezone.utc)
+            new_influence_date = datetime.fromtimestamp(system_new.last_influence_update, tz=timezone.utc)
+            if new_influence_date > current_influence_date:
+                self.population = system_new.population
+                self.security = system_new.security
+                self.economy = system_new.economy
+                self.second_economy = system_new.second_economy
+                self.controlling_faction_name = system_new.controlling_faction_name
 
-            self.minor_factions = system_new.minor_factions
-            self.minor_factions_names = system_new.minor_factions_names
-            self.minor_factions_influence = system_new.minor_factions_influence
-            self.minor_factions_states = system_new.minor_factions_states
+                self.minor_factions = system_new.minor_factions
+                self.minor_factions_names = system_new.minor_factions_names
+                self.minor_factions_influence = system_new.minor_factions_influence
+                self.minor_factions_states = system_new.minor_factions_states
 
-            self.lastInfluenceUpdate = system_new.lastInfluenceUpdate
+                self.last_influence_update = system_new.last_influence_update
+
+                return True
+        return False
 
 
     ### Method
@@ -209,14 +216,14 @@ class System:
         return (second,second_influence)
 
 
-    def get_minor_faction_influence(self, minor_faction_name: str):
+    def get_minor_faction_influence(self, minor_faction_name: str) -> float:
         if minor_faction_name.lower() in self.minor_factions_names:
             return self.minor_factions_influence[minor_faction_name.lower()]
         else:
             return 0
 
 
-    def do_minor_faction_have_state(self, minor_faction_name: str, state: str):
+    def do_minor_faction_have_state(self, minor_faction_name: str, state: str) -> str:
         if state in self.minor_factions_states[minor_faction_name.lower()]["pendingStates"]:
             return "pending"
         elif state in self.minor_factions_states[minor_faction_name.lower()]["activeStates"]:
@@ -225,8 +232,9 @@ class System:
             return "recovering"
         else:
             return None
-        
-    def get_minor_faction_conflict_state(self, minor_faction_name: str):
+
+
+    def get_minor_faction_conflict_state(self, minor_faction_name: str) -> str:
         if self.do_minor_faction_have_the_same_influence_as_another(minor_faction_name.lower()):
             war = self.do_minor_faction_have_state(minor_faction_name.lower(), "war")
             if war == "pending" or war == "active":
@@ -238,8 +246,9 @@ class System:
             if election == "pending" or election == "active":
                 return "election"
         return None
-    
-    def do_minor_faction_have_the_same_influence_as_another(self, minor_faction_name: str):
+
+
+    def do_minor_faction_have_the_same_influence_as_another(self, minor_faction_name: str) -> bool:
         minor_faction_influence = self.minor_factions_influence[minor_faction_name.lower()]
         for minor_faction_name_2 in self.minor_factions_names:
             if minor_faction_name_2 != minor_faction_name.lower():
@@ -262,18 +271,18 @@ class System:
 
 
 
-
 ##########################################################################################################
 ###################################### STR Functions #####################################################
 ##########################################################################################################
 
-    def getStrSystemEconomy(self):
+    def getStrSystemEconomy(self) -> str:
         if self.second_economy == None:
             return self.economy.title()
         else:
             return f"{self.economy.title()} / {self.second_economy.title()}"
-        
-    def getStrSystemPopulation(self):
+
+
+    def getStrSystemPopulation(self) -> str:
         if self.population == -1:
             return "?"
         match len(str(self.population)):
@@ -287,5 +296,5 @@ class System:
                 return f"{str(round(self.population/1000000000,2))} billion"
 
 
-    def get_system_name_with_inara_link(self):
+    def get_system_name_with_inara_link(self) -> str:
         return f"[**{self.name}**](https://inara.cz/elite/starsystem/?search={urllib.parse.quote(self.name.lower())})"
