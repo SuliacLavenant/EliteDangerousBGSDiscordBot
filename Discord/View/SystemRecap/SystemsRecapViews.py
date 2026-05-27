@@ -190,7 +190,8 @@ class SystemsRecapViews:
             if systemRecap.marginWarning:
                 match systemRecap.influenceWarningLevel:
                     case 3:
-                        warningLvl[3].append(systemRecapName)
+                        if not systemRecap.inConflict:
+                            warningLvl[3].append(systemRecapName)
                     case 2:
                         warningLvl[2].append(systemRecapName)
                     case 1:
