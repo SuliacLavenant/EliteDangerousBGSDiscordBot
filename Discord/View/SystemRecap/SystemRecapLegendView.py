@@ -39,7 +39,8 @@ class SystemsRecapLegendView(discord.ui.View):
         #position in system
         position = f"{BotConfig.emotes.minorFaction.positionInSystem.leader}: **{self.minorFactionName}** is **Leader**.\n"
         position += f"{BotConfig.emotes.minorFaction.positionInSystem.diplomatic}: **{self.minorFactionName}** is not **Leader** but have a **diplomatic** position in the **System**.\n"
-        position += f"{BotConfig.emotes.minorFaction.positionInSystem.other}: **{self.minorFactionName}** is **present**."
+        position += f"{BotConfig.emotes.minorFaction.positionInSystem.other}: **{self.minorFactionName}** is **present**.\n"
+        position += f"{BotConfig.emotes.minorFaction.positionInSystem.none}: **{self.minorFactionName}** is **not present**."
         embed.add_field(name=f"Position in System", value=position, inline=False)
 
         #number of faction in system
