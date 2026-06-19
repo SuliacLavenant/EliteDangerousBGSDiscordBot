@@ -55,6 +55,8 @@ class SystemsRecapView(discord.ui.View):
                 return BotConfig.emotes.minorFaction.positionInSystem.diplomatic
             case "other":
                 return BotConfig.emotes.minorFaction.positionInSystem.other
+            case None:
+                return BotConfig.emotes.minorFaction.positionInSystem.none
 
 
     def getImportantStatusEmote(self, systemRecap: SystemMinorFactionRecap):

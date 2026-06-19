@@ -48,9 +48,10 @@
                 "retreat_warning": ":no_entry:"
             },
             "positionInSystem": {
-                "leader": ":crown:",
+                "leader": "👑",
                 "diplomatic": ":judge:",
-                "other": ":bust_in_silhouette:"
+                "other": "👤",
+                "none": "❌"
             }
         },
         "mission": {
