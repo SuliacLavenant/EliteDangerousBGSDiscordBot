@@ -19,11 +19,11 @@
                 "origin": ":european_castle:"
             },
             "numberOfMinorFaction": {
-                "minimum": ":shield:",
+                "minimum": "🛡️",
                 "4": ":number_4:",
                 "5": ":number_5:",
                 "6": ":number_6:",
-                "maximum": ":lock:"
+                "maximum": "🔒"
             }
         },
         "minorFaction": {
@@ -31,10 +31,10 @@
                 "down": ":chart_with_downwards_trend:",
                 "up": ":chart_with_upwards_trend:",
                 "leader_influence_warning": {
-                    "level0": ":green_circle:",
-                    "level1": ":yellow_circle:",
-                    "level2": ":orange_circle:",
-                    "level3": ":red_circle:"
+                    "level0": "🟢",
+                    "level1": "🟡",
+                    "level2": "🟠",
+                    "level3": "🔴"
                 }
             },
             "state": {
