@@ -1,9 +1,8 @@
 import requests
 import urllib.parse
 
-# Custom Class
 from APIRequester.AbstractAPIRequester import AbstractAPIRequester
-
+from BotConfig.BotConfig import BotConfig
 from DataClass.System import System
 from DataClass.MinorFaction import MinorFaction
 
@@ -48,12 +47,19 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
 
     def requestSystemData(systemName: str):
-        url = f"https://www.edsm.net/api-v1/system?systemName={urllib.parse.quote(systemName)}&showInformation=1"
+        url = f"https://www.edsm.net/api-v1/system"
+        params = {
+            "systemName": urllib.parse.quote(systemName),
+            "showInformation": 1
+        }
+        headers = {
+            "User-Agent": f"EraEliteBGSBOT/0.1 contact: {BotConfig.contact_email}",
+            "Accept": "application/json"
+        }
 
         try:
-            response = requests.get(url, timeout=10) #timeout 10 sec
+            response = requests.get(url, params=params, headers=headers, timeout=10)
             response.raise_for_status() #detect request error
-
             jsonData = response.json()
             
             if len(jsonData)==0 or len(jsonData["information"])==0:
@@ -76,10 +82,19 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
 
     def requestMinorFactionSystemData(system: System):
-        url = f"https://www.edsm.net/api-system-v1/factions?systemName={urllib.parse.quote(system.name)}&showHistory=1"
+        url = f"https://www.edsm.net/api-system-v1/factions"
+        params = {
+            "systemName": urllib.parse.quote(system.name),
+            "showHistory": 1
+        }
+
+        headers = {
+            "User-Agent": f"EraEliteBGSBOT/0.1 contact: {BotConfig.contact_email}",
+            "Accept": "application/json"
+        }
 
         try:
-            response = requests.get(url, timeout=10) #timeout 10 sec
+            response = requests.get(url, params=params, headers=headers, timeout=10)
             response.raise_for_status() #detect request error
 
             timeStampSaved = False

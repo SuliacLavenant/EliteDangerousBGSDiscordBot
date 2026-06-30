@@ -21,6 +21,8 @@ class BotConfig:
     indent2: str = "⠀"*2
     indent4: str = "⠀"*4
 
+    contact_email: str = ""
+
     @classmethod
     def load(cls):
         with open(cls.configPath, "r", encoding="utf-8") as f:

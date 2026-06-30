@@ -44,6 +44,9 @@ BotConfig.load()
 load_dotenv()
 token = os.getenv("DISCORD_TOKEN")
 
+BotConfig.contact_email = os.getenv("CONTACT_EMAIL")
+print(BotConfig.contact_email)
+
 guildIDs_raw = os.getenv("DISCORD_GUILDS")
 guildIDs = [int(guildID) for guildID in guildIDs_raw.split(",") if guildID]
 print(guildIDs)
