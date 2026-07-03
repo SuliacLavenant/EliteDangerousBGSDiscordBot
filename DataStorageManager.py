@@ -135,12 +135,15 @@ class DataStorageManager:
         #data update
         if system_name in systemsData:
             system = DataStorageManager.get_system(guild_id,system_name)
+            minor_factions = []
             for minor_faction in system.minor_factions:
-                minor_faction.remove_system(system_name)
+                system.minor_factions[minor_faction].remove_system(system_name)
+                minor_factions.append(system.minor_factions[minor_faction])
+            DataStorageManager.store_minor_factions(guild_id,minor_factions)
             del systemsData[system_name]
 
+        DataStorageManager.remove_system_from_system_group(guild_id,system_name)
         DataStorageManager.atomic_write_file_content(file_path,systemsData)
-        DataStorageManager.store_minor_factions(guild_id,system.minor_factions)
         return True
 
 
@@ -275,6 +278,18 @@ class DataStorageManager:
             return True
         else:
             return False
+
+
+    def remove_system_from_system_group(guild_id: str, system_name: str):
+        system_groups = DataStorageManager.get_system_groups(guild_id)
+
+        for system_group in system_groups:
+            if system_group.removeSystem(system_name):
+                DataStorageManager.store_system_group(guild_id,system_group)
+        return True
+
+
+
 
 
 ##################################################

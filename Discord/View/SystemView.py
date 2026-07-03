@@ -54,7 +54,14 @@ class SystemView(discord.ui.View):
                 setNativeSystemtButton.callback = self.setNativeSystemtButtonCallback
                 self.add_item(setNativeSystemtButton)
             
+            if len(self.system.mission_ids)!=0 or self.system.minor_faction_is_present(self.guildSettings.minor_faction_name):
+                self.remove_item(self.unstore_system)
+            
             self.remove_item(self.store_system)
+        else:
+            self.remove_item(self.unstore_system)
+            self.remove_item(self.create_retreat_mission)
+            self.remove_item(self.create_set_leader_mission)
 
 
     async def setArchitectButtonCallback(self, interaction: discord.Interaction):
@@ -141,12 +148,23 @@ class SystemView(discord.ui.View):
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
-    
+
     @discord.ui.button(label="Store System", style=discord.ButtonStyle.secondary, row=1)
     async def store_system(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.system_permissions.store(interaction.user.id):
             DataStorageManager.store_system(interaction.guild_id, self.system)
             self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
+            await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+    @discord.ui.button(label="Unstore System", style=discord.ButtonStyle.danger, row=1)
+    async def unstore_system(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.system_permissions.unstore(interaction.user.id) and len(self.system.mission_ids)==0:
+            DataStorageManager.removeSystemFromDataFile(interaction.guild_id, self.system.name)
+            self.system.is_stored = False
             system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
             await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
         else:
