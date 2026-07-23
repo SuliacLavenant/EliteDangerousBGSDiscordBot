@@ -49,7 +49,8 @@ class EDSMAPIRequester(AbstractAPIRequester):
     def requestSystemData(systemName: str):
         url = f"https://www.edsm.net/api-v1/system"
         params = {
-            "systemName": urllib.parse.quote(systemName),
+            #"systemName": urllib.parse.quote(systemName),
+            "systemName": systemName,
             "showInformation": 1
         }
         headers = {
@@ -84,8 +85,9 @@ class EDSMAPIRequester(AbstractAPIRequester):
     def requestMinorFactionSystemData(system: System):
         url = f"https://www.edsm.net/api-system-v1/factions"
         params = {
-            "systemName": urllib.parse.quote(system.name),
-            "showHistory": 1
+            #"systemName": urllib.parse.quote(system.name),
+            "systemName": system.name,
+            "showHistory": 0
         }
 
         headers = {
@@ -118,7 +120,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
                     system.add_faction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], pendingStates, activeStates, recoveringStates)
 
                     if not timeStampSaved:
-                        system.last_influence_update = max(int(ts) for ts in faction["influenceHistory"].keys())
+                        system.last_influence_update = faction["lastUpdate"]
                         timeStampSaved = True
 
             return system
