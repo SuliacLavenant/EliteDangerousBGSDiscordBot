@@ -489,6 +489,14 @@ class DataStorageManager:
 
 ##################################################
 ################################################## Player
+# lock of player limit at 200
+
+    def player_data_format_update(guild_ids: list[str]):
+        for guild_id in guild_ids:
+            players: list[Player] = DataStorageManager.get_players(guild_id)
+            DataStorageManager.store_players(guild_id, players)
+        return True
+
 
     def store_player(guild_id: str, player: Player):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"players.json"
@@ -507,6 +515,24 @@ class DataStorageManager:
         return True
 
 
+    def store_players(guild_id: str, players: list[Player]):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"players.json"
+        player_data = DataStorageManager.read_file_content(file_path)
+
+        for player in players:
+            if player.id == None:
+                keys = player_data.keys()
+                key = 0
+                while str(key) in keys and key<200:
+                    key += 1
+                player.id = key
+    
+            player_data[str(player.id)] = player.get_as_dict()
+
+        DataStorageManager.atomic_write_file_content(file_path,player_data)
+        return True
+
+
     def get_player_by_id(guild_id: str, player_id: int) -> Player:
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"players.json"
         player_data = DataStorageManager.read_file_content(file_path)
@@ -517,7 +543,7 @@ class DataStorageManager:
 
 
     def get_player_by_name(guild_id: str, player_name: str) -> Player:
-        players = DataStorageManager.get_players(guild_id)
+        players: list[Player] = DataStorageManager.get_players(guild_id)
 
         for player in players:
             if player.name.lower() == player_name.lower():
@@ -526,10 +552,10 @@ class DataStorageManager:
 
 
     def get_players(guild_id: str) -> list:
-        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"players.json"
+        file_path: str = DataStorageManager.get_guild_folder_path(guild_id)+"players.json"
         player_data = DataStorageManager.read_file_content(file_path)
 
-        players = []
+        players: list[Player] = []
         for key in player_data.keys():
            players.append(Player.init_from_dict(player_data[key]))
         return players
