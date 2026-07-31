@@ -43,6 +43,9 @@ class Player:
         return player_dict
 
 
+##################################################
+################################################## architected system
+
     def add_architected_system(self, system_name: str) -> bool:
         if system_name.lower() not in self.architected_systems:
             self.architected_systems.append(system_name.lower())
@@ -51,6 +54,9 @@ class Player:
         else:
             return False
 
+
+##################################################
+################################################## str
 
     def __str__(self):
         return f"Name: {self.name.title()}"

@@ -18,14 +18,14 @@ class GuildSettings:
     @classmethod
     def init_from_dict(cls, guild_settings_dict: dict):
         guild_settings = cls(
-            guild_id=guild_settings_dict["guild_id"],
-            minor_faction_name=guild_settings_dict["minor_faction_name"],
-            squadron_id=guild_settings_dict["squadron_id"],
-            bgs_change_log_channel_id=guild_settings_dict["bgs_change_log_channel_id"],
-            bgs_system_recap_channel_id=guild_settings_dict["bgs_system_recap_channel_id"],
-            bgs_warning_recap_channel_id=guild_settings_dict["bgs_warning_recap_channel_id"],
-            mission_recap_channel_id=guild_settings_dict["mission_recap_channel_id"],
-            trusted_channel_ids=guild_settings_dict["trusted_channel_ids"]
+            guild_id = guild_settings_dict["guild_id"],
+            minor_faction_name = guild_settings_dict["minor_faction_name"],
+            squadron_id = guild_settings_dict["squadron_id"],
+            bgs_change_log_channel_id = guild_settings_dict["bgs_change_log_channel_id"],
+            bgs_system_recap_channel_id = guild_settings_dict["bgs_system_recap_channel_id"],
+            bgs_warning_recap_channel_id = guild_settings_dict["bgs_warning_recap_channel_id"],
+            mission_recap_channel_id = guild_settings_dict["mission_recap_channel_id"],
+            trusted_channel_ids = guild_settings_dict["trusted_channel_ids"]
             )
         return guild_settings
 
@@ -43,10 +43,8 @@ class GuildSettings:
         return guild_settings_dict
 
 
-    ######## Trusted channels
-    def is_channel_trusted(self, channel_id: int) -> bool:
-        return channel_id in self.trusted_channel_ids
-
+##################################################
+################################################## trusted channels
 
     def add_trusted_channel(self, channel_id: int) -> bool:
         if channel_id not in self.trusted_channel_ids:
@@ -54,6 +52,10 @@ class GuildSettings:
             return True
         else:
             return False
+
+
+    def is_channel_trusted(self, channel_id: int) -> bool:
+        return channel_id in self.trusted_channel_ids
 
 
     def remove_trusted_channel(self, channel_id: int) -> bool:
