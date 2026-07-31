@@ -193,16 +193,16 @@ async def bgs_recap(ctx: discord.ApplicationContext):
             channel = bot.get_channel(guildSettings.bgs_warning_recap_channel_id)
             await channel.purge(check=isBotMessage)
             #expansion
-            expEmbeds = systemsRecapViews.getExpansionWarningSystemRecapEmbeds()
+            expEmbeds = systemsRecapViews.get_expansion_warning_system_recap_embeds()
             for i in range(len(expEmbeds)):
                 await channel.send(embed=expEmbeds[i])
             #influence margin warning
-            influenceMarginWarningEmbedsAll = systemsRecapViews.getInfluenceMarginWarningSystemRecapEmbeds()
+            influenceMarginWarningEmbedsAll = systemsRecapViews.get_influence_margin_warning_system_recap_embeds()
             for influenceMarginWarningEmbeds in influenceMarginWarningEmbedsAll.values():
                 for i in range(len(influenceMarginWarningEmbeds)):
                     await channel.send(embed=influenceMarginWarningEmbeds[i])
             #conflicts
-            conflictEmbeds = systemsRecapViews.getConflictSystemRecapEmbeds()
+            conflictEmbeds = systemsRecapViews.get_conflict_system_recap_embeds()
             for i in range(len(conflictEmbeds)):
                 await channel.send(embed=conflictEmbeds[i])
             #retreat
