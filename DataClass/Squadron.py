@@ -43,6 +43,9 @@ class Squadron:
         return squadron_dict
 
 
+##################################################
+################################################## Minor Faction
+
     def add_minor_faction(self, minor_faction_name: str) -> bool:
         if len(minor_faction_name)==0 and minor_faction_name.lower() in self.minor_faction_names:
             return False
@@ -59,41 +62,11 @@ class Squadron:
             return False
 
 
+##################################################
+################################################## Players
+
     def add_player(self, player_id: int):
         self.recruit_ids.append(player_id)
-
-
-    def remove_player(self, player_id: int) -> bool:
-        if player_id in self.leader_ids:
-            self.leader_ids.remove(player_id)
-            return True
-        elif player_id in self.officer_ids:
-            self.officer_ids.remove(player_id)
-            return True
-        elif player_id in self.member_ids:
-            self.member_ids.remove(player_id)
-            return True
-        elif player_id in self.recruit_ids:
-            self.recruit_ids.remove(player_id)
-            return True
-        else:
-            return False
-
-
-    def get_player_position_in_squadron(self, player_id: int) -> str:
-        if player_id in self.leader_ids:
-            return "Leader"
-        elif player_id in self.officer_ids:
-            return "Officer"
-        elif player_id in self.member_ids:
-            return "Member"
-        elif player_id in self.recruit_ids:
-            return "Recruit"
-        return None
-
-
-    def get_player_ids(self) -> list:
-        return self.leader_ids + self.officer_ids + self.member_ids + self.recruit_ids
 
 
     def change_players_rank_to(self, player_ids: list[int], rank: str):
@@ -114,6 +87,46 @@ class Squadron:
                 for player_id in player_ids:
                     self.remove_player(player_id)
                     self.recruit_ids.append(player_id)
+
+
+    def remove_player(self, player_id: int) -> bool:
+        if player_id in self.leader_ids:
+            self.leader_ids.remove(player_id)
+            return True
+        elif player_id in self.officer_ids:
+            self.officer_ids.remove(player_id)
+            return True
+        elif player_id in self.member_ids:
+            self.member_ids.remove(player_id)
+            return True
+        elif player_id in self.recruit_ids:
+            self.recruit_ids.remove(player_id)
+            return True
+        else:
+            return False
+
+
+    def get_player_ids(self) -> list:
+        return self.leader_ids + self.officer_ids + self.member_ids + self.recruit_ids
+
+
+    def get_player_position_in_squadron(self, player_id: int) -> str:
+        if player_id in self.leader_ids:
+            return "Leader"
+        elif player_id in self.officer_ids:
+            return "Officer"
+        elif player_id in self.member_ids:
+            return "Member"
+        elif player_id in self.recruit_ids:
+            return "Recruit"
+        return None
+
+
+##################################################
+################################################## str
+
+    def get_name_with_tag_str(self) -> str:
+        return f"{self.name} [{self.tag}]"
 
 
     def __str__(self):

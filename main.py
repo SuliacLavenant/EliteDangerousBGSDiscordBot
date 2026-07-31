@@ -19,6 +19,7 @@ from Discord.View.MinorFactionView import MinorFactionView
 from Discord.View.Player.PlayerView import PlayerView
 from Discord.View.Player.PlayerNotFoundView import PlayerNotFoundView
 from Discord.View.SquadronView import SquadronView
+from Discord.View.SquadronsView import SquadronsView
 from Discord.View.SquadronNotFoundView import SquadronNotFoundView
 from Discord.View.SystemView import SystemView
 from Discord.View.SystemRecap.SystemsRecapViews import SystemsRecapViews
@@ -258,6 +259,15 @@ async def squadron(ctx: discord.ApplicationContext, squadron_name: str):
     else:
         squadron_view = SquadronView(squadron, ctx.guild_id)
         await ctx.edit(embed=squadron_view.get_embed(), view=squadron_view)
+
+
+@bot.slash_command(name="squadrons", description="show stored squadrons", guild_ids=guildIDs)
+@PermissionManager.squadron_permissions.see_list_predicate()
+async def squadrons(ctx: discord.ApplicationContext):
+    await ctx.defer()
+    squadrons: list[Squadron] = DataStorageManager.get_squadrons(ctx.guild_id)
+    squadrons_view = SquadronsView(squadrons, ctx.guild_id)
+    await ctx.edit(embed=squadrons_view.get_embed(), view=squadrons_view)
 
 
 @bot.slash_command(name="player", description="show player information", guild_ids=guildIDs)
