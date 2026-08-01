@@ -5,6 +5,7 @@ from DataClass.Player import Player
 from DataClass.System import System
 from DataClass.GuildSettings import GuildSettings
 from DataStorageManager import DataStorageManager
+from Discord.Modal.Player.AddOtherNamePlayerModal import AddOtherNamePlayerModal
 from Discord.Modal.Player.RenamePlayerModal import RenamePlayerModal
 from Discord.Modal.Player.SetPlayerInaraIdModal import SetPlayerInaraIdModal
 from PermissionManager.PermissionManager import PermissionManager
@@ -28,6 +29,7 @@ class PlayerView(discord.ui.View):
         else:
             self.remove_item(self.rename)
             self.remove_item(self.set_inara_id)
+            self.remove_item(self.add_other_name)
 
         if self.player.inara_id != None and not self.edit_mode:
             self.add_item(discord.ui.Button(
@@ -85,6 +87,24 @@ class PlayerView(discord.ui.View):
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
+    @discord.ui.button(label="Add Other Name", style=discord.ButtonStyle.primary, row=2)
+    async def add_other_name(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if PermissionManager.player_permissions.add_other_name(interaction.user.id, self.guild_id):
+            add_other_name_player_modal = AddOtherNamePlayerModal(self.player)
+            await interaction.response.send_modal(add_other_name_player_modal)
+            await add_other_name_player_modal.wait()
+
+            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+            player.add_other_name(add_other_name_player_modal.other_name)
+            DataStorageManager.store_player(interaction.guild_id, player)
+
+            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+            player_view = PlayerView(player, self.guild_id, True)
+            await interaction.message.edit(embed=player_view.get_embed(),view=player_view)
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
     def get_embed(self):
         title = f"{self.player.name}"
         description = ""
@@ -97,9 +117,13 @@ class PlayerView(discord.ui.View):
         else:
             accounts_details += f"{BotConfig.indent2}**Discord**: Unknown\n"
         if self.player.inara_id != None:
-            accounts_details += f"{BotConfig.indent2}**Inara**: [{self.player.name}](https://inara.cz/elite/cmdr/{str(self.player.inara_id)}/)"
+            accounts_details += f"{BotConfig.indent2}**Inara**: [{self.player.name}](https://inara.cz/elite/cmdr/{str(self.player.inara_id)}/)\n"
         else:
-            accounts_details += f"{BotConfig.indent2}**Inara**: Unknown"
+            accounts_details += f"{BotConfig.indent2}**Inara**: Unknown\n"
+        if len(self.player.other_names) > 0:
+            accounts_details += f"{BotConfig.indent2}**Other names**: {",".join(self.player.other_names)}"
+        else:
+            accounts_details += f"{BotConfig.indent2}**Other names**: -"
         embed.add_field(name="Accounts", value=accounts_details, inline=False)
 
         ##### Squadron

@@ -9,7 +9,7 @@ class Player:
     inara_id: int = None
     name: str = ""
     note: str = None
-    old_names: list[str] = field(default_factory=list[str])
+    other_names: list[str] = field(default_factory=list[str])
     squadron_id: int = None
 
 
@@ -23,7 +23,7 @@ class Player:
             inara_id = player_dict["inara_id"],
             name = player_dict["name"],
             note = player_dict["note"],
-            old_names = player_dict["old_names"],
+            other_names = player_dict["other_names"],
             squadron_id = player_dict["squadron_id"]
             )
         return player
@@ -38,7 +38,7 @@ class Player:
         player_dict["inara_id"] = self.inara_id
         player_dict["name"] = self.name
         player_dict["note"] = self.note
-        player_dict["old_names"] = self.old_names
+        player_dict["other_names"] = self.other_names
         player_dict["squadron_id"] = self.squadron_id
         return player_dict
 
@@ -50,6 +50,17 @@ class Player:
         if system_name.lower() not in self.architected_systems:
             self.architected_systems.append(system_name.lower())
             self.architected_systems.sort()
+            return True
+        else:
+            return False
+
+
+##################################################
+################################################## other names
+
+    def add_other_name(self, other_name: str) -> bool:
+        if other_name not in self.other_names:
+            self.other_names.append(other_name)
             return True
         else:
             return False
