@@ -7,6 +7,9 @@ class GuildSettings:
     minor_faction_name: str = None
     squadron_id: int = None
 
+    #parameters
+    display_untracked_systems_in_recap: bool = True
+
     #channels
     bgs_change_log_channel_id: int = None
     bgs_system_recap_channel_id: int = None
@@ -17,17 +20,7 @@ class GuildSettings:
 
     @classmethod
     def init_from_dict(cls, guild_settings_dict: dict):
-        guild_settings = cls(
-            guild_id = guild_settings_dict["guild_id"],
-            minor_faction_name = guild_settings_dict["minor_faction_name"],
-            squadron_id = guild_settings_dict["squadron_id"],
-            bgs_change_log_channel_id = guild_settings_dict["bgs_change_log_channel_id"],
-            bgs_system_recap_channel_id = guild_settings_dict["bgs_system_recap_channel_id"],
-            bgs_warning_recap_channel_id = guild_settings_dict["bgs_warning_recap_channel_id"],
-            mission_recap_channel_id = guild_settings_dict["mission_recap_channel_id"],
-            trusted_channel_ids = guild_settings_dict["trusted_channel_ids"]
-            )
-        return guild_settings
+        return cls(**guild_settings_dict)
 
 
     def get_as_dict(self) -> dict:
@@ -35,6 +28,7 @@ class GuildSettings:
         guild_settings_dict["guild_id"] = self.guild_id
         guild_settings_dict["minor_faction_name"] = self.minor_faction_name
         guild_settings_dict["squadron_id"] = self.squadron_id
+        guild_settings_dict["display_untracked_systems_in_recap"] = self.display_untracked_systems_in_recap
         guild_settings_dict["bgs_change_log_channel_id"] = self.bgs_change_log_channel_id
         guild_settings_dict["bgs_system_recap_channel_id"] = self.bgs_system_recap_channel_id
         guild_settings_dict["bgs_warning_recap_channel_id"] = self.bgs_warning_recap_channel_id

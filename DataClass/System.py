@@ -40,28 +40,12 @@ class System:
 
     mission_ids: list = field(default_factory=list)
 
+    tracked: bool = True
 
     @classmethod
     def init_from_dict(cls, system_dict: dict):
-        system = cls(
-            name = system_dict["name"],
-            population = system_dict["population"],
-            security = system_dict["security"],
-            economy = system_dict["economy"],
-            second_economy = system_dict["second_economy"],
-            reserve = system_dict["reserve"],
-            controlling_faction_name = system_dict["controlling_faction_name"],
-            minor_factions_names = system_dict["minor_factions_names"],
-            minor_factions_influence = system_dict["minor_factions_influence"],
-            minor_factions_states = system_dict["minor_factions_states"],
-            isOrigin = system_dict["isOrigin"],
-            is_architected = system_dict["is_architected"],
-            architect_id = system_dict["architect_id"],
-            isDiplomatic = system_dict["isDiplomatic"],
-            last_influence_update = system_dict["last_influence_update"],
-            is_stored = True,
-            mission_ids = system_dict["mission_ids"]
-            )
+        system: System = cls(**system_dict)
+        system.is_stored = True
         return system
 
 
@@ -92,6 +76,7 @@ class System:
         system_dict["isDiplomatic"] = self.isDiplomatic
         system_dict["last_influence_update"] = self.last_influence_update
         system_dict["mission_ids"] = self.mission_ids
+        system_dict["tracked"] = self.tracked
 
         return system_dict
 

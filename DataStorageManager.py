@@ -114,6 +114,13 @@ class DataStorageManager:
 ##################################################
 ################################################## Systems
 
+    def system_data_format_update(guild_ids: list[str]) -> bool:
+        for guild_id in guild_ids:
+            systems: list[System] = DataStorageManager.get_systems(guild_id)
+            DataStorageManager.update_systems_only(guild_id, systems)
+        return True
+
+
     def store_system(guild_id: str, system: System):
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)
@@ -154,7 +161,7 @@ class DataStorageManager:
         return list(systems_data.keys())
 
 
-    def get_system(guild_id: str, system_name: str):
+    def get_system(guild_id: str, system_name: str) -> System:
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)
 
@@ -167,7 +174,7 @@ class DataStorageManager:
             return None
 
 
-    def get_systems(guild_id: str):
+    def get_systems(guild_id: str) -> list[System]:
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systems_data = DataStorageManager.read_file_content(file_path)
 
@@ -189,6 +196,20 @@ class DataStorageManager:
             systems_data[system.name] = system.get_as_dict()
         else:
             print(f"{system.name} do not exist in storage")
+
+        DataStorageManager.atomic_write_file_content(file_path,systems_data)
+        return True
+
+
+    def update_systems_only(guild_id: str, systems: list[System]):
+        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
+        systems_data = DataStorageManager.read_file_content(file_path)
+
+        for system in systems:
+            if system.name in systems_data:
+                systems_data[system.name] = system.get_as_dict()
+            else:
+                print(f"{system.name} do not exist in storage")
 
         DataStorageManager.atomic_write_file_content(file_path,systems_data)
         return True
@@ -295,14 +316,20 @@ class DataStorageManager:
 ##################################################
 ################################################## Guild Settings
 
-    def get_guild_settings(guild_id: str):
-        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"guildSettings.json"
-        guild_settings_dict = DataStorageManager.read_file_content(file_path)
+    def guild_settings_data_format_update(guild_ids: list[str]) -> bool:
+        for guild_id in guild_ids:
+            guild_settings: GuildSettings = DataStorageManager.get_guild_settings(guild_id)
+            DataStorageManager.store_guild_settings(guild_id, guild_settings)
+        return True
+
+    def get_guild_settings(guild_id: str) -> GuildSettings:
+        file_path: str = DataStorageManager.get_guild_folder_path(guild_id)+"guildSettings.json"
+        guild_settings_dict: dict = DataStorageManager.read_file_content(file_path)
         return GuildSettings.init_from_dict(guild_settings_dict)
 
 
-    def store_guild_settings(guild_id: str, guild_settings: GuildSettings):
-        file_path = DataStorageManager.get_guild_folder_path(guild_id)+"guildSettings.json"
+    def store_guild_settings(guild_id: str, guild_settings: GuildSettings) -> bool:
+        file_path: str = DataStorageManager.get_guild_folder_path(guild_id)+"guildSettings.json"
         DataStorageManager.atomic_write_file_content(file_path,guild_settings.get_as_dict())
         return True
 
