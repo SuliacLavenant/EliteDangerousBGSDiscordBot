@@ -135,18 +135,28 @@ class DataStorageManager:
         return True
 
 
-    def removeSystemFromDataFile(guild_id: str, system_name: str):
+    def remove_system_from_data_file(guild_id: str, system_name: str) -> bool:
         file_path = DataStorageManager.get_guild_folder_path(guild_id)+"systems.json"
         systemsData = DataStorageManager.read_file_content(file_path)
 
         #data update
         if system_name in systemsData:
             system = DataStorageManager.get_system(guild_id,system_name)
+
+            #minor factions
             minor_factions = []
             for minor_faction in system.minor_factions:
                 system.minor_factions[minor_faction].remove_system(system_name)
                 minor_factions.append(system.minor_factions[minor_faction])
             DataStorageManager.store_minor_factions(guild_id,minor_factions)
+
+            #architect
+            if system.is_architected and system.architect_id!=None:
+                player: Player = DataStorageManager.get_player_by_id(guild_id,system.architect_id)
+                player.remove_architected_system(system_name)
+                DataStorageManager.store_player(guild_id, player)
+                
+
             del systemsData[system_name]
 
         DataStorageManager.remove_system_from_system_group(guild_id,system_name)

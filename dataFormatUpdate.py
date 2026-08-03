@@ -12,4 +12,5 @@ BotConfig.load()
 
 #data format update
 DataStorageManager.guild_settings_data_format_update(guild_ids)
+DataStorageManager.player_data_format_update(guild_ids)
 DataStorageManager.system_data_format_update(guild_ids)

@@ -163,7 +163,7 @@ class SystemView(discord.ui.View):
     @discord.ui.button(label="Unstore System", style=discord.ButtonStyle.danger, row=1)
     async def unstore_system(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.system_permissions.unstore(interaction.user.id) and len(self.system.mission_ids)==0:
-            DataStorageManager.removeSystemFromDataFile(interaction.guild_id, self.system.name)
+            DataStorageManager.remove_system_from_data_file(interaction.guild_id, self.system.name)
             self.system.is_stored = False
             system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
             await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())

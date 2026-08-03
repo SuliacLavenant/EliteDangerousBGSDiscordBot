@@ -15,18 +15,7 @@ class Player:
 
     @classmethod
     def init_from_dict(cls, player_dict: dict):
-        player = cls(
-            alternative_account_ids = player_dict["alternative_account_ids"],
-            architected_systems = player_dict["architected_systems"],
-            discord_id = player_dict["discord_id"],
-            id = player_dict["id"],
-            inara_id = player_dict["inara_id"],
-            name = player_dict["name"],
-            note = player_dict["note"],
-            other_names = player_dict["other_names"],
-            squadron_id = player_dict["squadron_id"]
-            )
-        return player
+        return cls(**player_dict)
 
 
     def get_as_dict(self) -> dict:
@@ -49,6 +38,15 @@ class Player:
     def add_architected_system(self, system_name: str) -> bool:
         if system_name.lower() not in self.architected_systems:
             self.architected_systems.append(system_name.lower())
+            self.architected_systems.sort()
+            return True
+        else:
+            return False
+
+
+    def remove_architected_system(self, system_name: str) -> bool:
+        if system_name.lower() in self.architected_systems:
+            self.architected_systems.remove(system_name.lower())
             self.architected_systems.sort()
             return True
         else:
