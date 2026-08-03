@@ -7,7 +7,9 @@
         "data": {
             "online": ":globe_with_meridians:",
             "saved": ":package:",
-            "save": "inbox_tray:" 
+            "save": "inbox_tray:",
+            "tracked": "📍",
+            "untracked": "💤"
         },
         "systems": ":sparkles:",
         "system": {

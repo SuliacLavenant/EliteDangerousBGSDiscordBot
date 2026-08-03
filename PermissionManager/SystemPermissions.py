@@ -16,6 +16,16 @@ class SystemPermissions(AbstractPermissions):
 
 
     @classmethod
+    def track(cls, user_id: int) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
+    @classmethod
+    def untrack(cls, user_id: int) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
+    @classmethod
     def unstore(cls, user_id: int) -> bool:
         return cls.is_user_super_admin(user_id)
 
@@ -32,6 +42,20 @@ class SystemPermissions(AbstractPermissions):
     def store_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.store(ctx.author.id)
+        return commands.check(predicate)
+
+
+    @classmethod
+    def track_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.track(ctx.author.id)
+        return commands.check(predicate)
+
+
+    @classmethod
+    def untrack_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.untrack(ctx.author.id)
         return commands.check(predicate)
 
 
