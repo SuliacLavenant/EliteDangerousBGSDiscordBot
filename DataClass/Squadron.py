@@ -17,17 +17,7 @@ class Squadron:
 
     @classmethod
     def init_from_dict(cls, squadron_dict: dict):
-        squadron = cls(
-            id=squadron_dict["id"],
-            minor_faction_names=squadron_dict["minor_faction_names"],
-            name=squadron_dict["name"],
-            tag=squadron_dict["tag"],
-            leader_ids=squadron_dict["leader_ids"],
-            officer_ids=squadron_dict["officer_ids"],
-            member_ids=squadron_dict["member_ids"],
-            recruit_ids=squadron_dict["recruit_ids"]
-            )
-        return squadron
+        return cls(**squadron_dict)
 
 
     def get_as_dict(self) -> dict:

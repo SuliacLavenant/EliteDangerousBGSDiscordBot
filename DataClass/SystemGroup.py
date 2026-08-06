@@ -13,12 +13,7 @@ class SystemGroup:
 
     @classmethod
     def init_from_dict(cls, system_group_dict: dict):
-        return cls(
-            name = system_group_dict["name"],
-            rgb_color = system_group_dict["rgb_color"],
-            emote = system_group_dict["emote"],
-            systems = system_group_dict["systems"]
-        )
+        return cls(**system_group_dict)
 
 
     def rename(self, name: str):

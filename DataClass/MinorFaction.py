@@ -11,14 +11,7 @@ class MinorFaction:
 
     @classmethod
     def init_from_dict(cls, minor_faction_dict: dict):
-        minor_faction = cls(
-            allegiance = minor_faction_dict["allegiance"],
-            government = minor_faction_dict["government"],
-            name = minor_faction_dict["name"],
-            origin_system_name = minor_faction_dict["origin_system_name"],
-            system_names = minor_faction_dict["system_names"]
-            )
-        return minor_faction
+        return cls(**minor_faction_dict)
 
 
     def get_as_dict(self) -> dict:

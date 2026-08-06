@@ -20,13 +20,7 @@ class RetreatMinorFactionFromSystemMission(SystemMission):
 
     @classmethod
     def init_from_dict(cls, mission_dict: dict):
-        system_mission = cls(
-            minor_faction_name=mission_dict["minor_faction_name"],
-            mission_id=mission_dict["mission_id"],
-            mission_type=mission_dict["mission_type"],
-            system_name=mission_dict["system_name"]
-            )
-        return system_mission
+        return cls(**mission_dict)
 
 
     def get_as_dict(self) -> dict:
