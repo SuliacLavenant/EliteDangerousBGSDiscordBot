@@ -15,15 +15,30 @@ class SystemsRecapViews:
     guild_settings: GuildSettings
     system_recap_dict: dict[str,SystemMinorFactionRecap]
 
-    def __init__(self, guild_settings: GuildSettings, system_recap_dict: dict[str,SystemMinorFactionRecap], systemGroups: list, systemsWithNoGroups: list):
+    def __init__(self, guild_settings: GuildSettings, system_recap_dict: dict[str,SystemMinorFactionRecap], system_groups: list, system_names_with_no_group: list):
         self.guild_settings = guild_settings
         self.system_recap_dict = system_recap_dict
-        self.systemGroups = systemGroups
-        self.systemsWithNoGroups = systemsWithNoGroups
+        self.system_groups = system_groups
+        self.system_names_with_no_group = system_names_with_no_group
 
-        for systemGroup in self.systemGroups:
-            for systemName in systemGroup.systems:
-                self.system_recap_dict[systemName].systemGroup = systemGroup
+        system_names_to_remove: list[str] = []
+
+        for system_group in self.system_groups:
+            for system_name in system_group.systems:
+                if system_name in system_recap_dict.keys():
+                    self.system_recap_dict[system_name].systemGroup = system_group
+                else:
+                    system_names_to_remove.append(system_name)
+            for system_name in system_names_to_remove:
+                system_group.systems.remove(system_name)
+            system_names_to_remove = []
+
+        for system_name in self.system_names_with_no_group:
+            if system_name not in system_recap_dict.keys():
+                system_names_to_remove.append(system_name)
+        for system_name in system_names_to_remove:
+            self.system_names_with_no_group.remove(system_name)
+        system_names_to_remove = []
 
 
     def getRawSystemsMinorFactionRecapEmbeds(self):
@@ -51,13 +66,13 @@ class SystemsRecapViews:
     ############## systems recap
     def getSystemsMinorFactionRecapEmbeds(self):
         embeds=[]
-        for systemGroup in self.systemGroups:
+        for systemGroup in self.system_groups:
             if systemGroup.systems!=None and len(systemGroup.systems)>0:
                 systemGroup.calculate_number_leader_systems(self.system_recap_dict)
                 systemGroup.systems.sort()
                 embeds += self.getSystemGroupRecapEmbeds(systemGroup)
 
-        if len(self.systemsWithNoGroups)>0:
+        if len(self.system_names_with_no_group)>0:
             embeds += self.getSystemNoGroupRecapEmbeds()
         return embeds
 
@@ -85,18 +100,18 @@ class SystemsRecapViews:
 
 
     def getSystemNoGroupRecapEmbeds(self):
-        self.systemsWithNoGroups.sort()
+        self.system_names_with_no_group.sort()
         number_leader_systems = 0
-        for system_name in self.systemsWithNoGroups:
+        for system_name in self.system_names_with_no_group:
             if self.system_recap_dict[system_name].isLeader:
                 number_leader_systems += 1
 
-        title = f"Other ({number_leader_systems} {BotConfig.emotes.minorFaction.positionInSystem.leader} | {len(self.systemsWithNoGroups)} {BotConfig.emotes.systems})"
+        title = f"Other ({number_leader_systems} {BotConfig.emotes.minorFaction.positionInSystem.leader} | {len(self.system_names_with_no_group)} {BotConfig.emotes.systems})"
         color = None
 
         embeds=[]
         systems = {}
-        for systemName in self.systemsWithNoGroups:
+        for systemName in self.system_names_with_no_group:
             systems[systemName] = self.system_recap_dict[systemName]
             if len(systems)>=15:
                 embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())

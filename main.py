@@ -171,8 +171,8 @@ async def bgs_recap(ctx: discord.ApplicationContext):
     if minorFaction!=None:
         systemsRecap = DataManager.get_minor_faction_system_recaps(ctx.guild_id, minorFaction)
         systemGroups = DataStorageManager.get_system_groups(ctx.guild_id)
-        systemsWithNoGroups = DataManager.getSystemNamesWithNoGroupList(ctx.guild_id)
-        systemsRecapViews = SystemsRecapViews(guildSettings, systemsRecap,systemGroups,systemsWithNoGroups)
+        systemsWithNoGroups = DataManager.get_system_names_with_no_group(ctx.guild_id)
+        systemsRecapViews = SystemsRecapViews(guildSettings, systemsRecap, systemGroups, systemsWithNoGroups)
 
         ##### BGS Recap
         if guildSettings.bgs_system_recap_channel_id!=None:

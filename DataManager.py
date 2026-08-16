@@ -83,7 +83,7 @@ class DataManager:
         guildSettings = DataStorageManager.get_guild_settings(guild_id)
         return guildSettings.minor_faction_name
 
-    def getSystemNamesWithNoGroupList(guild_id: str):
+    def get_system_names_with_no_group(guild_id: str):
         systemNames = DataStorageManager.get_system_names_list(guild_id)
         systemGroups = DataStorageManager.get_system_groups(guild_id)
         for systemGroup in systemGroups:
@@ -156,13 +156,17 @@ class DataManager:
         minor_faction_system_recaps: dict[str,SystemMinorFactionRecap] = {}
         system_name: str
         for system_name in system_names:
-            minor_faction_system_recaps[system_name] = DataManager.get_minor_faction_system_recap(guild_id, system_name, minor_faction.name)
+            system_recap: SystemMinorFactionRecap = DataManager.get_minor_faction_system_recap(guild_id, system_name, minor_faction.name)
+            if system_recap != None:
+                minor_faction_system_recaps[system_name] = system_recap
 
         return minor_faction_system_recaps
 
 
-    def get_minor_faction_system_recap(guild_id: str, system_name: str, minor_faction_name: str) -> SystemMinorFactionRecap:
+    def get_minor_faction_system_recap(guild_id: str, system_name: str, minor_faction_name: str, include_untracked: bool = False) -> SystemMinorFactionRecap:
         system: System = DataStorageManager.get_system(guild_id, system_name)
+        if not include_untracked and not system.tracked:
+            return None
         diplomatic_system: DiplomaticSystem = None
         if system.isDiplomatic:
             diplomatic_system = DataStorageManager.getDiplomaticSystem(guild_id,system_name)

@@ -57,7 +57,7 @@ class SystemGroupView(discord.ui.View):
     @discord.ui.button(label="Add systems to group", style=discord.ButtonStyle.secondary, emoji="➕", row=1)
     async def add_systems_to_system_group(self, button: discord.ui.Button, interaction: discord.Interaction):
         if PermissionManager.system_group_permissions.add_systems(interaction.user.id):
-            system_name_list = DataManager.getSystemNamesWithNoGroupList(interaction.guild_id)
+            system_name_list = DataManager.get_system_names_with_no_group(interaction.guild_id)
             if system_name_list!=None and len(system_name_list)>0:
                 select_systems_to_add_to_system_group_modal = SelectSystemsToAddToSystemGroupModal(system_name_list)
                 await interaction.response.send_modal(select_systems_to_add_to_system_group_modal)
