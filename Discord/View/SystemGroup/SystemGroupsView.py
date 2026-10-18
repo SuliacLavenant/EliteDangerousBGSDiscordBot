@@ -71,7 +71,7 @@ class SystemGroupsView(discord.ui.View):
             name = system_group.name
             if system_group.emote!=None:
                 name = f"{system_group.emote} {system_group.name} {system_group.emote}"
-            text = f"{BotConfig.emotes.systems} Systems: {len(system_group.systems)}"
+            text = f"{BotConfig.indent2} {BotConfig.emotes.systems} Systems: {len(system_group.systems)}"
             embed.add_field(name=name, value=text, inline=False)
 
         return embed

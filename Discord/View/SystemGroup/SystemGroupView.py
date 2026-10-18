@@ -1,5 +1,6 @@
 import discord
 
+from BotConfig.BotConfig import BotConfig
 from DatabaseGateway.DatabaseGateway import DatabaseGateway
 from DataClass.GuildSettings import GuildSettings
 from DataClass.SystemGroup import SystemGroup
@@ -160,9 +161,12 @@ class SystemGroupView(discord.ui.View):
             title += f"{self.system_group.name}"
 
         description="Systems:"
-        #self.system_group.systems.sort() #TODO
+        system_names: list[str] = []
         for tracked_system in self.system_group.systems:
-                description += f"\n{tracked_system.system.name}"
+            system_names.append(tracked_system.system.name)
+        system_names.sort()
+        for system_name in system_names:
+            description += f"\n{BotConfig.indent2} {system_name}"
         
         if self.system_group.color_rgb!=None:
             embed = discord.Embed(title=title, description=description, color=discord.Color.from_rgb(self.system_group.color_rgb[0],self.system_group.color_rgb[1],self.system_group.color_rgb[2]))
