@@ -1,7 +1,9 @@
 from DataClass.SQLAlchemyBase import SQLAlchemyBase
 
-from DataClass.GuildSettings import GuildSettings
-from DataClass.System import System
-from DataClass.MinorFaction import MinorFaction
-from DataClass.SystemGroup import SystemGroup
 from DataClass.DiscordTrackedSystem import DiscordTrackedSystem
+from DataClass.GuildSettings import GuildSettings
+from DataClass.MinorFaction import MinorFaction
+from DataClass.Player import Player
+from DataClass.System import System
+from DataClass.SystemMinorFactionDetails import SystemMinorFactionDetails
+from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap

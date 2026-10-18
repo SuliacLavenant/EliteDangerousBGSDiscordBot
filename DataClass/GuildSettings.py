@@ -3,15 +3,13 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from DataClass.SQLAlchemyBase import SQLAlchemyBase
 
 from typing import TYPE_CHECKING
-
 if TYPE_CHECKING:
     from DataClass.DiscordTrackedSystem import DiscordTrackedSystem
     from DataClass.MinorFaction import MinorFaction
     from DataClass.SystemGroup import SystemGroup
-
-from DataClass.SQLAlchemyBase import SQLAlchemyBase
 
 
 # WARNING take care diffrence discord id (id) and guild id

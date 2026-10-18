@@ -47,14 +47,12 @@ class System(SQLAlchemyBase):
     is_architected: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
     architect_name: Mapped[str | None] = mapped_column(String, nullable=True)
 
-    # last_influence_update: Mapped[int] = mapped_column(BigInteger, default=0)
     last_update: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),nullable=True)
 
     controlling_faction_name: ClassVar[str | None] = None #used for some api
     controlling_minor_faction_id: Mapped[int | None] = mapped_column(ForeignKey("minor_faction.id"), nullable=True)
     # controlling_minor_faction: MinorFaction = None
 
-    # system_minor_faction_details_list: Mapped[list["SystemMinorFactionDetails"]] = relationship(back_populates="system", lazy="raise")
     system_minor_faction_details_dict: Mapped[dict[int, "SystemMinorFactionDetails"]] = relationship(back_populates="system", collection_class=attribute_keyed_dict("minor_faction_id"), lazy="selectin")
 
 
@@ -80,10 +78,6 @@ class System(SQLAlchemyBase):
             return 1
 
         influence: int = -1
-        # for system_minor_faction_details in self.system_minor_faction_details_list:
-        #     if system_minor_faction_details.minor_faction_id == minor_faction_id:
-        #         influence = system_minor_faction_details.influence
-
         if minor_faction.id in self.system_minor_faction_details_dict:
             influence = self.system_minor_faction_details_dict[minor_faction.id].influence
 
@@ -101,25 +95,12 @@ class System(SQLAlchemyBase):
 
     def get_minor_factions_ranking(self) -> dict:
         ranking = {}
-        # for i in range(len(self.system_minor_faction_details_list)):
-        #     system_minor_faction_details = self.system_minor_faction_details_list[i]
-        #     rank = self.get_minor_faction_position(system_minor_faction_details.minor_faction_id)
-        #     if rank in ranking.keys():
-        #         ranking[rank+1] = i
-        #     else:
-        #         ranking[rank] = i
-
-
-
         for system_minor_faction_details in self.system_minor_faction_details_dict.values():
             rank = self.get_minor_faction_position(system_minor_faction_details.minor_faction)
             if rank in ranking.keys():
                 ranking[rank+1] = system_minor_faction_details.minor_faction_id
             else:
                 ranking[rank] = system_minor_faction_details.minor_faction_id
-
-
-
 
         return ranking
 

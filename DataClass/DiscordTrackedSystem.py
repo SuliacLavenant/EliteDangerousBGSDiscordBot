@@ -3,14 +3,14 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from typing import TYPE_CHECKING
+from DataClass.SQLAlchemyBase import SQLAlchemyBase
 
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from DataClass.GuildSettings import GuildSettings
     from DataClass.System import System
     from DataClass.SystemGroup import SystemGroup
 
-from DataClass.SQLAlchemyBase import SQLAlchemyBase
 
 
 class DiscordTrackedSystem(SQLAlchemyBase):
