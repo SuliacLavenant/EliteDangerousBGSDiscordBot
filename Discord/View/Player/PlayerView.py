@@ -4,32 +4,32 @@ from BotConfig.BotConfig import BotConfig
 from DataClass.Player import Player
 from DataClass.System import System
 from DataClass.GuildSettings import GuildSettings
-from DataStorageManager import DataStorageManager
-from Discord.Modal.Player.AddOtherNamePlayerModal import AddOtherNamePlayerModal
-from Discord.Modal.Player.RenamePlayerModal import RenamePlayerModal
-from Discord.Modal.Player.SetPlayerInaraIdModal import SetPlayerInaraIdModal
+# from DataStorageManager import DataStorageManager
+# from Discord.Modal.Player.AddOtherNamePlayerModal import AddOtherNamePlayerModal
+# from Discord.Modal.Player.RenamePlayerModal import RenamePlayerModal
+# from Discord.Modal.Player.SetPlayerInaraIdModal import SetPlayerInaraIdModal
 from PermissionManager.PermissionManager import PermissionManager
 
 
 class PlayerView(discord.ui.View):
+    discord_id: int
     player: Player
-    guild_id: int
 
     edit_mode: bool = False
 
 
-    def __init__(self, player: Player, guild_id: int, edit_mode: bool = False):
+    def __init__(self, player: Player, discord_id: int, edit_mode: bool = False):
         super().__init__()
         self.player = player
-        self.guild_id = guild_id
+        self.discord_id = discord_id
         self.edit_mode = edit_mode
 
-        if self.edit_mode:
-            self.remove_item(self.edit)
-        else:
-            self.remove_item(self.rename)
-            self.remove_item(self.set_inara_id)
-            self.remove_item(self.add_other_name)
+        # if self.edit_mode:
+        #     self.remove_item(self.edit)
+        # else:
+        #     self.remove_item(self.rename)
+        #     self.remove_item(self.set_inara_id)
+        #     self.remove_item(self.add_other_name)
 
         if self.player.inara_id != None and not self.edit_mode:
             self.add_item(discord.ui.Button(
@@ -40,69 +40,69 @@ class PlayerView(discord.ui.View):
             ))
 
 
-    @discord.ui.button(label="Edit", style=discord.ButtonStyle.primary, row=1)
-    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
-            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
-            player_view = PlayerView(player, self.guild_id, True)
-            await interaction.response.edit_message(embed=player_view.get_embed(),view=player_view)
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+    # @discord.ui.button(label="Edit", style=discord.ButtonStyle.primary, row=1)
+    # async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
+    #     if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
+    #         player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+    #         player_view = PlayerView(player, self.guild_id, True)
+    #         await interaction.response.edit_message(embed=player_view.get_embed(),view=player_view)
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
-    @discord.ui.button(label="Rename", style=discord.ButtonStyle.primary, row=1)
-    async def rename(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
-            rename_player_modal = RenamePlayerModal(self.player)
-            await interaction.response.send_modal(rename_player_modal)
-            await rename_player_modal.wait()
+    # @discord.ui.button(label="Rename", style=discord.ButtonStyle.primary, row=1)
+    # async def rename(self, button: discord.ui.Button, interaction: discord.Interaction):
+    #     if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
+    #         rename_player_modal = RenamePlayerModal(self.player)
+    #         await interaction.response.send_modal(rename_player_modal)
+    #         await rename_player_modal.wait()
 
-            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
-            player.name = rename_player_modal.player_name
-            DataStorageManager.store_player(interaction.guild_id, player)
+    #         player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+    #         player.name = rename_player_modal.player_name
+    #         DataStorageManager.store_player(interaction.guild_id, player)
 
-            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
-            player_view = PlayerView(player, self.guild_id, True)
-            await interaction.message.edit(embed=player_view.get_embed(),view=player_view)
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
-
-
-    @discord.ui.button(label="Set Inara Id", style=discord.ButtonStyle.primary, row=1)
-    async def set_inara_id(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
-            set_inara_id_player_modal = SetPlayerInaraIdModal()
-            await interaction.response.send_modal(set_inara_id_player_modal)
-            await set_inara_id_player_modal.wait()
-
-            if set_inara_id_player_modal.inara_id != None:
-                player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
-                player.inara_id = set_inara_id_player_modal.inara_id
-                DataStorageManager.store_player(interaction.guild_id, player)
-
-            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
-            player_view = PlayerView(player, self.guild_id, True)
-            await interaction.message.edit(embed=player_view.get_embed(),view=player_view)
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+    #         player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+    #         player_view = PlayerView(player, self.guild_id, True)
+    #         await interaction.message.edit(embed=player_view.get_embed(),view=player_view)
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
-    @discord.ui.button(label="Add Other Name", style=discord.ButtonStyle.primary, row=2)
-    async def add_other_name(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.player_permissions.add_other_name(interaction.user.id, self.guild_id):
-            add_other_name_player_modal = AddOtherNamePlayerModal(self.player)
-            await interaction.response.send_modal(add_other_name_player_modal)
-            await add_other_name_player_modal.wait()
+    # @discord.ui.button(label="Set Inara Id", style=discord.ButtonStyle.primary, row=1)
+    # async def set_inara_id(self, button: discord.ui.Button, interaction: discord.Interaction):
+    #     if PermissionManager.player_permissions.edit(interaction.user.id, self.guild_id):
+    #         set_inara_id_player_modal = SetPlayerInaraIdModal()
+    #         await interaction.response.send_modal(set_inara_id_player_modal)
+    #         await set_inara_id_player_modal.wait()
 
-            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
-            player.add_other_name(add_other_name_player_modal.other_name)
-            DataStorageManager.store_player(interaction.guild_id, player)
+    #         if set_inara_id_player_modal.inara_id != None:
+    #             player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+    #             player.inara_id = set_inara_id_player_modal.inara_id
+    #             DataStorageManager.store_player(interaction.guild_id, player)
 
-            player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
-            player_view = PlayerView(player, self.guild_id, True)
-            await interaction.message.edit(embed=player_view.get_embed(),view=player_view)
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+    #         player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+    #         player_view = PlayerView(player, self.guild_id, True)
+    #         await interaction.message.edit(embed=player_view.get_embed(),view=player_view)
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+    # @discord.ui.button(label="Add Other Name", style=discord.ButtonStyle.primary, row=2)
+    # async def add_other_name(self, button: discord.ui.Button, interaction: discord.Interaction):
+    #     if PermissionManager.player_permissions.add_other_name(interaction.user.id, self.guild_id):
+    #         add_other_name_player_modal = AddOtherNamePlayerModal(self.player)
+    #         await interaction.response.send_modal(add_other_name_player_modal)
+    #         await add_other_name_player_modal.wait()
+
+    #         player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+    #         player.add_other_name(add_other_name_player_modal.other_name)
+    #         DataStorageManager.store_player(interaction.guild_id, player)
+
+    #         player = DataStorageManager.get_player_by_id(self.guild_id, self.player.id)
+    #         player_view = PlayerView(player, self.guild_id, True)
+    #         await interaction.message.edit(embed=player_view.get_embed(),view=player_view)
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
     def get_embed(self):
@@ -112,7 +112,7 @@ class PlayerView(discord.ui.View):
 
         ##### Accounts
         accounts_details = ""
-        if self.player.discord_id != None:
+        if self.player.discord_account_id != None:
             accounts_details += f"{BotConfig.indent2}**Discord**: \n"
         else:
             accounts_details += f"{BotConfig.indent2}**Discord**: Unknown\n"
@@ -127,13 +127,13 @@ class PlayerView(discord.ui.View):
         embed.add_field(name="Accounts", value=accounts_details, inline=False)
 
         ##### Squadron
-        if self.player.squadron_id != None:
-            squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.player.squadron_id)
-            squadron_details = ""
-            squadron_details += f"{BotConfig.indent2}**Name**: {squadron.name}\n"
-            squadron_details += f"{BotConfig.indent2}**Tag**: [{squadron.tag}]\n"
-            squadron_details += f"{BotConfig.indent2}**Position in squadron**: {squadron.get_player_position_in_squadron(self.player.id)}\n"
-            embed.add_field(name="Squadron", value=squadron_details, inline=False)
+        # if self.player.squadron_id != None:
+        #     squadron = DataStorageManager.get_squadron_by_id(self.guild_id, self.player.squadron_id)
+        #     squadron_details = ""
+        #     squadron_details += f"{BotConfig.indent2}**Name**: {squadron.name}\n"
+        #     squadron_details += f"{BotConfig.indent2}**Tag**: [{squadron.tag}]\n"
+        #     squadron_details += f"{BotConfig.indent2}**Position in squadron**: {squadron.get_player_position_in_squadron(self.player.id)}\n"
+        #     embed.add_field(name="Squadron", value=squadron_details, inline=False)
 
         return embed
 
@@ -144,12 +144,12 @@ class PlayerView(discord.ui.View):
         embeds.append(main_embed)
 
         ##### Architected Systems
-        if len(self.player.architected_systems) > 0:
-            description: str = ""
-            for system_name in self.player.architected_systems:
-                system: System = DataStorageManager.get_system(self.guild_id, system_name)
-                description += f"{system.get_system_name_with_inara_link()}\n"
-            embed_architect: discord.Embed = discord.Embed(title=f"Architected Systems", description=description)
-            embeds.append(embed_architect)
+        # if len(self.player.architected_systems) > 0:
+        #     description: str = ""
+        #     for system_name in self.player.architected_systems:
+        #         system: System = DataStorageManager.get_system(self.guild_id, system_name)
+        #         description += f"{system.get_system_name_with_inara_link()}\n"
+        #     embed_architect: discord.Embed = discord.Embed(title=f"Architected Systems", description=description)
+        #     embeds.append(embed_architect)
 
         return embeds

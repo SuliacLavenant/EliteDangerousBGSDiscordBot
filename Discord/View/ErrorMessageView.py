@@ -1,13 +1,13 @@
 import discord
 
 class ErrorMessageView(discord.ui.View):
-    def __init__(self, errorMessage: str):
+    def __init__(self, error_message: str):
         super().__init__()
-        self.errorMessage = errorMessage
+        self.error_message = error_message
 
 
-    def getEmbed(self):
+    def get_embed(self):
         embed = discord.Embed(
-            title=self.errorMessage
+            title=self.error_message
         )
         return embed

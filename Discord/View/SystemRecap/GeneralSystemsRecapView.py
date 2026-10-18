@@ -11,13 +11,13 @@ class GeneralSystemsRecapView(SystemsRecapView):
         self.title = title
 
 
-    def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
+    def get_system_recap_one_line(self, systemRecap: SystemMinorFactionRecap):
         systemLine = f"{self.getWarningLevelEmote(systemRecap)} {self.getImportantStatusEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} {self.getSpecialSystemEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} | {self.getInfluenceString(systemRecap)}"
 
-        if systemRecap.marginWarning and systemRecap.importantState!= "war" and systemRecap.importantState!= "election":
+        if systemRecap.margin_warning and systemRecap.important_state!= "war" and systemRecap.important_state!= "election":
             systemLine += f" {self.getInfluenceDiffLevelStr(systemRecap)}"
 
-        systemLine +=  f"{self.get_have_mission_string(systemRecap)}"
+        #systemLine +=  f"{self.get_have_mission_string(systemRecap)}"
         systemLine +=  f"{self.getLastUpdateWarning(systemRecap)}"
 
         return systemLine

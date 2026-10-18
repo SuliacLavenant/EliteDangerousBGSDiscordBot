@@ -20,7 +20,7 @@ class SystemMissionsRecapView(discord.ui.View):
         self.is_title = is_title
 
 
-    def getEmbed(self):
+    def get_embed(self):
         description=""
         for mission in self.mission_list:
             description += self.get_mission_recap_one_line(mission)
@@ -33,7 +33,7 @@ class SystemMissionsRecapView(discord.ui.View):
 
 
     def get_last_update_warning(self, system: System):
-        time_since_last_update = datetime.now(timezone.utc) - datetime.fromtimestamp(system.last_influence_update, tz=timezone.utc)
+        time_since_last_update = datetime.now(timezone.utc) - system.last_update
         days_since_last_update = time_since_last_update.days
         if days_since_last_update<=1:
             return ""

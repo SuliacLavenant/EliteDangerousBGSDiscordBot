@@ -1,3 +1,5 @@
+import asyncio
+from datetime import datetime, timezone
 import requests
 import urllib.parse
 
@@ -5,7 +7,9 @@ from APIRequester.AbstractAPIRequester import AbstractAPIRequester
 from BotConfig.BotConfig import BotConfig
 from DataClass.System import System
 from DataClass.MinorFaction import MinorFaction
+from DataClass.SystemMinorFactionDetails import SystemMinorFactionDetails
 
+from DatabaseGateway.DatabaseGateway import DatabaseGateway
 
 
 class EDSMAPIRequester(AbstractAPIRequester):
@@ -46,11 +50,12 @@ class EDSMAPIRequester(AbstractAPIRequester):
             return "HTTP Error"
 
 
-    def requestSystemData(systemName: str):
+    @classmethod
+    async def request_system_data(cls, system_name: str) -> System | None:
         url = f"https://www.edsm.net/api-v1/system"
         params = {
             #"systemName": urllib.parse.quote(systemName),
-            "systemName": systemName,
+            "systemName": system_name,
             "showInformation": 1
         }
         headers = {
@@ -66,12 +71,34 @@ class EDSMAPIRequester(AbstractAPIRequester):
             if len(jsonData)==0 or len(jsonData["information"])==0:
                 return None
 
-            secondEconomy = "none"
-            if "secondEconomy" in jsonData["information"]:
-                secondEconomy = jsonData["information"]["secondEconomy"]
+            system: System = await DatabaseGateway.system.get_by_name(system_name, True)
+            if system is None:
+                system = System(name=jsonData["name"])
+                await DatabaseGateway.system.add(system)
+                system = await DatabaseGateway.system.get_by_name(system_name, True)
 
-            system = System(name=jsonData["name"], population=jsonData["information"]["population"], security=jsonData["information"]["security"], economy=jsonData["information"]["economy"], second_economy=secondEconomy, reserve=jsonData["information"]["reserve"], controlling_faction_name=jsonData["information"]["faction"])
+            #### TMP TODO (just to update caps name, to remove later)
+            await DatabaseGateway.system.set_name(system.id, jsonData["name"])
+
+            await DatabaseGateway.system.set_population(system.id, cls.get_correct_variable(jsonData["information"],"population"))
+            await DatabaseGateway.system.set_security(system.id, cls.get_correct_variable(jsonData["information"],"security"))
+            await DatabaseGateway.system.set_economy(system.id, cls.get_correct_variable(jsonData["information"],"economy"))
+            await DatabaseGateway.system.set_security(system.id, cls.get_correct_variable(jsonData["information"],"second_economy"))
+            await DatabaseGateway.system.set_reserve(system.id, cls.get_correct_variable(jsonData["information"],"reserve"))
+
+            # controlling_faction
+            controlling_minor_faction_name = cls.get_correct_variable(jsonData["information"],"faction")
+            if controlling_minor_faction_name != None:
+                minor_faction = await DatabaseGateway.minor_faction.get_by_name(controlling_minor_faction_name)
+                if minor_faction != None:
+                    await DatabaseGateway.system.set_controlling_minor_faction_id(system.id, minor_faction.id)
+
+            system = await DatabaseGateway.system.get_by_name(system_name,True)
+            if system.controlling_minor_faction_id == None and controlling_minor_faction_name != None:
+                system.controlling_minor_faction_name = controlling_minor_faction_name
+
             return system
+
 
         except requests.exceptions.Timeout:
             print("Error: Timeout.")
@@ -82,7 +109,10 @@ class EDSMAPIRequester(AbstractAPIRequester):
             return None
 
 
-    def requestMinorFactionSystemData(system: System):
+    #TODO probleme il ecrase direct la base de donné
+    @classmethod
+    async def request_minor_faction_system_data(cls, system: System) -> System | None:
+        system_id = system.id
         url = f"https://www.edsm.net/api-system-v1/factions"
         params = {
             #"systemName": urllib.parse.quote(system.name),
@@ -117,12 +147,33 @@ class EDSMAPIRequester(AbstractAPIRequester):
                     for state in faction["recoveringStates"]:
                         recoveringStates.append(state["state"].lower())
 
-                    system.add_faction(faction["name"], faction["allegiance"], faction["government"], faction["influence"], pendingStates, activeStates, recoveringStates)
+                    minor_faction = await DatabaseGateway.minor_faction.get_by_name(faction["name"])
+                    if minor_faction == None:
+                        minor_faction = MinorFaction(name=faction["name"], allegiance=faction["allegiance"], government=faction["government"])
+                        await DatabaseGateway.minor_faction.add(minor_faction)
+                        minor_faction = await DatabaseGateway.minor_faction.get_by_name(faction["name"])
 
-                    if not timeStampSaved:
-                        system.last_influence_update = faction["lastUpdate"]
+                        if system.controlling_minor_faction_id == None and faction["name"] == system.controlling_faction_name:
+                            await DatabaseGateway.system.set_controlling_minor_faction_id(system.id,minor_faction.id)
+                    else: # TODO to remove later, it's just to update names     
+                        await DatabaseGateway.minor_faction.set_name(minor_faction.id, faction["name"])
+
+                    # create data for minorfaction instance in system
+                    if not await DatabaseGateway.system_minor_faction_details.exists(system_id, minor_faction.id):
+                        system_minor_faction_details: SystemMinorFactionDetail = SystemMinorFactionDetails(system_id=system_id, minor_faction_id=minor_faction.id)
+                        await DatabaseGateway.system_minor_faction_details.add(system_minor_faction_details)
+                    
+                    # add influence
+                    await DatabaseGateway.system_minor_faction_details.set_influence(system_id, minor_faction.id, faction["influence"])
+
+
+                    if not timeStampSaved: #TODO le mettre en set au datagateaway
+                        last_update = datetime.fromtimestamp(faction["lastUpdate"], tz=timezone.utc)
+                        await DatabaseGateway.system.set_last_update_date_time(system.id, last_update)
                         timeStampSaved = True
 
+
+            #TODO check, pas besoin de recuperer la version actuelle pour repartir d'elle vu l'architecture actuelle (set_...)
             return system
 
         except requests.exceptions.Timeout:

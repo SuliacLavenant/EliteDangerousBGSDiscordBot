@@ -16,6 +16,11 @@ class GuildSettingsPermissions(AbstractPermissions):
 
 
     @classmethod
+    def set_minor_faction(cls, user_id: int) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
+    @classmethod
     def set_squadron(cls, user_id: int) -> bool:
         return cls.is_user_super_admin(user_id)
 
@@ -33,6 +38,13 @@ class GuildSettingsPermissions(AbstractPermissions):
     def set_channel_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.set_channel(ctx.author.id)
+        return commands.check(predicate)
+
+
+    @classmethod
+    def set_minor_faction(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.set_minor_faction(ctx.author.id)
         return commands.check(predicate)
 
 

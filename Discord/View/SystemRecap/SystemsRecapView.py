@@ -3,8 +3,8 @@ import urllib.parse
 
 from BotConfig.BotConfig import BotConfig
 from DataClass.GuildSettings import GuildSettings
-from DataClass.Squadron import Squadron
-from DataStorageManager import DataStorageManager
+# from DataClass.Squadron import Squadron
+# from DataStorageManager import DataStorageManager
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
 
 class SystemsRecapView(discord.ui.View):
@@ -19,11 +19,11 @@ class SystemsRecapView(discord.ui.View):
         self.systemsRecapDict = systemsRecapDict
 
 
-    def getEmbed(self):
+    def get_embed(self):
         description=""
         i=0
         for systemRecap in self.systemsRecapDict.values():
-            description += self.getSystemRecapOneLine(systemRecap)
+            description += self.get_system_recap_one_line(systemRecap)
             description += "\n"
             i+=1
             if i>15:
@@ -37,7 +37,7 @@ class SystemsRecapView(discord.ui.View):
         return embed
 
 
-    def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
+    def get_system_recap_one_line(self, systemRecap: SystemMinorFactionRecap):
         systemLine = f"{self.getSystemNameWithInaraLink(systemRecap)}"
 
         return systemLine
@@ -48,7 +48,7 @@ class SystemsRecapView(discord.ui.View):
 
     
     def getPositionEmote(self, systemRecap: SystemMinorFactionRecap):
-        match systemRecap.positionInSystem:
+        match systemRecap.position_in_system:
             case "leader":
                 return BotConfig.emotes.minorFaction.positionInSystem.leader
             case "diplomatic":
@@ -60,7 +60,7 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getImportantStatusEmote(self, systemRecap: SystemMinorFactionRecap):
-        match systemRecap.importantState:
+        match systemRecap.important_state:
             case None:
                 return BotConfig.emotes.minorFaction.state.none
             case "war" | "civil war":
@@ -72,12 +72,12 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getNumberFactionEmote(self, systemRecap: SystemMinorFactionRecap):
-        if systemRecap.numberOfFactions<=3:
+        if systemRecap.number_of_factions<=3:
             return BotConfig.emotes.system.numberOfMinorFaction[3]
-        elif systemRecap.numberOfFactions>=7:
+        elif systemRecap.number_of_factions>=7:
             return BotConfig.emotes.system.numberOfMinorFaction[7]
         else:
-            return BotConfig.emotes.system.numberOfMinorFaction[systemRecap.numberOfFactions]
+            return BotConfig.emotes.system.numberOfMinorFaction[systemRecap.number_of_factions]
 
 
     def getSpecialSystemEmote(self, systemRecap: SystemMinorFactionRecap):
@@ -92,7 +92,8 @@ class SystemsRecapView(discord.ui.View):
         return BotConfig.emotes.nothing
 
 
-    def getSystemGroupEmote(self, systemRecap: SystemMinorFactionRecap):
+    #TODO fix
+    def get_system_group_emote(self, systemRecap: SystemMinorFactionRecap):
         emote = BotConfig.emotes.nothing
         if systemRecap.systemGroup != None and systemRecap.systemGroup.emote != None:
             emote = systemRecap.systemGroup.emote
@@ -120,7 +121,7 @@ class SystemsRecapView(discord.ui.View):
                 emote = BotConfig.emotes.minorFaction.state.important
         
         #diplomatic #overide retreat warning, take care #even global warning
-        if systemRecap.isDiplomatic:
+        if systemRecap.is_diplomatic:
             match systemRecap.diplomaticWarning:
                 case "shouldBeLeader":
                     emote = BotConfig.emotes.minorFaction.influence.leader_influence_warning.level3
@@ -140,17 +141,17 @@ class SystemsRecapView(discord.ui.View):
 
 
     def getInfluenceDiffLevelStr(self, systemRecap: SystemMinorFactionRecap):
-        if systemRecap.isLeader:
-            return f"(+{round(systemRecap.leaderInfluenceMargin*100,1)}%)"
+        if systemRecap.is_leader:
+            return f"(+{round(systemRecap.leader_influence_margin*100,1)}%)"
         else:
-            return f"(-{round((systemRecap.leaderInfluence-systemRecap.influence)*100,1)}%)"
+            return f"(-{round((systemRecap.leader_influence-systemRecap.influence)*100,1)}%)"
 
 
     def getLastUpdateWarning(self, systemRecap: SystemMinorFactionRecap):
-        if systemRecap.daysSinceLastUpdate<1:
+        if systemRecap.days_since_last_update is None or systemRecap.days_since_last_update<1:
             return ""
         else:
-            return f" | ({BotConfig.emotes.warning}{systemRecap.daysSinceLastUpdate} days)"
+            return f" | ({BotConfig.emotes.warning}{systemRecap.days_since_last_update} days)"
 
 
     def get_have_mission_string(self, systemRecap: SystemMinorFactionRecap):

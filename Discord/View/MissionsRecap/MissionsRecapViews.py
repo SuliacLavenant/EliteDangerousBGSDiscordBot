@@ -2,7 +2,7 @@ import discord
 
 from DataClass.Mission.SystemMission.RetreatMinorFactionFromSystemMission import RetreatMinorFactionFromSystemMission
 from DataClass.Mission.SystemMission.SetMinorFactionAsLeaderInSystemMission import SetMinorFactionAsLeaderInSystemMission
-from DataStorageManager import DataStorageManager
+# from DataStorageManager import DataStorageManager
 from Discord.View.MissionsRecap.RetreatMinorFactionFromSystemMissionsRecapView import RetreatMinorFactionFromSystemMissionsRecapView
 from Discord.View.MissionsRecap.SetMinorFactionAsLeaderInSystemMissionsRecapView import SetMinorFactionAsLeaderInSystemMissionsRecapView
 from Discord.View.MissionsRecap.SystemMissionsRecapPerSystemView import SystemMissionsRecapPerSystemView
@@ -17,7 +17,7 @@ class MissionsRecapViews:
 
     def __init__(self, guild_id):
         self.guild_id = guild_id
-        missions = DataStorageManager.get_missions(self.guild_id)
+        missions = []# DataStorageManager.get_missions(self.guild_id)
 
         self.missions_per_system = {}
         self.retreat_missions = []
@@ -35,8 +35,8 @@ class MissionsRecapViews:
                         self.missions_per_system[mission.system_name] = []
                     self.missions_per_system[mission.system_name].append(mission)
 
-        self.process_retreat_mission()
-        self.process_set_leader_mission()
+        # self.process_retreat_mission()
+        # self.process_set_leader_mission()
 
 
     def process_retreat_mission(self):

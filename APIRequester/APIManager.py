@@ -1,5 +1,3 @@
-
-
 from APIRequester.EliteBGSAPIAPIRequester import EliteBGSAPIAPIRequester
 from APIRequester.EDSMAPIRequester import EDSMAPIRequester
 
@@ -15,14 +13,14 @@ class APIManager:
 
         return aPIStatus
 
-    def requestSystemData(systemName: str):
-        return EDSMAPIRequester.requestSystemData(systemName)
+    async def request_system_data(systemName: str) -> System | None:
+        return await EDSMAPIRequester.request_system_data(systemName)
 
     def requestMinorFactionBaseInformation(minorFactionName: str):
         return EliteBGSAPIAPIRequester.requestMinorFactionBaseInformation(minorFactionName)
 
-    def requestMinorFactionSystemData(system: System):
-        return EDSMAPIRequester.requestMinorFactionSystemData(system)
+    async def request_minor_faction_system_data(system: System):
+        return await EDSMAPIRequester.request_minor_faction_system_data(system)
 
     def requestMinorFactionSystemsList(minorFactionName: str):
         return EliteBGSAPIAPIRequester.requestMinorFactionSystemsList(minorFactionName)

@@ -16,7 +16,7 @@ class ConflictSystemsRecapView(SystemsRecapView):
             self.title = f"{BotConfig.emotes.minorFaction.state.war}{BotConfig.emotes.minorFaction.state.election} Conflicts (War and Election) {BotConfig.emotes.minorFaction.state.election}{BotConfig.emotes.minorFaction.state.war}"
 
 
-    def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
-        systemLine = f"{self.getSystemGroupEmote(systemRecap)} | {self.getImportantStatusEmote(systemRecap)} | {self.getPositionEmote(systemRecap)} {self.getNumberFactionEmote(systemRecap)} {self.getSpecialSystemEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} {self.getLastUpdateWarning(systemRecap)}"
+    def get_system_recap_one_line(self, system_recap: SystemMinorFactionRecap):
+        systemLine = f"{self.get_system_group_emote(system_recap)} | {self.getImportantStatusEmote(system_recap)} | {self.getPositionEmote(system_recap)} {self.getNumberFactionEmote(system_recap)} {self.getSpecialSystemEmote(system_recap)} | {self.getSystemNameWithInaraLink(system_recap)} {self.getLastUpdateWarning(system_recap)}"
 
         return systemLine

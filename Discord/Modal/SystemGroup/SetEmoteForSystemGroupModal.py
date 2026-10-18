@@ -10,3 +10,4 @@ class SetEmoteForSystemGroupModal(discord.ui.Modal):
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
+        self.emote = str(self.emote_input.value)

@@ -6,3 +6,5 @@ guildsData/*
 !guildsData/template/
 
 test.py
+testbddalchemy.py
+testbddpsycopg.py

@@ -1,30 +1,34 @@
 import discord
 
 from DataClass.Player import Player
-from DataStorageManager import DataStorageManager
+from DataClass.GuildSettings import GuildSettings # tmp
+from DatabaseGateway.DatabaseGateway import DatabaseGateway
 from Discord.View.Player.PlayerView import PlayerView
 from PermissionManager.PermissionManager import PermissionManager
 
 
 class PlayerNotFoundView(discord.ui.View):
-    guild_id: int
+    discord_id: int
     player_name: str
 
 
-    def __init__(self, player_name: str, guild_id: int):
+    def __init__(self, player_name: str, discord_id: int):
         super().__init__()
         self.player_name = player_name
-        self.guild_id = guild_id
+        self.discord_id = discord_id
 
 
     @discord.ui.button(label="Create Player", style=discord.ButtonStyle.primary, row=0)
     async def create_player(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.player_permissions.create(interaction.user.id, self.guild_id):
-            player = Player(name=self.player_name)
-            DataStorageManager.store_player(interaction.guild_id, player)
+        #tmp, to remove later TODO
+        guild_settings: GuildSettings = await DatabaseGateway.guild_settings.get(self.discord_id)
+        if PermissionManager.player_permissions.create(interaction.user.id, guild_settings.guild_id):
+            player: Player = Player(discord_id=self.discord_id,name=self.player_name)
+            await DatabaseGateway.player.add(player)
 
-            player = DataStorageManager.get_player_by_id(self.guild_id, player.id)
-            player_view = PlayerView(player, self.guild_id)
+            player: Player = await DatabaseGateway.player.get(self.discord_id, self.player_name)
+
+            player_view = PlayerView(player, self.discord_id)
             await interaction.response.edit_message(embed=player_view.get_embed(),view=player_view)
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)

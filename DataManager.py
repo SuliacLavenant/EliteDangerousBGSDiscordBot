@@ -1,14 +1,17 @@
 
 from APIRequester.APIManager import APIManager
-from DataStorageManager import DataStorageManager
+# from DataStorageManager import DataStorageManager
 
-from DataClass.DiplomaticSystem import DiplomaticSystem
+# from DataClass.DiplomaticSystem import DiplomaticSystem
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
-from DataClass.SystemGroup import SystemGroup
+# from DataClass.SystemGroup import SystemGroup
 from DataClass.GuildSettings import GuildSettings
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
+import time
 
+
+from DatabaseGateway.DatabaseGateway import DatabaseGateway
 
 class DataManager:
 
@@ -60,12 +63,15 @@ class DataManager:
         return systems
 
     #request system data from API
-    def requestSystemData(systemName: str):
-        system = APIManager.requestSystemData(systemName)
-        if system!=None:
-            system = APIManager.requestMinorFactionSystemData(system)
+    async def request_system_data(system_name: str) -> System | None: #->>>>>>>>>>>>>>>>>
+        system: System = await DatabaseGateway.system.get_by_name(system_name)
+        if system == None:
+            system = await APIManager.request_system_data(system_name)
+        if system != None:
+            system = await APIManager.request_minor_faction_system_data(system)
         return system
 
+    #old i guess
     #request system data from API
     def requestAndStoreSystemData(guild_id: str, systemName: str):
         system = DataManager.requestSystemData(systemName)
@@ -112,26 +118,38 @@ class DataManager:
         return True
 
 
-    def updateStoredSystemsBGSData(guild_id: str):
-        minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
-        storedSystemNamesList = DataStorageManager.get_system_names_list(guild_id)
-        systems = []
+    # "system = await DataManager.request_system_data(system_name.lower())"
+    #TODO put back change log
+    async def update_systems_bgs_data(guild_id: str): #TODO no use for guild_id
+        # minorFactionName = DataManager.getGuildMinorFactionName(guild_id)
+        # storedSystemNamesList = DataStorageManager.get_system_names_list(guild_id)
+        systems: list[System] = await DatabaseGateway.system.get_all()
         system_events = []
-        print(f"Updating {len(storedSystemNamesList)} systems")
+        print(f"Updating {len(systems)} systems")
         i = 0
-        for systemName in storedSystemNamesList:
-            system = DataStorageManager.get_system(guild_id, systemName)
-            system_new = DataManager.requestSystemData(systemName)
-            system_events = system_events + system.diff(system_new,minorFactionName)
-            system.update(system_new)
-            systems.append(system)
+        for system in systems:
+            # system = DataStorageManager.get_system(guild_id, systemName)
+            # system_new = DataManager.request_system_data(system.name)
+            system_new = await DataManager.update_system_bgs_data(system)
+            # system_events = system_events + system.diff(system_new,minorFactionName)
+            # system.update(system_new)
+            # systems.append(system)
             i+=1
-            print(f"Updated {i}/{len(storedSystemNamesList)} systems")
+            print(f"Updated {i}/{len(systems)} systems ({system.name})")
+            time.sleep(1)
         
-        DataStorageManager.updateSystems(guild_id, systems)
-        print("updateStoredSystemsBGSData: DONE")
+        # DataStorageManager.updateSystems(guild_id, systems)
+        print("update_systems_bgs_data: DONE")
 
         return system_events
+    
+    # sqg<ggsq
+    async def update_system_bgs_data(system: System):
+        system_new = await APIManager.request_system_data(system.name)
+        if system_new != None:
+            system_new = await APIManager.request_minor_faction_system_data(system_new)
+        return system_new
+
 
 
     def updateSystemBGSData(guild_id: str, systemName: str):
@@ -150,25 +168,52 @@ class DataManager:
 ##################################################
 ################################################## Recap
 
-    def get_minor_faction_system_recaps(guild_id: str, minor_faction: MinorFaction) -> dict[str,SystemMinorFactionRecap]:
-        system_names: list[str] = DataStorageManager.get_system_names_list(guild_id)
+    # def get_minor_faction_system_recaps(guild_id: str, minor_faction: MinorFaction) -> dict[str,SystemMinorFactionRecap]:
+    #     system_names: list[str] = DataStorageManager.get_system_names_list(guild_id)
 
+    #     minor_faction_system_recaps: dict[str,SystemMinorFactionRecap] = {}
+    #     system_name: str
+    #     for system_name in system_names:
+    #         system_recap: SystemMinorFactionRecap = DataManager.get_minor_faction_system_recap(guild_id, system_name, minor_faction.name)
+    #         if system_recap != None:
+    #             minor_faction_system_recaps[system_name] = system_recap
+
+    #     return minor_faction_system_recaps
+
+
+    # def get_minor_faction_system_recap(guild_id: str, system_name: str, minor_faction_name: str, include_untracked: bool = False) -> SystemMinorFactionRecap:
+    #     system: System = DataStorageManager.get_system(guild_id, system_name)
+    #     if not include_untracked and not system.tracked:
+    #         return None
+    #     diplomatic_system: DiplomaticSystem = None
+    #     if system.isDiplomatic:
+    #         diplomatic_system = DataStorageManager.getDiplomaticSystem(guild_id,system_name)
+
+    #     return SystemMinorFactionRecap(system,minor_faction_name,diplomatic_system)
+
+
+    def get_minor_faction_tracked_system_recaps(tracked_systems: list[DiscordTrackedSystem], minor_faction: MinorFaction) -> dict[str,SystemMinorFactionRecap]:
+        systems: list[System] = []
+        for tracked_system in tracked_systems:
+            systems.append(tracked_system.system)
+        
+        return DataManager.get_minor_faction_system_recaps(systems, minor_faction)
+
+
+    def get_minor_faction_system_recaps(systems: list[System], minor_faction: MinorFaction) -> dict[str,SystemMinorFactionRecap]:
         minor_faction_system_recaps: dict[str,SystemMinorFactionRecap] = {}
         system_name: str
-        for system_name in system_names:
-            system_recap: SystemMinorFactionRecap = DataManager.get_minor_faction_system_recap(guild_id, system_name, minor_faction.name)
+        for system in systems:
+            system_recap: SystemMinorFactionRecap = DataManager.get_minor_faction_system_recap(system, minor_faction)
             if system_recap != None:
-                minor_faction_system_recaps[system_name] = system_recap
+                minor_faction_system_recaps[system.name] = system_recap
 
         return minor_faction_system_recaps
 
 
-    def get_minor_faction_system_recap(guild_id: str, system_name: str, minor_faction_name: str, include_untracked: bool = False) -> SystemMinorFactionRecap:
-        system: System = DataStorageManager.get_system(guild_id, system_name)
-        if not include_untracked and not system.tracked:
-            return None
+    def get_minor_faction_system_recap(system: System, minor_faction: MinorFaction) -> SystemMinorFactionRecap:
         diplomatic_system: DiplomaticSystem = None
-        if system.isDiplomatic:
-            diplomatic_system = DataStorageManager.getDiplomaticSystem(guild_id,system_name)
+        # if system.isDiplomatic:
+        #     diplomatic_system = DataStorageManager.getDiplomaticSystem(guild_id,system_name)
 
-        return SystemMinorFactionRecap(system,minor_faction_name,diplomatic_system)
+        return SystemMinorFactionRecap(system, minor_faction, diplomatic_system)

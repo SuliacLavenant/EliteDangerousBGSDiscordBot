@@ -1,30 +1,32 @@
 from datetime import datetime, timezone
 import discord
 import urllib.parse
+import asyncio
 
 from BotConfig.BotConfig import BotConfig
 from DataManager import DataManager
-from DataStorageManager import DataStorageManager
+from DatabaseGateway.DatabaseGateway import DatabaseGateway
+from DataClass.DiscordTrackedSystem import DiscordTrackedSystem
 from DataClass.Player import Player
 from DataClass.System import System
 from DataClass.GuildSettings import GuildSettings
-from DataClass.Mission.MissionProgressEnum import MissionProgressEnum
-from DataClass.Mission.SystemMission.RetreatMinorFactionFromSystemMission import RetreatMinorFactionFromSystemMission
-from DataClass.Mission.SystemMission.SetMinorFactionAsLeaderInSystemMission import SetMinorFactionAsLeaderInSystemMission
+# from DataClass.Mission.MissionProgressEnum import MissionProgressEnum
+# from DataClass.Mission.SystemMission.RetreatMinorFactionFromSystemMission import RetreatMinorFactionFromSystemMission
+# from DataClass.Mission.SystemMission.SetMinorFactionAsLeaderInSystemMission import SetMinorFactionAsLeaderInSystemMission
 from PermissionManager.PermissionManager import PermissionManager
 
-from Discord.Modal.System.SetSystemArchitectModal import SetSystemArchitectModal
-from Discord.Modal.Mission.CreateRetreatMinorFactionFromSystemMissionModal import CreateRetreatMinorFactionFromSystemMissionModal
-from Discord.Modal.Mission.CreateSetMinorFactionAsLeaderInSystemMissionModal import CreateSetMinorFactionAsLeaderInSystemMissionModal
+# from Discord.Modal.System.SetSystemArchitectModal import SetSystemArchitectModal
+# from Discord.Modal.Mission.CreateRetreatMinorFactionFromSystemMissionModal import CreateRetreatMinorFactionFromSystemMissionModal
+# from Discord.Modal.Mission.CreateSetMinorFactionAsLeaderInSystemMissionModal import CreateSetMinorFactionAsLeaderInSystemMissionModal
 class SystemView(discord.ui.View):
     is_for_trusted_channel: bool = False
 
-    def __init__(self, system: System, guildSettings: GuildSettings, is_for_trusted_channel: bool = False):
+    def __init__(self, system: System, guild_settings: GuildSettings, is_system_tracked_by_discord: bool, is_for_trusted_channel: bool = False):
         super().__init__()
         self.system: System = system
-        self.guildSettings: GuildSettings = guildSettings
-
+        self.guild_settings: GuildSettings = guild_settings
         self.is_for_trusted_channel: bool = is_for_trusted_channel
+        self.is_system_tracked_by_discord = is_system_tracked_by_discord
 
         
         self.add_item(discord.ui.Button(
@@ -34,93 +36,94 @@ class SystemView(discord.ui.View):
             row=0
         ))
 
-        if self.system.is_stored:
-            if self.system.is_architected == None:
-                setArchitectButton = discord.ui.Button(
-                    label="Set Architect",
-                    style=discord.ButtonStyle.secondary,
-                    emoji="🏗️",
-                    row=1
-                )
-                setArchitectButton.callback = self.setArchitectButtonCallback
-                self.add_item(setArchitectButton)
+        # if self.system.is_stored:
+        #     if self.system.is_architected == None:
+        #         setArchitectButton = discord.ui.Button(
+        #             label="Set Architect",
+        #             style=discord.ButtonStyle.secondary,
+        #             emoji="🏗️",
+        #             row=1
+        #         )
+        #         setArchitectButton.callback = self.setArchitectButtonCallback
+        #         self.add_item(setArchitectButton)
 
-                setNativeSystemtButton = discord.ui.Button(
-                    label="Native System",
-                    style=discord.ButtonStyle.secondary,
-                    emoji="🏛️",
-                    row=1
-                )
-                setNativeSystemtButton.callback = self.setNativeSystemtButtonCallback
-                self.add_item(setNativeSystemtButton)
+        #         setNativeSystemtButton = discord.ui.Button(
+        #             label="Native System",
+        #             style=discord.ButtonStyle.secondary,
+        #             emoji="🏛️",
+        #             row=1
+        #         )
+        #         setNativeSystemtButton.callback = self.setNativeSystemtButtonCallback
+        #         self.add_item(setNativeSystemtButton)
             
-            if len(self.system.mission_ids)!=0 or self.system.minor_faction_is_present(self.guildSettings.minor_faction_name):
-                self.remove_item(self.unstore_system)
+        #     if len(self.system.mission_ids)!=0 or self.system.minor_faction_is_present(self.guild_settings.minor_faction_name):
+        #         self.remove_item(self.unstore_system)
 
-            if self.system.tracked:
-                self.remove_item(self.track_system)
-            else:
-                self.remove_item(self.untrack_system)
-            
-            self.remove_item(self.store_system)
-        else:
-            self.remove_item(self.unstore_system)
-            self.remove_item(self.create_retreat_mission)
-            self.remove_item(self.create_set_leader_mission)
+        if self.is_system_tracked_by_discord:
             self.remove_item(self.track_system)
-            self.remove_item(self.untrack_system)
-
-
-    async def setArchitectButtonCallback(self, interaction: discord.Interaction):
-        if PermissionManager.system_permissions.set_architect(interaction.user.id):
-            players: list[Player] = DataStorageManager.get_players(interaction.guild_id)
-            set_system_architect_modal = SetSystemArchitectModal(players)
-            await interaction.response.send_modal(set_system_architect_modal)
-            await set_system_architect_modal.wait()
-
-            if set_system_architect_modal.player_id != None:
-                system: System = DataStorageManager.get_system(interaction.guild_id, self.system.name)
-                system.is_architected = True
-                system.architect_id = set_system_architect_modal.player_id
-                DataStorageManager.update_system_only(interaction.guild_id, system)
-
-                player: Player = DataStorageManager.get_player_by_id(interaction.guild_id, set_system_architect_modal.player_id)
-                player.add_architected_system(system.name.lower())
-                DataStorageManager.store_player(interaction.guild_id, player)
-
-            system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
-            system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
-            await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
         else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+            self.remove_item(self.untrack_system)
+            
+        #     self.remove_item(self.store_system)
+        # else:
+        #     self.remove_item(self.unstore_system)
+        #     self.remove_item(self.create_retreat_mission)
+        #     self.remove_item(self.create_set_leader_mission)
+        #     self.remove_item(self.track_system)
+        #     self.remove_item(self.untrack_system)
+
+
+    # async def setArchitectButtonCallback(self, interaction: discord.Interaction):
+    #     if PermissionManager.system_permissions.set_architect(interaction.user.id):
+    #         players: list[Player] = DataStorageManager.get_players(interaction.guild_id)
+    #         set_system_architect_modal = SetSystemArchitectModal(players)
+    #         await interaction.response.send_modal(set_system_architect_modal)
+    #         await set_system_architect_modal.wait()
+
+    #         if set_system_architect_modal.player_id != None:
+    #             system: System = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+    #             system.is_architected = True
+    #             system.architect_id = set_system_architect_modal.player_id
+    #             DataStorageManager.update_system_only(interaction.guild_id, system)
+
+    #             player: Player = DataStorageManager.get_player_by_id(interaction.guild_id, set_system_architect_modal.player_id)
+    #             player.add_architected_system(system.name.lower())
+    #             DataStorageManager.store_player(interaction.guild_id, player)
+
+    #         system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
+    #         system_view = SystemView(system, self.guild_settings, self.is_for_trusted_channel)
+    #         await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
         
 
-        system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
-        system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
-        await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
+    #     system = DataStorageManager.get_system(interaction.guild_id,self.system.name)
+    #     system_view = SystemView(system, self.guild_settings, self.is_for_trusted_channel)
+    #     await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
 
 
-    async def setNativeSystemtButtonCallback(self, interaction: discord.Interaction):
-        system: System = DataStorageManager.get_system(interaction.guild_id,self.system.name)
-        system.is_architected = False
+    # async def setNativeSystemtButtonCallback(self, interaction: discord.Interaction):
+    #     system: System = DataStorageManager.get_system(interaction.guild_id,self.system.name)
+    #     system.is_architected = False
 
-        DataStorageManager.store_system(interaction.guild_id,system)
+    #     DataStorageManager.store_system(interaction.guild_id,system)
 
-        system_view = SystemView(system, self.guildSettings, self.is_for_trusted_channel)
-        await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
+    #     system_view = SystemView(system, self.guild_settings, self.is_for_trusted_channel)
+    #     await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
 
 
     @discord.ui.button(label="Track System", style=discord.ButtonStyle.success, row=1)
     async def track_system(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.defer()
         if PermissionManager.system_permissions.track(interaction.user.id):
-            self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
-            self.system.tracked = True
-            DataStorageManager.store_system(interaction.guild_id, self.system)
+            discord_tracked_system: DiscordTrackedSystem = DiscordTrackedSystem(discord_id=self.guild_settings.id, system_id=self.system.id)
+            tracked: bool = await DatabaseGateway.discord_tracked_system.add(discord_tracked_system)
 
-            self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
-            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
+            system: System = await DatabaseGateway.system.get_by_name(self.system.name, True)
+            guild_settings: GuildSettings = await DatabaseGateway.guild_settings.get_from_guild_id(interaction.guild_id)
+            system_view = SystemView(system, guild_settings, tracked, self.is_for_trusted_channel)
             await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
@@ -128,84 +131,105 @@ class SystemView(discord.ui.View):
 
     @discord.ui.button(label="Untrack System", style=discord.ButtonStyle.danger, row=1)
     async def untrack_system(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.defer()
         if PermissionManager.system_permissions.untrack(interaction.user.id):
-            self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
-            self.system.tracked = False
-            DataStorageManager.store_system(interaction.guild_id, self.system)
+            tracked: bool = not await DatabaseGateway.discord_tracked_system.delete(self.guild_settings.id, self.system.id)
 
-            self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
-            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
+            system: System = await DatabaseGateway.system.get_by_name(self.system.name, True)
+            guild_settings: GuildSettings = await DatabaseGateway.guild_settings.get_from_guild_id(interaction.guild_id)
+            system_view = SystemView(system, guild_settings, tracked, self.is_for_trusted_channel)
             await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
         else:
             await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
-    @discord.ui.button(label="Create Retreat Mission", style=discord.ButtonStyle.primary, row=4)
-    async def create_retreat_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.mission_permissions.create(interaction.user.id):
-            create_retreat_minor_faction_from_system_mission_modal = CreateRetreatMinorFactionFromSystemMissionModal(self.system)
-            await interaction.response.send_modal(create_retreat_minor_faction_from_system_mission_modal)
-            await create_retreat_minor_faction_from_system_mission_modal.wait()
+    @discord.ui.button(label="Update", style=discord.ButtonStyle.primary, row=1)
+    async def update(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.defer()
+        if PermissionManager.system_permissions.update(interaction.user.id):
+            await DataManager.update_system_bgs_data(self.system)
+
+            system: System = await DatabaseGateway.system.get_by_name(self.system.name, True)
+            guild_settings: GuildSettings = await DatabaseGateway.guild_settings.get_from_guild_id(interaction.guild_id)
+            system_view = SystemView(system, guild_settings, self.is_system_tracked_by_discord, self.is_for_trusted_channel)
+            await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
+        else:
+            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+
+
+
+
+    # @discord.ui.button(label="Create Retreat Mission", style=discord.ButtonStyle.primary, row=4)
+    # async def create_retreat_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
+    #     if PermissionManager.mission_permissions.create(interaction.user.id):
+    #         create_retreat_minor_faction_from_system_mission_modal = CreateRetreatMinorFactionFromSystemMissionModal(self.system)
+    #         await interaction.response.send_modal(create_retreat_minor_faction_from_system_mission_modal)
+    #         await create_retreat_minor_faction_from_system_mission_modal.wait()
             
-            minor_faction_name = create_retreat_minor_faction_from_system_mission_modal.minor_faction
-            if minor_faction_name != None:
-                mission = RetreatMinorFactionFromSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
-                DataStorageManager.store_mission(interaction.guild_id,mission)
+    #         minor_faction_name = create_retreat_minor_faction_from_system_mission_modal.minor_faction
+    #         if minor_faction_name != None:
+    #             mission = RetreatMinorFactionFromSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
+    #             DataStorageManager.store_mission(interaction.guild_id,mission)
 
-                self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
-                self.system.add_mission(mission.mission_id)
-                DataStorageManager.store_system(interaction.guild_id, self.system)
+    #             self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+    #             self.system.add_mission(mission.mission_id)
+    #             DataStorageManager.store_system(interaction.guild_id, self.system)
 
-            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
-            await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+    #         system_view = SystemView(self.system, self.guild_settings, self.is_for_trusted_channel)
+    #         await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
-    @discord.ui.button(label="Create Set Leader Mission", style=discord.ButtonStyle.primary, row=4)
-    async def create_set_leader_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.mission_permissions.create(interaction.user.id):
-            create_set_minor_faction_as_leader_in_system_mission_modal = CreateSetMinorFactionAsLeaderInSystemMissionModal(self.system)
-            await interaction.response.send_modal(create_set_minor_faction_as_leader_in_system_mission_modal)
-            await create_set_minor_faction_as_leader_in_system_mission_modal.wait()
+    # @discord.ui.button(label="Create Set Leader Mission", style=discord.ButtonStyle.primary, row=4)
+    # async def create_set_leader_mission(self, button: discord.ui.Button, interaction: discord.Interaction):
+    #     if PermissionManager.mission_permissions.create(interaction.user.id):
+    #         create_set_minor_faction_as_leader_in_system_mission_modal = CreateSetMinorFactionAsLeaderInSystemMissionModal(self.system)
+    #         await interaction.response.send_modal(create_set_minor_faction_as_leader_in_system_mission_modal)
+    #         await create_set_minor_faction_as_leader_in_system_mission_modal.wait()
             
-            minor_faction_name = create_set_minor_faction_as_leader_in_system_mission_modal.minor_faction
-            if minor_faction_name != None:
-                mission = SetMinorFactionAsLeaderInSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
-                DataStorageManager.store_mission(interaction.guild_id,mission)
+    #         minor_faction_name = create_set_minor_faction_as_leader_in_system_mission_modal.minor_faction
+    #         if minor_faction_name != None:
+    #             mission = SetMinorFactionAsLeaderInSystemMission(minor_faction_name=minor_faction_name,system_name=self.system.name)
+    #             DataStorageManager.store_mission(interaction.guild_id,mission)
 
-                self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
-                self.system.add_mission(mission.mission_id)
-                DataStorageManager.store_system(interaction.guild_id, self.system)
+    #             self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+    #             self.system.add_mission(mission.mission_id)
+    #             DataStorageManager.store_system(interaction.guild_id, self.system)
 
-            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
-            await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
-
-
-    @discord.ui.button(label="Store System", style=discord.ButtonStyle.secondary, row=1)
-    async def store_system(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.system_permissions.store(interaction.user.id):
-            DataStorageManager.store_system(interaction.guild_id, self.system)
-            self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
-            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
-            await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+    #         system_view = SystemView(self.system, self.guild_settings, self.is_for_trusted_channel)
+    #         await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
-    @discord.ui.button(label="Unstore System", style=discord.ButtonStyle.danger, row=1)
-    async def unstore_system(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if PermissionManager.system_permissions.unstore(interaction.user.id) and len(self.system.mission_ids)==0:
-            DataStorageManager.remove_system_from_data_file(interaction.guild_id, self.system.name)
-            self.system.is_stored = False
-            system_view = SystemView(self.system, self.guildSettings, self.is_for_trusted_channel)
-            await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
-        else:
-            await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+    #TODO to remove
+    # @discord.ui.button(label="Store System", style=discord.ButtonStyle.secondary, row=1)
+    # async def store_system(self, button: discord.ui.Button, interaction: discord.Interaction):
+    #     if PermissionManager.system_permissions.store(interaction.user.id):
+    #         DataStorageManager.store_system(interaction.guild_id, self.system)
+    #         self.system = DataStorageManager.get_system(interaction.guild_id, self.system.name)
+    #         system_view = SystemView(self.system, self.guild_settings, self.is_for_trusted_channel)
+    #         await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
 
 
+    #TODO to remove
+    # @discord.ui.button(label="Unstore System", style=discord.ButtonStyle.danger, row=1)
+    # async def unstore_system(self, button: discord.ui.Button, interaction: discord.Interaction):
+    #     if PermissionManager.system_permissions.unstore(interaction.user.id) and len(self.system.mission_ids)==0:
+    #         DataStorageManager.remove_system_from_data_file(interaction.guild_id, self.system.name)
+    #         self.system.is_stored = False
+    #         system_view = SystemView(self.system, self.guild_settings, self.is_for_trusted_channel)
+    #         await interaction.response.edit_message(view=system_view,embeds=system_view.get_embeds())
+    #     else:
+    #         await interaction.response.send_message(f"You don't have the permission to do this.", ephemeral=True)
+
+
+    # TODO unused and old, to check, to remove
     def getEmbed(self):
         title = self.system.name.title()
         if self.system.is_stored:
@@ -213,12 +237,12 @@ class SystemView(discord.ui.View):
         else:
             title += f" {BotConfig.emotes.data.online}"
 
-        description = f"{BotConfig.emotes.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
-        description += f"{BotConfig.emotes.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
+        description = f"{BotConfig.emotes.system.information.economy} Economy: **{self.system.get_str_system_economy()}**\n"
+        description += f"{BotConfig.emotes.system.information.population} Population: **{self.system.get_str_system_population()}**\n"
         description += f"{BotConfig.emotes.system.information.security} Security Level: **{self.system.security.title()}**\n"
-        description += f"{self.get_number_minor_faction_emote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
-        if self.system.isArchitected:
-            description += f"{BotConfig.emotes.system.information.architect} Architect: **{self.system.architect.title()}**\n"
+        # description += f"{self.get_number_minor_faction_emote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
+        if self.system.is_architected:
+            description += f"{BotConfig.emotes.system.information.architect} Architect: **{self.system.architect_name}**\n"
         description += "."
 
         embed = discord.Embed(title=title, description=description)
@@ -237,7 +261,7 @@ class SystemView(discord.ui.View):
                 emote = BotConfig.emotes.minorFaction.positionInSystem.other
 
             title = f"{emote} {minor_faction.name} {emote} - < {round(self.system.minor_factions_influence[minor_faction.name.lower()]*100,1)}% >"
-            if minor_faction.name.lower() == self.guildSettings.minor_faction_name:
+            if minor_faction.name.lower() == self.guild_settings.minor_faction_name:
                 title += f" {BotConfig.emotes.pin}"
 
             embed.add_field(name=title, value=minorFactionDescription, inline=False)
@@ -249,10 +273,10 @@ class SystemView(discord.ui.View):
 
     def get_embeds(self):
         embeds = []
-        title = self.system.name.title()
+        title = self.system.name
         if self.system.is_stored:
-            title += f" {BotConfig.emotes.data.saved}"
-            if self.system.tracked:
+            title += f" {BotConfig.emotes.data.saved}" #TODO no test to confirm if it's from stored data
+            if self.is_system_tracked_by_discord:
                 title += f" {BotConfig.emotes.data.tracked}"
             else:
                 title += f" {BotConfig.emotes.data.untracked}"
@@ -260,13 +284,13 @@ class SystemView(discord.ui.View):
             title += f" {BotConfig.emotes.data.online}"
         title += self.get_last_update_warning()
 
-        description = f"{BotConfig.emotes.system.information.economy} Economy: **{self.system.getStrSystemEconomy()}**\n"
-        description += f"{BotConfig.emotes.system.information.population} Population: **{self.system.getStrSystemPopulation()}**\n"
-        description += f"{BotConfig.emotes.system.information.security} Security Level: **{self.system.security.title()}**\n"
-        description += f"{self.get_number_minor_faction_emote(self.system)} Number of Minor Factions: **{len(self.system.minor_factions_names)}**\n"
-        if self.system.is_architected:
-            player: Player = DataStorageManager.get_player_by_id(self.guildSettings.guild_id, self.system.architect_id)
-            description += f"{BotConfig.emotes.system.information.architect} Architect: **{player.name}**\n"
+        description = f"{BotConfig.emotes.system.information.economy} Economy: **{self.system.get_economy_str()}**\n"
+        description += f"{BotConfig.emotes.system.information.population} Population: **{self.system.get_population_str()}**\n"
+        description += f"{BotConfig.emotes.system.information.security} Security Level: **{self.system.get_security_str()}**\n"
+        description += f"{self.get_number_minor_faction_emote(self.system)} Number of Minor Factions: **{len(self.system.system_minor_faction_details_dict)}**\n"
+        # if self.system.is_architected:
+        #     player: Player = DataStorageManager.get_player_by_id(self.guild_settings.guild_id, self.system.architect_id)
+        #     description += f"{BotConfig.emotes.system.information.architect} Architect: **{player.name}**\n"
         description += f"{BotConfig.indent2}"
 
         embed = discord.Embed(title=title, description=description)
@@ -275,9 +299,9 @@ class SystemView(discord.ui.View):
         ranking = self.system.get_minor_factions_ranking()
         current = 1
         while current<=len(ranking):
-            minor_faction = self.system.minor_factions[ranking[current]]
-            minorFactionDescription = f"{BotConfig.indent2} Allegiance: **{minor_faction.allegiance.title()}**\n"
-            minorFactionDescription += f"{BotConfig.indent2} Government: **{minor_faction.government.title()}**\n"
+            minor_faction = self.system.system_minor_faction_details_dict[ranking[current]].minor_faction
+            minorFactionDescription = f"{BotConfig.indent2} Allegiance: **{minor_faction.get_allegiance_str()}**\n"
+            minorFactionDescription += f"{BotConfig.indent2} Government: **{minor_faction.get_government_str()}**\n"
 
             emote = ""
             if current == 1:
@@ -285,64 +309,69 @@ class SystemView(discord.ui.View):
             else:
                 emote = BotConfig.emotes.minorFaction.positionInSystem.other
 
-            title = f"{emote} {minor_faction.name} {emote} - < {round(self.system.minor_factions_influence[minor_faction.name.lower()]*100,1)}% >"
-            if minor_faction.name.lower() == self.guildSettings.minor_faction_name:
-                title += f" {BotConfig.emotes.pin}"
+            title = f"{emote} {minor_faction.name} {emote} - < {round(self.system.system_minor_faction_details_dict[ranking[current]].influence*100,1)}% >"
+            # if minor_faction.name.lower() == self.guild_settings.minor_faction_name: #TODO
+            #     title += f" {BotConfig.emotes.pin}"
 
             embed.add_field(name=title, value=minorFactionDescription, inline=False)
 
             current+=1
 
         #missions
-        if self.is_for_trusted_channel and len(self.system.mission_ids)>0:
-            embed = discord.Embed(title="Missions")
-            embeds.append(embed)
+        # if self.is_for_trusted_channel and len(self.system.mission_ids)>0:
+        #     embed = discord.Embed(title="Missions")
+        #     embeds.append(embed)
 
-            for mission_id in self.system.mission_ids:
-                mission = DataStorageManager.get_mission(self.guildSettings.guild_id, mission_id)
-                title = ""
-                details = ""
-                if mission.mission_type == "SetMinorFactionAsLeaderInSystemMission":
-                    title = f"{BotConfig.emotes.minorFaction.positionInSystem.leader} Set Leader {BotConfig.emotes.minorFaction.positionInSystem.leader}"
-                    mission.update_with_system_data(self.system)
-                    mission.check_mission_state()
-                    details += f"{BotConfig.indent2}{BotConfig.emotes.mission.state.state} State: {mission.get_mission_state_emote()} **{mission.state.value}** \n"
-                    details += f"{BotConfig.indent2}{BotConfig.emotes.target} Target: **{mission.minor_faction_name}** \n"
-                    if mission.current_influence_difference<0:
-                        details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.influence.up} Missing Influence: {mission.get_target_minor_faction_influence_difference_string()} \n"
-                    elif mission.conflict != None:
-                        details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.state.war} Conflict: {mission.conflict} \n"
+        #     for mission_id in self.system.mission_ids:
+        #         mission = DataStorageManager.get_mission(self.guild_settings.guild_id, mission_id)
+        #         title = ""
+        #         details = ""
+        #         if mission.mission_type == "SetMinorFactionAsLeaderInSystemMission":
+        #             title = f"{BotConfig.emotes.minorFaction.positionInSystem.leader} Set Leader {BotConfig.emotes.minorFaction.positionInSystem.leader}"
+        #             mission.update_with_system_data(self.system)
+        #             mission.check_mission_state()
+        #             details += f"{BotConfig.indent2}{BotConfig.emotes.mission.state.state} State: {mission.get_mission_state_emote()} **{mission.state.value}** \n"
+        #             details += f"{BotConfig.indent2}{BotConfig.emotes.target} Target: **{mission.minor_faction_name}** \n"
+        #             if mission.current_influence_difference<0:
+        #                 details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.influence.up} Missing Influence: {mission.get_target_minor_faction_influence_difference_string()} \n"
+        #             elif mission.conflict != None:
+        #                 details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.state.war} Conflict: {mission.conflict} \n"
                     
-                elif mission.mission_type == "RetreatMinorFactionFromSystemMission":
-                    title = f"{BotConfig.emotes.minorFaction.state.retreat} Retreat {BotConfig.emotes.minorFaction.state.retreat}"
-                    mission.update_with_system_data(self.system)
-                    mission.check_mission_state()
-                    details += f"{BotConfig.indent2}{BotConfig.emotes.mission.state.state} State: {mission.get_mission_state_emote()} **{mission.state.value}** \n"
-                    details += f"{BotConfig.indent2}{BotConfig.emotes.target} Target: **{mission.minor_faction_name}** \n"
-                    details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.influence.down} Current Influence: {mission.get_current_influence_string()} \n"
+        #         elif mission.mission_type == "RetreatMinorFactionFromSystemMission":
+        #             title = f"{BotConfig.emotes.minorFaction.state.retreat} Retreat {BotConfig.emotes.minorFaction.state.retreat}"
+        #             mission.update_with_system_data(self.system)
+        #             mission.check_mission_state()
+        #             details += f"{BotConfig.indent2}{BotConfig.emotes.mission.state.state} State: {mission.get_mission_state_emote()} **{mission.state.value}** \n"
+        #             details += f"{BotConfig.indent2}{BotConfig.emotes.target} Target: **{mission.minor_faction_name}** \n"
+        #             details += f"{BotConfig.indent2}{BotConfig.emotes.minorFaction.influence.down} Current Influence: {mission.get_current_influence_string()} \n"
 
-                embed.add_field(name=title, value=details, inline=False)
+        #         embed.add_field(name=title, value=details, inline=False)
 
 
         return embeds
 
 
-    def get_number_minor_faction_emote(self, system: System):
-        if len(system.minor_factions_names)<=3:
+    def get_number_minor_faction_emote(self, system: System): #TODO match case
+        if len(system.system_minor_faction_details_dict)==1:
+            return "?1?"
+        if len(system.system_minor_faction_details_dict)<=3:
             return BotConfig.emotes.system.numberOfMinorFaction[3]
-        elif len(system.minor_factions_names)>=7:
+        elif len(system.system_minor_faction_details_dict)>=7:
             return BotConfig.emotes.system.numberOfMinorFaction[7]
         else:
-            return BotConfig.emotes.system.numberOfMinorFaction[len(system.minor_factions_names)]
+            return BotConfig.emotes.system.numberOfMinorFaction[len(system.system_minor_faction_details_dict)]
 
 
     def get_last_update_warning(self):
-        time_since_last_update = datetime.now(timezone.utc) - datetime.fromtimestamp(self.system.last_influence_update, tz=timezone.utc)
-        days_since_last_update = time_since_last_update.days
-        if days_since_last_update<=1:
-            return ""
+        if self.system.last_update != None:
+            time_since_last_update = datetime.now(timezone.utc) - self.system.last_update
+            days_since_last_update = time_since_last_update.days
+            if days_since_last_update<=1:
+                return ""
+            else:
+                return f" | ({BotConfig.emotes.warning}{days_since_last_update} days)"
         else:
-            return f" | ({BotConfig.emotes.warning}{days_since_last_update} days)"
+            return f" | ({BotConfig.emotes.warning}{"??"} days)"
 
 
     def get_mission_state_emote(self, mission):

@@ -30,6 +30,11 @@ class SystemPermissions(AbstractPermissions):
         return cls.is_user_super_admin(user_id)
 
 
+    @classmethod
+    def update(cls, user_id: int) -> bool:
+        return cls.is_user_super_admin(user_id)
+
+
 ################ Predicates
     @classmethod
     def set_architect_predicate(cls):
@@ -63,4 +68,11 @@ class SystemPermissions(AbstractPermissions):
     def unstore_predicate(cls):
         async def predicate(ctx: discord.ApplicationContext) -> bool:
             return cls.unstore(ctx.author.id)
+        return commands.check(predicate)
+
+
+    @classmethod
+    def update_predicate(cls):
+        async def predicate(ctx: discord.ApplicationContext) -> bool:
+            return cls.update(ctx.author.id)
         return commands.check(predicate)

@@ -1,21 +1,24 @@
 import discord
 
+from DataClass.DiscordTrackedSystem import DiscordTrackedSystem 
+
+
 class SelectSystemsToRemoveFromSystemGroupModal(discord.ui.DesignerModal):
-    system_name_list: list
-    system_name_to_remove_list: list
+    tracked_systems: list
+    system_names_to_remove: list
 
     systems_selects: list
 
-    def __init__(self, system_name_list: list):
+    def __init__(self, tracked_systems: list):
         super().__init__(title="Select Systems To Remove From System Group")
         
-        self.system_name_list = system_name_list
-        self.system_name_list.sort()
+        self.tracked_systems = tracked_systems
+        # self.tracked_systems.sort()
         
         self.systems_selects = []
         options = []
-        for system_name in self.system_name_list:
-            options.append(discord.SelectOption(label=system_name, value=system_name))
+        for tracked_system in self.tracked_systems:
+            options.append(discord.SelectOption(label=tracked_system.system.name, value=tracked_system.system.name))
             if len(options)>=20:
                 systems_select = discord.ui.Label(label="Systems:").set_select(
                     options=options,
@@ -41,9 +44,8 @@ class SelectSystemsToRemoveFromSystemGroupModal(discord.ui.DesignerModal):
 
 
     async def callback(self, interaction: discord.Interaction):
-        self.system_name_to_remove_list= []
+        await interaction.response.defer()
+        self.system_names_to_remove= []
         for systems_select in self.systems_selects:
             for system_name in systems_select.item.values:
-                self.system_name_to_remove_list.append(system_name)
-
-        await interaction.response.defer()
+                self.system_names_to_remove.append(system_name)

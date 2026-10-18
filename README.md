@@ -16,6 +16,10 @@ Create a .env file with:
 - DISCORD_GUILDS=IDOFYOURDISCORDSERVER,...
 - SUPER_ADMIN=IDOFUSER
 - CONTACT_EMAIL=EMAIL
+- DB_USER=
+- DB_PW=
+- DB_PORT=
+- DB_NAME=
 
 
 # Data 
@@ -38,3 +42,11 @@ FactionInSystem:
 - government: str
 - influence: int
 - state: str
+
+
+---------
+# PostgreSQL
+5432
+pip install "psycopg[binary]"
+pip install sqlalchemy "psycopg[binary]"
+

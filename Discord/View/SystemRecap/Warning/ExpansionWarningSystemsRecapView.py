@@ -16,7 +16,7 @@ class ExpansionWarningSystemsRecapView(SystemsRecapView):
             self.title = f"{BotConfig.emotes.minorFaction.state.expansion} Expansion Warning {BotConfig.emotes.minorFaction.state.expansion}"
 
 
-    def getSystemRecapOneLine(self, systemRecap: SystemMinorFactionRecap):
-        systemLine = f"{self.getSystemGroupEmote(systemRecap)} | {self.getNumberFactionEmote(systemRecap)} {self.getSpecialSystemEmote(systemRecap)} | {self.getSystemNameWithInaraLink(systemRecap)} | {self.getInfluenceString(systemRecap)} {self.getLastUpdateWarning(systemRecap)}"
+    def get_system_recap_one_line(self, system_recap: SystemMinorFactionRecap):
+        systemLine = f"{self.get_system_group_emote(system_recap)} | {self.getNumberFactionEmote(system_recap)} {self.getSpecialSystemEmote(system_recap)} | {self.getSystemNameWithInaraLink(system_recap)} | {self.getInfluenceString(system_recap)} {self.getLastUpdateWarning(system_recap)}"
 
         return systemLine

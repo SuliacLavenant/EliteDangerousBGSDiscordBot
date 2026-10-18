@@ -34,3 +34,14 @@ class AbstractAPIRequester(ABC):
         except requests.exceptions.RequestException as e:
             print(f"Error: HTTP {e}")
             return None
+
+
+    @classmethod
+    def get_correct_variable(cls, data: dict, key: str) -> str | int | None:
+        if key in data and data[key] != None and data[key] != "None":
+            if type(data[key]) == str:
+                return data[key].lower()
+            else:
+                return data[key]
+        else:
+            return None

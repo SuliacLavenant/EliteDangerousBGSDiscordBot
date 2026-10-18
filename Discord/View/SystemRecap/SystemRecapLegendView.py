@@ -10,10 +10,10 @@ class SystemsRecapLegendView(discord.ui.View):
     def __init__(self, minorFactionName: str):
         super().__init__()
         self.title = "Recap Legend"
-        self.minorFactionName = minorFactionName.title()
+        self.minorFactionName = minorFactionName
 
 
-    def getEmbed(self):
+    def get_embed(self):
         description=""
         embed = discord.Embed(title=self.title, description=description)
 

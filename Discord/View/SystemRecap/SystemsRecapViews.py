@@ -23,22 +23,23 @@ class SystemsRecapViews:
 
         system_names_to_remove: list[str] = []
 
-        for system_group in self.system_groups:
-            for system_name in system_group.systems:
-                if system_name in system_recap_dict.keys():
-                    self.system_recap_dict[system_name].systemGroup = system_group
-                else:
-                    system_names_to_remove.append(system_name)
-            for system_name in system_names_to_remove:
-                system_group.systems.remove(system_name)
-            system_names_to_remove = []
+        # TODO I think I can remove this
+        # for system_group in self.system_groups:
+        #     for system_name in system_group.systems:
+        #         if system_name in system_recap_dict.keys():
+        #             self.system_recap_dict[system_name].systemGroup = system_group
+        #         else:
+        #             system_names_to_remove.append(system_name)
+        #     for system_name in system_names_to_remove:
+        #         system_group.systems.remove(system_name)
+        #     system_names_to_remove = []
 
-        for system_name in self.system_names_with_no_group:
-            if system_name not in system_recap_dict.keys():
-                system_names_to_remove.append(system_name)
-        for system_name in system_names_to_remove:
-            self.system_names_with_no_group.remove(system_name)
-        system_names_to_remove = []
+        # for system_name in self.system_names_with_no_group:
+        #     if system_name not in system_recap_dict.keys():
+        #         system_names_to_remove.append(system_name)
+        # for system_name in system_names_to_remove:
+        #     self.system_names_with_no_group.remove(system_name)
+        # system_names_to_remove = []
 
 
     def getRawSystemsMinorFactionRecapEmbeds(self):
@@ -64,46 +65,59 @@ class SystemsRecapViews:
 
 
     ############## systems recap
-    def getSystemsMinorFactionRecapEmbeds(self):
+    def get_systems_minor_faction_recap_embeds(self):
         embeds=[]
-        for systemGroup in self.system_groups:
-            if systemGroup.systems!=None and len(systemGroup.systems)>0:
-                systemGroup.calculate_number_leader_systems(self.system_recap_dict)
-                systemGroup.systems.sort()
-                embeds += self.getSystemGroupRecapEmbeds(systemGroup)
+        for system_group in self.system_groups:
+            if system_group.systems is not None and len(system_group.systems)>0:
+                system_group.calculate_number_leader_systems(self.system_recap_dict)
+                # system_group.systems.sort()
+                embeds += self.get_system_group_recap_embeds(system_group)
 
         if len(self.system_names_with_no_group)>0:
-            embeds += self.getSystemNoGroupRecapEmbeds()
+            embeds += self.get_system_no_group_recap_embeds()
         return embeds
 
-    def getSystemGroupRecapEmbeds(self, systemGroup: SystemGroup):
-        title = systemGroup.name
+    def get_system_group_recap_embeds(self, system_group: SystemGroup):
+        title: str = system_group.name
         color = None
-        if systemGroup.rgb_color != None:
-            color = discord.Color.from_rgb(systemGroup.rgb_color[0],systemGroup.rgb_color[1],systemGroup.rgb_color[2])
-        if systemGroup.emote != None:
-            title = f"{systemGroup.emote} {systemGroup.name} {systemGroup.emote}"
-        title += f" ({systemGroup.number_leader_systems} {BotConfig.emotes.minorFaction.positionInSystem.leader} | {len(systemGroup.systems)} {BotConfig.emotes.systems})"
+        if system_group.color_rgb != None:
+            color = discord.Color.from_rgb(system_group.color_rgb[0], system_group.color_rgb[1], system_group.color_rgb[2])
+        if system_group.emote != None:
+            title = f"{system_group.emote} {system_group.name} {system_group.emote}"
+        title += f" ({system_group.number_leader_systems} {BotConfig.emotes.minorFaction.positionInSystem.leader} | {len(system_group.systems)} {BotConfig.emotes.systems})"
 
         embeds=[]
         systems = {}
-        for systemName in systemGroup.systems:
-            systems[systemName] = self.system_recap_dict[systemName]
+        for tracked_system in system_group.systems:
+            system_name: str = tracked_system.system.name
+            systems[system_name] = self.system_recap_dict[system_name]
             if len(systems)>=15:
-                embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())
+                embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).get_embed())
                 title = None
                 systems = {}
         if len(systems)>0:
-            embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())
+            embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).get_embed())
+
+
+        embeds=[]
+        system_recaps = {}
+        for tracked_system in system_group.systems:
+            system_recaps[tracked_system.system.name] = self.system_recap_dict[tracked_system.system.name]
+            if len(system_recaps)>=15:
+                embeds.append(GeneralSystemsRecapView(self.guild_settings, system_recaps, color, title).get_embed())
+                title = None
+                system_recaps = {}
+        if len(system_recaps)>0:
+            embeds.append(GeneralSystemsRecapView(self.guild_settings, system_recaps, color, title).get_embed())
 
         return embeds
 
 
-    def getSystemNoGroupRecapEmbeds(self):
+    def get_system_no_group_recap_embeds(self):
         self.system_names_with_no_group.sort()
         number_leader_systems = 0
         for system_name in self.system_names_with_no_group:
-            if self.system_recap_dict[system_name].isLeader:
+            if self.system_recap_dict[system_name].is_leader:
                 number_leader_systems += 1
 
         title = f"Other ({number_leader_systems} {BotConfig.emotes.minorFaction.positionInSystem.leader} | {len(self.system_names_with_no_group)} {BotConfig.emotes.systems})"
@@ -114,11 +128,11 @@ class SystemsRecapViews:
         for systemName in self.system_names_with_no_group:
             systems[systemName] = self.system_recap_dict[systemName]
             if len(systems)>=15:
-                embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())
+                embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).get_embed())
                 title = None
                 systems = {}
         if len(systems)>0:
-            embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).getEmbed())
+            embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).get_embed())
 
         return embeds
     ##############
@@ -130,7 +144,7 @@ class SystemsRecapViews:
     def get_conflict_system_recap_embeds(self) -> list[discord.Embed]:
         system_names_in_conflict: list[str] = []
         for system_name in self.system_recap_dict:
-            if self.system_recap_dict[system_name].inConflict:
+            if self.system_recap_dict[system_name].in_conflict:
                 system_names_in_conflict.append(system_name)
 
         embeds: list[discord.Embed] = []
@@ -139,11 +153,11 @@ class SystemsRecapViews:
         for system_name in system_names_in_conflict:
             systems[system_name] = self.system_recap_dict[system_name]
             if len(systems)>=15:
-                embeds.append(ConflictSystemsRecapView(self.guild_settings, systems, not title_set).getEmbed())
+                embeds.append(ConflictSystemsRecapView(self.guild_settings, systems, not title_set).get_embed())
                 title_set = True
                 systems = {}
         if len(systems)>0:
-            embeds.append(ConflictSystemsRecapView(self.guild_settings, systems, not title_set).getEmbed())
+            embeds.append(ConflictSystemsRecapView(self.guild_settings, systems, not title_set).get_embed())
 
         return embeds
 
@@ -154,7 +168,7 @@ class SystemsRecapViews:
     def get_expansion_warning_system_recap_embeds(self) -> list[discord.Embed]:
         system_names_in_expansion_warning: list[str] = []
         for system_name in self.system_recap_dict:
-            if self.system_recap_dict[system_name].expansionWarning:
+            if self.system_recap_dict[system_name].expansion_warning:
                 system_names_in_expansion_warning.append(system_name)
         system_names_in_expansion_warning = self.sort_list_by_influence(system_names_in_expansion_warning)
 
@@ -164,11 +178,11 @@ class SystemsRecapViews:
         for system_name in system_names_in_expansion_warning:
             systems[system_name] = self.system_recap_dict[system_name]
             if len(systems)>=15:
-                embeds.append(ExpansionWarningSystemsRecapView(self.guild_settings, systems, not title_set).getEmbed())
+                embeds.append(ExpansionWarningSystemsRecapView(self.guild_settings, systems, not title_set).get_embed())
                 title_set = True
                 systems = {}
         if len(systems)>0:
-            embeds.append(ExpansionWarningSystemsRecapView(self.guild_settings, systems, not title_set).getEmbed())
+            embeds.append(ExpansionWarningSystemsRecapView(self.guild_settings, systems, not title_set).get_embed())
 
         return embeds
 
@@ -176,7 +190,7 @@ class SystemsRecapViews:
     def get_retreat_warning_system_recap_embeds(self) -> list[discord.Embed]:
         system_names_in_retreat_warning: list[str] = []
         for system_name in self.system_recap_dict:
-            if self.system_recap_dict[system_name].retreatWarning:
+            if self.system_recap_dict[system_name].expansion_warning:
                 system_names_in_retreat_warning.append(system_name)
         system_names_in_retreat_warning = self.sort_list_by_influence(system_names_in_retreat_warning)
 
@@ -186,11 +200,11 @@ class SystemsRecapViews:
         for system_name in system_names_in_retreat_warning:
             systems[system_name] = self.system_recap_dict[system_name]
             if len(systems)>=15:
-                embeds.append(RetreatWarningSystemsRecapView(self.guild_settings, systems, not title_set).getEmbed())
+                embeds.append(RetreatWarningSystemsRecapView(self.guild_settings, systems, not title_set).get_embed())
                 title_set = True
                 systems = {}
         if len(systems)>0:
-            embeds.append(RetreatWarningSystemsRecapView(self.guild_settings, systems, not title_set).getEmbed())
+            embeds.append(RetreatWarningSystemsRecapView(self.guild_settings, systems, not title_set).get_embed())
 
         return embeds
     
@@ -201,10 +215,10 @@ class SystemsRecapViews:
         warning_lvl[2]: list[str] = []
         warning_lvl[1]: list[str] = []
         for system_name in self.system_recap_dict:
-            if self.system_recap_dict[system_name].marginWarning:
-                match self.system_recap_dict[system_name].influenceWarningLevel:
+            if self.system_recap_dict[system_name].margin_warning:
+                match self.system_recap_dict[system_name].influence_warning_level:
                     case 3:
-                        if not self.system_recap_dict[system_name].inConflict:
+                        if not self.system_recap_dict[system_name].in_conflict:
                             warning_lvl[3].append(system_name)
                     case 2:
                         warning_lvl[2].append(system_name)
@@ -226,11 +240,11 @@ class SystemsRecapViews:
             for system_name in warning_lvl[lvl]:
                 systems[system_name] = self.system_recap_dict[system_name]
                 if len(systems)>=15:
-                    embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(self.guild_settings, systems, lvl, not title_set).getEmbed())
+                    embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(self.guild_settings, systems, lvl, not title_set).get_embed())
                     title_set = True
                     systems = {}
             if len(systems)>0:
-                embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(self.guild_settings, systems, lvl, not title_set).getEmbed())
+                embeds[lvl].append(InfluenceMarginWarningSystemsRecapView(self.guild_settings, systems, lvl, not title_set).get_embed())
 
         return embeds
 
@@ -254,7 +268,7 @@ class SystemsRecapViews:
         for i in range(1,len(system_names)):
             tmp = system_names[i]
             j = i-1
-            while j>=0 and self.system_recap_dict[system_names[j]].leaderInfluenceMargin < self.system_recap_dict[tmp].leaderInfluenceMargin:
+            while j>=0 and self.system_recap_dict[system_names[j]].leader_influence_margin < self.system_recap_dict[tmp].leader_influence_margin:
                 system_names[j+1] = system_names[j]
                 j-=1
             system_names[j+1] = tmp
