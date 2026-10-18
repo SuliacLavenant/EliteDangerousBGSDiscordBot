@@ -77,6 +77,7 @@ class SystemsRecapViews:
             embeds += self.get_system_no_group_recap_embeds()
         return embeds
 
+
     def get_system_group_recap_embeds(self, system_group: SystemGroup):
         title: str = system_group.name
         color = None
@@ -87,23 +88,10 @@ class SystemsRecapViews:
         title += f" ({system_group.number_leader_systems} {BotConfig.emotes.minorFaction.positionInSystem.leader} | {len(system_group.systems)} {BotConfig.emotes.systems})"
 
         embeds=[]
-        systems = {}
-        for tracked_system in system_group.systems:
-            system_name: str = tracked_system.system.name
-            systems[system_name] = self.system_recap_dict[system_name]
-            if len(systems)>=15:
-                embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).get_embed())
-                title = None
-                systems = {}
-        if len(systems)>0:
-            embeds.append(GeneralSystemsRecapView(self.guild_settings, systems, color, title).get_embed())
-
-
-        embeds=[]
         system_recaps = {}
         for tracked_system in system_group.systems:
             system_recaps[tracked_system.system.name] = self.system_recap_dict[tracked_system.system.name]
-            if len(system_recaps)>=15:
+            if len(system_recaps) >= 15:
                 embeds.append(GeneralSystemsRecapView(self.guild_settings, system_recaps, color, title).get_embed())
                 title = None
                 system_recaps = {}
