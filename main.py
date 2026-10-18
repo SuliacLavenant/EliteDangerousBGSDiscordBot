@@ -5,6 +5,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import os
 import asyncio
+import traceback
 
 #custom files
 #from DataClass.GuildSettings import GuildSettings
@@ -83,6 +84,10 @@ bot = discord.Bot(intents=intents)
 #update file check
 # for guild_id in guildIDs:
 #     DataStorageManager.create_missing_data_files(guild_id)
+
+# import logging
+# logging.basicConfig(level=logging.INFO)
+# logging.getLogger("discord.http").setLevel(logging.DEBUG)
 
 
 @bot.event
@@ -214,8 +219,11 @@ async def bgs_recap(ctx: discord.ApplicationContext):
             await channel.send(embed=systems_recap_legend_view.get_embed())
             #systems
             embeds = systems_recap_views.get_systems_minor_faction_recap_embeds()
-            for i in range(len(embeds)):
-                await channel.send(embed=embeds[i])
+            for i, embed in enumerate(embeds):
+                print(f"Sending embed {i+1}/{len(embeds)}", flush=True)
+                message = await channel.send(embed=embed)
+                print(f"Sent: {message.id}", flush=True)
+                await asyncio.sleep(0.5)
 
         ##### warning Recap
         if guild_settings.bgs_warning_recap_channel_id!=None:
