@@ -245,7 +245,8 @@ class EDSMAPIRequester(AbstractAPIRequester):
         timeStampSaved = False
 
         # minor factions
-        minor_factions: dict[str,MinorFaction] = []
+        minor_factions: dict[str,MinorFaction] = {}
+        system.system_minor_faction_details_dict_by_name = {}
         for faction in json_minor_faction_details_data["factions"]:
             if faction["influence"]!=0:
                 minor_faction: MinorFaction = MinorFaction(name=faction["name"], allegiance=faction["allegiance"], government=faction["government"])
