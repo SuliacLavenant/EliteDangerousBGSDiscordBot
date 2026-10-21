@@ -18,7 +18,7 @@ class SystemDatabaseGateway:
             result = await session.scalar(
                 select(
                     exists()
-                    .where(System.name == system_name)
+                    .where(func.lower(System.name) == system_name.lower())
                 )
             )
 

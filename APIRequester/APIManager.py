@@ -13,8 +13,9 @@ class APIManager:
 
         return aPIStatus
 
-    async def request_system_data(systemName: str) -> System | None:
-        return await EDSMAPIRequester.request_system_data(systemName)
+    async def request_system_data(system_name: str) -> System | None:
+        # return await EDSMAPIRequester.request_system_data(system_name)
+        return await EDSMAPIRequester.request_system_full_data(system_name)
 
     def requestMinorFactionBaseInformation(minorFactionName: str):
         return EliteBGSAPIAPIRequester.requestMinorFactionBaseInformation(minorFactionName)

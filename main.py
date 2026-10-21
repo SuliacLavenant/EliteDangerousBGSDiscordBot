@@ -167,7 +167,7 @@ async def system(ctx: discord.ApplicationContext, system_name: str):
         view = SystemView(system, guild_settings, is_system_tracked_by_discord, guild_settings.is_channel_trusted(ctx.channel_id))
         await ctx.edit(embeds=view.get_embeds(), view=view)
     else:
-        system = await DataManager.request_system_data(system_name.lower())
+        system = await DataManager.request_and_store_system_data(system_name.lower())
         if system != None:
             # if system.minor_faction_is_present(guild_settings.minor_faction_name):
             #     # DataStorageManager.store_system(ctx.guild_id, system)

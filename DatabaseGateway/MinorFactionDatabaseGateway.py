@@ -19,7 +19,7 @@ class MinorFactionDatabaseGateway:
             result = await session.scalar(
                 select(
                     exists()
-                    .where(MinorFaction.name == minor_faction_name)
+                    .where(func.lower(MinorFaction.name) == minor_faction_name.lower())
                 )
             )
 

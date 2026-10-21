@@ -52,6 +52,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
 
     @classmethod
     async def request_system_data(cls, system_name: str) -> System | None:
+        return None
         url = f"https://www.edsm.net/api-v1/system"
         params = {
             #"systemName": urllib.parse.quote(systemName),
@@ -112,6 +113,7 @@ class EDSMAPIRequester(AbstractAPIRequester):
     #TODO probleme il ecrase direct la base de donné
     @classmethod
     async def request_minor_faction_system_data(cls, system: System) -> System | None:
+        return None
         system_id = system.id
         url = f"https://www.edsm.net/api-system-v1/factions"
         params = {
@@ -183,3 +185,130 @@ class EDSMAPIRequester(AbstractAPIRequester):
         except requests.exceptions.RequestException as e:
             print(f"Error: HTTP {e}")
             return None
+
+
+
+    @classmethod
+    async def request_system_full_data(cls, system_name: str) -> System | None:
+        url_system = f"https://www.edsm.net/api-v1/system"
+        params_system = {
+            #"systemName": urllib.parse.quote(systemName),
+            "systemName": system_name,
+            "showInformation": 1
+        }
+        url_minor_faction_details = f"https://www.edsm.net/api-system-v1/factions"
+        params_minor_faction_details = {
+            #"systemName": urllib.parse.quote(system_name),
+            "systemName": system_name,
+            "showHistory": 0
+        }
+        headers = {
+            "User-Agent": f"EraEliteBGSBOT/0.1 contact: {BotConfig.contact_email}",
+            "Accept": "application/json"
+        }
+
+        try:
+            # system
+            response = requests.get(url_system, params=params_system, headers=headers, timeout=10)
+            response.raise_for_status() #detect request error
+            json_system_data = response.json()
+            if len(json_system_data)==0 or len(json_system_data["information"])==0:
+                return None
+
+            # minor_faction_details
+            response = requests.get(url_minor_faction_details, params=params_minor_faction_details, headers=headers, timeout=10)
+            response.raise_for_status() #detect request error
+            json_minor_faction_details_data = response.json()
+
+        except requests.exceptions.Timeout:
+            print("Error: Timeout.")
+            return None
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error: HTTP {e}")
+            return None
+
+        ################################################
+
+        # system base datas
+        system: System = System(
+            name = json_system_data["name"],
+            population = cls.get_correct_variable(json_system_data["information"],"population"),
+            security = cls.get_correct_variable(json_system_data["information"],"security"),
+            economy = cls.get_correct_variable(json_system_data["information"],"economy"),
+            second_economy = cls.get_correct_variable(json_system_data["information"],"second_economy"),
+            reserve = cls.get_correct_variable(json_system_data["information"],"reserve")
+        )
+
+        system.controlling_minor_faction_name = cls.get_correct_variable(json_system_data["information"],"faction")
+
+        timeStampSaved = False
+
+        # minor factions
+        minor_factions: dict[str,MinorFaction] = []
+        for faction in json_minor_faction_details_data["factions"]:
+            if faction["influence"]!=0:
+                minor_faction: MinorFaction = MinorFaction(name=faction["name"], allegiance=faction["allegiance"], government=faction["government"])
+
+                pending_states = []
+                active_states = []
+                recovering_states = []
+                for state in faction["pendingStates"]:
+                    pending_states.append(state["state"].lower())
+                for state in faction["activeStates"]:
+                    active_states.append(state["state"].lower())
+                # if faction["state"].lower()!= "none" and faction["state"].lower() not in activeStates:
+                #     activeStates.append(faction["state"].lower())
+                for state in faction["recoveringStates"]:
+                    recovering_states.append(state["state"].lower())
+
+                system_minor_faction_details: SystemMinorFactionDetail = SystemMinorFactionDetails(
+                    system = system,
+                    minor_faction = minor_faction,
+                    influence = faction["influence"],
+                    pending_states = pending_states,
+                    active_states = active_states,
+                    recovering_states = recovering_states
+                )
+
+                system.system_minor_faction_details_dict_by_name[minor_faction.name] = system_minor_faction_details
+
+                if not timeStampSaved:
+                    last_update = datetime.fromtimestamp(faction["lastUpdate"], tz=timezone.utc)
+                    system.last_update = last_update
+                    timeStampSaved = True
+
+        return system
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # controlling_faction
+        controlling_minor_faction_name = cls.get_correct_variable(jsonData["information"],"faction")
+        if controlling_minor_faction_name != None:
+            minor_faction = await DatabaseGateway.minor_faction.get_by_name(controlling_minor_faction_name)
+            if minor_faction != None:
+                await DatabaseGateway.system.set_controlling_minor_faction_id(system.id, minor_faction.id)
+
+        system = await DatabaseGateway.system.get_by_name(system_name,True)
+        if system.controlling_minor_faction_id == None and controlling_minor_faction_name != None:
+            system.controlling_minor_faction_name = controlling_minor_faction_name
+
+        return system

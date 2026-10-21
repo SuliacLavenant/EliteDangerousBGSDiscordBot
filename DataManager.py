@@ -5,6 +5,7 @@ from APIRequester.APIManager import APIManager
 # from DataClass.DiplomaticSystem import DiplomaticSystem
 from DataClass.MinorFaction import MinorFaction
 from DataClass.System import System
+from DataClass.SystemMinorFactionDetails import SystemMinorFactionDetails
 # from DataClass.SystemGroup import SystemGroup
 from DataClass.GuildSettings import GuildSettings
 from DataClass.SystemMinorFactionRecap import SystemMinorFactionRecap
@@ -49,6 +50,7 @@ class DataManager:
 
     #request systems data from APIs
     def requestAndStoreSystemsData(guild_id: str):
+        print("outdated")
         minorFactionName = DataManager.getMinorFactionName(guild_id)
         systems = DataManager.requestSystemsData(minorFactionName)
         for system in systems:
@@ -57,19 +59,71 @@ class DataManager:
 
     #request systems data from APIs
     def requestSystemsData(minorFactionName: str):
+        print("outdated")
         systems = []
         for systemName in DataManager.requestSystemNamesList(minorFactionName):
             systems.append(DataManager.requestSystemData(systemName))
         return systems
 
+
     #request system data from API
     async def request_system_data(system_name: str) -> System | None: #->>>>>>>>>>>>>>>>>
-        system: System = await DatabaseGateway.system.get_by_name(system_name)
-        if system == None:
-            system = await APIManager.request_system_data(system_name)
-        if system != None:
-            system = await APIManager.request_minor_faction_system_data(system)
-        return system
+        # system: System = await DatabaseGateway.system.get_by_name(system_name)
+        # if system == None:
+        #     system = await APIManager.request_system_data(system_name)
+        # if system != None:
+        #     system = await APIManager.request_minor_faction_system_data(system)
+        return await APIManager.request_system_data(system_name)
+
+
+    async def request_and_store_system_data(system_name: str) -> System | None:
+        system: System = await DataManager.request_system_data(system_name)
+
+        if not await DatabaseGateway.system.exists(system.name):
+            system_to_store: System = System(name=system.name)
+            await DatabaseGateway.system.add(system_to_store)
+
+        system_stored: System = await DatabaseGateway.system.get_by_name(system.name)
+        await DatabaseGateway.system.set_name(system_stored.id, system.name)
+        await DatabaseGateway.system.set_population(system_stored.id, system.population)
+        await DatabaseGateway.system.set_security(system_stored.id, system.security)
+        await DatabaseGateway.system.set_economy(system_stored.id, system.economy)
+        await DatabaseGateway.system.set_security(system_stored.id, system.second_economy)
+        await DatabaseGateway.system.set_reserve(system_stored.id, system.reserve)
+        await DatabaseGateway.system.set_last_update_date_time(system_stored.id, system.last_update)
+
+        #remove previous detyails TODO
+        minor_faction_ids: list[int] = []
+        for system_minor_faction_details in system.system_minor_faction_details_dict_by_name.values():
+            minor_faction: MinorFaction = system_minor_faction_details.minor_faction
+            if not await DatabaseGateway.minor_faction.exists(minor_faction.name):
+                minor_faction_to_add: MinorFaction = MinorFaction(name=minor_faction.name, allegiance=minor_faction.allegiance, government=minor_faction.government)
+                await DatabaseGateway.minor_faction.add(minor_faction_to_add)
+            minor_faction_stored: MinorFaction = await DatabaseGateway.minor_faction.get_by_name(minor_faction.name)
+            minor_faction_ids.append(minor_faction_stored.id)
+
+            #set controlling faction
+            if system.controlling_minor_faction_name is not None and system.controlling_minor_faction_name.lower() == system_minor_faction_details.minor_faction.name.lower():
+                await DatabaseGateway.system.set_controlling_minor_faction_id(system_stored.id, minor_faction_stored.id)
+
+            if not await DatabaseGateway.system_minor_faction_details.exists(system_stored.id, minor_faction_stored.id):
+                system_minor_faction_details_to_store: SystemMinorFactionDetail = SystemMinorFactionDetails(system_id=system_stored.id, minor_faction_id=minor_faction_stored.id)
+                await DatabaseGateway.system_minor_faction_details.add(system_minor_faction_details_to_store)
+            await DatabaseGateway.system_minor_faction_details.set_influence(system_stored.id, minor_faction_stored.id, system_minor_faction_details.influence)
+
+        #remove minor faction not present anymore
+        system_stored = await DatabaseGateway.system.get_by_name(system.name, True)
+        minor_faction_removed:bool = False
+        for minor_faction_id in system_stored.system_minor_faction_details_dict.keys():
+            if minor_faction_id not in minor_faction_ids:
+                await DatabaseGateway.system_minor_faction_details.delete(system_stored.id,minor_faction_id)
+                minor_faction_removed = True
+        
+        if minor_faction_removed:
+            system_stored = await DatabaseGateway.system.get_by_name(system.name, True)
+
+        return system_stored
+
 
     #old i guess
     #request system data from API
@@ -130,7 +184,7 @@ class DataManager:
         for system in systems:
             # system = DataStorageManager.get_system(guild_id, systemName)
             # system_new = DataManager.request_system_data(system.name)
-            system_new = await DataManager.update_system_bgs_data(system)
+            system_new = await DataManager.request_and_store_system_data(system.name)
             # system_events = system_events + system.diff(system_new,minorFactionName)
             # system.update(system_new)
             # systems.append(system)

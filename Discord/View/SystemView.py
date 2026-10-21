@@ -147,9 +147,12 @@ class SystemView(discord.ui.View):
     async def update(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.defer()
         if PermissionManager.system_permissions.update(interaction.user.id):
-            await DataManager.update_system_bgs_data(self.system)
+            # await DataManager.update_system_bgs_data(self.system)
 
-            system: System = await DatabaseGateway.system.get_by_name(self.system.name, True)
+            # system: System = await DatabaseGateway.system.get_by_name(self.system.name, True)
+            
+            system: System = await DataManager.request_and_store_system_data(self.system.name)
+
             guild_settings: GuildSettings = await DatabaseGateway.guild_settings.get_from_guild_id(interaction.guild_id)
             system_view = SystemView(system, guild_settings, self.is_system_tracked_by_discord, self.is_for_trusted_channel)
             await interaction.message.edit(view=system_view,embeds=system_view.get_embeds())

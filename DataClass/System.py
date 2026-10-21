@@ -49,11 +49,14 @@ class System(SQLAlchemyBase):
 
     last_update: Mapped[datetime | None] = mapped_column(DateTime(timezone=True),nullable=True)
 
-    controlling_faction_name: ClassVar[str | None] = None #used for some api
+    controlling_minor_faction_name: ClassVar[str | None] = None #used for some api
     controlling_minor_faction_id: Mapped[int | None] = mapped_column(ForeignKey("minor_faction.id"), nullable=True)
     # controlling_minor_faction: MinorFaction = None
 
-    system_minor_faction_details_dict: Mapped[dict[int, "SystemMinorFactionDetails"]] = relationship(back_populates="system", collection_class=attribute_keyed_dict("minor_faction_id"), lazy="selectin")
+    system_minor_faction_details_dict: Mapped[dict[int, "SystemMinorFactionDetails"]] = relationship(back_populates="system", collection_class=attribute_keyed_dict("minor_faction_id", ignore_unpopulated_attribute=True), lazy="selectin")
+
+    # used when retriving data from api
+    system_minor_faction_details_dict_by_name: ClassVar[Mapped[dict[int, "SystemMinorFactionDetails"]]] = {}
 
 
     discord_trackings: Mapped[list["DiscordTrackedSystem"]] = relationship(back_populates="system", lazy="raise")
@@ -89,7 +92,7 @@ class System(SQLAlchemyBase):
                 if system_minor_faction_details.minor_faction_id != minor_faction.id:
                     if influence < system_minor_faction_details.influence:
                         position+=1
-            
+
             return position
 
 
