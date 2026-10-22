@@ -247,11 +247,14 @@ class DataManager:
 
 
     def get_minor_faction_tracked_system_recaps(tracked_systems: list[DiscordTrackedSystem], minor_faction: MinorFaction) -> dict[str,SystemMinorFactionRecap]:
-        systems: list[System] = []
+        minor_faction_system_recaps: dict[str,SystemMinorFactionRecap] = {}
+        system_name: str
         for tracked_system in tracked_systems:
-            systems.append(tracked_system.system)
-        
-        return DataManager.get_minor_faction_system_recaps(systems, minor_faction)
+            system_recap: SystemMinorFactionRecap = DataManager.get_minor_faction_system_recap(tracked_system.system, minor_faction, tracked_system.system_group)
+            if system_recap != None:
+                minor_faction_system_recaps[tracked_system.system.name] = system_recap
+
+        return minor_faction_system_recaps
 
 
     def get_minor_faction_system_recaps(systems: list[System], minor_faction: MinorFaction) -> dict[str,SystemMinorFactionRecap]:
@@ -265,9 +268,9 @@ class DataManager:
         return minor_faction_system_recaps
 
 
-    def get_minor_faction_system_recap(system: System, minor_faction: MinorFaction) -> SystemMinorFactionRecap:
+    def get_minor_faction_system_recap(system: System, minor_faction: MinorFaction, system_group: SystemGroup = None) -> SystemMinorFactionRecap:
         diplomatic_system: DiplomaticSystem = None
         # if system.isDiplomatic:
         #     diplomatic_system = DataStorageManager.getDiplomaticSystem(guild_id,system_name)
 
-        return SystemMinorFactionRecap(system, minor_faction, diplomatic_system)
+        return SystemMinorFactionRecap(system, minor_faction, diplomatic_system, system_group)

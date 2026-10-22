@@ -40,11 +40,12 @@ class SystemMinorFactionRecap:
     in_conflict: bool = False
 
 
-    systemGroup: SystemGroup = None
+    system_group: SystemGroup = None
 
-    def __init__(self, system: System, minor_faction: MinorFaction, diplomaticSystem: DiplomaticSystem = None):
+    def __init__(self, system: System, minor_faction: MinorFaction, diplomaticSystem: DiplomaticSystem = None, system_group: SystemGroup = None):
         self.system = system
         self.minor_faction = minor_faction
+        self.system_group = system_group
         
         self.diplomaticSystem = diplomaticSystem
         self.is_diplomatic = self.diplomaticSystem is not None

@@ -92,11 +92,10 @@ class SystemsRecapView(discord.ui.View):
         return BotConfig.emotes.nothing
 
 
-    #TODO fix
     def get_system_group_emote(self, systemRecap: SystemMinorFactionRecap):
         emote = BotConfig.emotes.nothing
-        if systemRecap.systemGroup != None and systemRecap.systemGroup.emote != None:
-            emote = systemRecap.systemGroup.emote
+        if systemRecap.system_group != None and systemRecap.system_group.emote != None:
+            emote = systemRecap.system_group.emote
         return emote
 
 

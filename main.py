@@ -220,10 +220,10 @@ async def bgs_recap(ctx: discord.ApplicationContext):
             #systems
             embeds = systems_recap_views.get_systems_minor_faction_recap_embeds()
             for i, embed in enumerate(embeds):
-                print(f"Sending embed {i+1}/{len(embeds)}", flush=True)
+                # print(f"Sending embed {i+1}/{len(embeds)}", flush=True)
                 message = await channel.send(embed=embed)
-                print(f"Sent: {message.id}", flush=True)
-                await asyncio.sleep(0.5)
+                # print(f"Sent: {message.id}", flush=True)
+                await asyncio.sleep(1)
 
         ##### warning Recap
         if guild_settings.bgs_warning_recap_channel_id!=None:
@@ -233,19 +233,23 @@ async def bgs_recap(ctx: discord.ApplicationContext):
             expEmbeds: list[discord.Embed] = systems_recap_views.get_expansion_warning_system_recap_embeds()
             for i in range(len(expEmbeds)):
                 await channel.send(embed=expEmbeds[i])
+                await asyncio.sleep(1)
             #influence margin warning
             influence_margin_warning_embeds_all: list[discord.Embed] = systems_recap_views.get_influence_margin_warning_system_recap_embeds()
             for influence_margin_warning_embeds in influence_margin_warning_embeds_all.values():
                 for i in range(len(influence_margin_warning_embeds)):
                     await channel.send(embed=influence_margin_warning_embeds[i])
+                await asyncio.sleep(1)
             #conflicts
             conflictEmbeds: list[discord.Embed] = systems_recap_views.get_conflict_system_recap_embeds()
             for i in range(len(conflictEmbeds)):
                 await channel.send(embed=conflictEmbeds[i])
+                await asyncio.sleep(1)
             #retreat
             retreatEmbeds: list[discord.Embed] = systems_recap_views.get_retreat_warning_system_recap_embeds()
             for i in range(len(retreatEmbeds)):
                 await channel.send(embed=retreatEmbeds[i])
+                await asyncio.sleep(1)
         
 #     await update_mission_recaps(ctx.guild_id)
 
